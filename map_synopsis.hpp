@@ -2,7 +2,7 @@ namespace std {
 
 template <class Key, class T, class Compare = default_order_t<Key>,
           class Allocator = allocator<pair<const Key, T>>>
-class map {
+class flat_map {
 public:
     // types:
     using key_type                 = Key;
@@ -24,7 +24,7 @@ public:
     using insert_return_type       = unspecified ;
 
     class value_compare {
-      friend class map;
+      friend class flat_map;
     protected:
       Compare comp;
       value_compare(Compare c) : comp(c) {}
@@ -35,31 +35,36 @@ public:
     };
 
     // construct/copy/destroy:
-    map() : map(Compare()) { }
-    explicit map(const Compare& comp, const Allocator& = Allocator());
+    flat_map() : flat_map(Compare()) { }
+    explicit flat_map(const Compare& comp, const Allocator& = Allocator());
     template <class InputIterator>
-      map(InputIterator first, InputIterator last,
-          const Compare& comp = Compare(), const Allocator& = Allocator());
-    map(const map& x);
-    map(map&& x);
-    explicit map(const Allocator&);
-    map(const map&, const Allocator&);
-    map(map&&, const Allocator&);
-    map(initializer_list<value_type>,
-        const Compare& = Compare(),
-        const Allocator& = Allocator());
+      flat_map(InputIterator first, InputIterator last,
+               const Compare& comp = Compare(), const Allocator& = Allocator());
+    flat_map(const flat_map& x);
+    flat_map(flat_map&& x);
+    explicit flat_map(const Allocator&);
+    flat_map(const flat_map&, const Allocator&);
+    flat_map(flat_map&&, const Allocator&);
+    flat_map(initializer_list<value_type>,
+             const Compare& = Compare(),
+             const Allocator& = Allocator());
     template <class InputIterator>
-      map(InputIterator first, InputIterator last, const Allocator& a)
-        : map(first, last, Compare(), a) { }
-    map(initializer_list<value_type> il, const Allocator& a)
-      : map(il, Compare(), a) { }
-    ~map();
-    map& operator=(const map& x);
-    map& operator=(map&& x)
+      flat_map(InputIterator first, InputIterator last, const Allocator& a)
+        : flat_map(first, last, Compare(), a) { }
+    flat_map(initializer_list<value_type> il, const Allocator& a)
+      : flat_map(il, Compare(), a) { }
+    ~flat_map();
+    flat_map& operator=(const flat_map& x);
+    flat_map& operator=(flat_map&& x)
       noexcept(allocator_traits<Allocator>::is_always_equal::value &&
                is_nothrow_move_assignable_v<Compare>);
-    map& operator=(initializer_list<value_type>);
+    flat_map& operator=(initializer_list<value_type>);
     allocator_type get_allocator() const noexcept;
+
+#if 1
+    explicit flat_map(Container&& x);
+    flat_map& operator=(Container&& x);
+#endif
 
     // iterators:
     iterator                 begin() noexcept;
@@ -79,6 +84,11 @@ public:
     bool      empty() const noexcept;
     size_type size() const noexcept;
     size_type max_size() const noexcept;
+#if 1
+    size_type capacity() const noexcept;
+    void reserve(size_type x);
+    void shrink_to_fit();
+#endif
 
     // element access:
     T& operator[](const key_type& x);
@@ -100,10 +110,16 @@ public:
       void insert(InputIterator first, InputIterator last);
     void insert(initializer_list<value_type>);
 
+#if 0
     node_type extract(const_iterator position);
     node_type extract(const key_type& x);
     insert_return_type insert(node_type&& nh);
     iterator           insert(const_iterator hint, node_type&& nh);
+#endif
+
+#if 1
+    Container extract();
+#endif
 
     template <class... Args>
       pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
@@ -127,19 +143,19 @@ public:
     size_type erase(const key_type& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(map&)
+    void swap(flat_map&)
       noexcept(allocator_traits<Allocator>::is_always_equal::value &&
                is_nothrow_swappable_v<Compare>);
     void clear() noexcept;
 
     template<class C2>
-      void merge(map<Key, T, C2, Allocator>& source);
+      void merge(flat_map<Key, T, C2, Allocator>& source);
     template<class C2>
-      void merge(map<Key, T, C2, Allocator>&& source);
+      void merge(flat_map<Key, T, C2, Allocator>&& source);
     template<class C2>
-      void merge(multimap<Key, T, C2, Allocator>& source);
+      void merge(multiflat_map<Key, T, C2, Allocator>& source);
     template<class C2>
-      void merge(multimap<Key, T, C2, Allocator>&& source);
+      void merge(multiflat_map<Key, T, C2, Allocator>&& source);
 
     // observers:
     key_compare key_comp() const;
@@ -169,27 +185,27 @@ public:
 };
 
 template <class Key, class T, class Compare, class Allocator>
-  bool operator==(const map<Key, T, Compare, Allocator>& x,
-                  const map<Key, T, Compare, Allocator>& y);
+  bool operator==(const flat_map<Key, T, Compare, Allocator>& x,
+                  const flat_map<Key, T, Compare, Allocator>& y);
 template <class Key, class T, class Compare, class Allocator>
-  bool operator< (const map<Key, T, Compare, Allocator>& x,
-                  const map<Key, T, Compare, Allocator>& y);
+  bool operator< (const flat_map<Key, T, Compare, Allocator>& x,
+                  const flat_map<Key, T, Compare, Allocator>& y);
 template <class Key, class T, class Compare, class Allocator>
-  bool operator!=(const map<Key, T, Compare, Allocator>& x,
-                  const map<Key, T, Compare, Allocator>& y);
+  bool operator!=(const flat_map<Key, T, Compare, Allocator>& x,
+                  const flat_map<Key, T, Compare, Allocator>& y);
 template <class Key, class T, class Compare, class Allocator>
-  bool operator> (const map<Key, T, Compare, Allocator>& x,
-                  const map<Key, T, Compare, Allocator>& y);
+  bool operator> (const flat_map<Key, T, Compare, Allocator>& x,
+                  const flat_map<Key, T, Compare, Allocator>& y);
 template <class Key, class T, class Compare, class Allocator>
-  bool operator>=(const map<Key, T, Compare, Allocator>& x,
-                  const map<Key, T, Compare, Allocator>& y);
+  bool operator>=(const flat_map<Key, T, Compare, Allocator>& x,
+                  const flat_map<Key, T, Compare, Allocator>& y);
 template <class Key, class T, class Compare, class Allocator>
-  bool operator<=(const map<Key, T, Compare, Allocator>& x,
-                  const map<Key, T, Compare, Allocator>& y);
+  bool operator<=(const flat_map<Key, T, Compare, Allocator>& x,
+                  const flat_map<Key, T, Compare, Allocator>& y);
 
 // specialized algorithms:
 template <class Key, class T, class Compare, class Allocator>
-  void swap(map<Key, T, Compare, Allocator>& x,
-            map<Key, T, Compare, Allocator>& y) noexcept(noexcept(x.swap(y)));
+  void swap(flat_map<Key, T, Compare, Allocator>& x,
+            flat_map<Key, T, Compare, Allocator>& y) noexcept(noexcept(x.swap(y)));
 
 }
