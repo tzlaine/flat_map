@@ -3,7 +3,7 @@ namespace std {
 struct ordered_unique_sequence_tag { };
 
 template <class Key, class T, class Compare = default_order_t<Key>,
-          class Container = vector<pair<const Key, T>>>
+          class Container = vector<pair<Key, T>>>
 class flat_map {
 public:
     // types:
