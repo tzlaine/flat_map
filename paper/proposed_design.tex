@@ -41,7 +41,7 @@ for customization by users.
 
 \code{flat_map} is an adapter for an underlying storage type.  This storage
 type is configurable via the template parameter \code{Container}.
-\code{Container} must be a \textit{contiguous container} (23.2.1/13).
+\code{Container} must be a \textit{contiguous container} (\S23.2.1/13).
 \code{vector} is a great candidate for this, but limiting \code{flat_map} only
 to use \code{vector} for its storage would be a mistake.  Many other suitable
 replacements exist, each suited to a certain use.  A user may have a
@@ -86,7 +86,26 @@ allocations altogether, if the maximum number of elements N is know \textit{a
 
 \subsubsection{\code{flat_map} Requirements}
 
-TODO
+(TODO! Change the synopsis to reflect this!) Since the underlying container is
+contiguous and elements may be moved or copied during inserts and erases, the
+element type of \code{Container} must be \code{pair<Key, T>}, not
+\code{pair<const Key, T>}.  Even so, the element type of \code{flat_map}
+should still be \code{pair<const Key, T>}, for drop-in compatibility with
+\code{map} (\S23.2.4/5).
+
+Only the underlying container is allocator-aware.  \S23.2.4/7 regarding
+allocator awareness does not apply to \code{flat_map}.
+
+Validity of iterators is not preserved when mutating the underlying container
+(i.e. \S23.2.4/9 does not apply).
+
+The exception safety guarantees for associative containers (\S23.2.4.1) do not
+apply.
+
+The rest of the requirements follow the ones in (\S23.2.4 Associative
+containers), except \S23.2.4/10, which applies to members not in
+\code{flat_map} and select portions of the table in \S23.2.4/8.  These table
+differences are outlined in ``Member Semantics'' below.
 
 \subsubsection{Member Semantics}
 
