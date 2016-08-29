@@ -2,17 +2,53 @@
 
 \subsection{Design Goals}
 
-\begin{itemize}
-  \item TODO
+The Boost.Container documentation gives a nice summary of the tradeoffs
+between node-based and flat associative containers (quoted here, mostly
+verbatim):
 
-  \item TODO
+\begin{itemize}
+  \item Faster lookup than standard associative containers.
+
+  \item Much faster iteration than standard associative
+    containers.
+
+  \item Random-access iterators instead of bidirectional iterators.
+
+  \item Less memory consumption for each element.
+
+  \item Improved cache performance (data is stored in contiguous memory).
+
+  \item Non-stable iterators (iterators are invalidated when inserting and
+    erasing elements).
+
+  \item Non-copyable and non-movable values types can't be stored.
+
+  \item Weaker exception safety than standard associative containers
+    (copy/move constructors can throw when shifting values in erasures and
+    insertions).
+
+  \item Slower insertion and erasure than standard associative containers
+    (specially for non-movable types).
 \end{itemize}
+
+The overarching goal of this proposal is to define a \code{flat_map} for
+standardization that fits the above gross profile, while leaving maximum room
+for customization by users.
 
 \subsection{Design}
 
-\subsubsection{\code{flat_map} Is a Wrapper}
+\subsubsection{\code{flat_map} Is a Container Adapter}
 
-TODO
+\code{flat_map} is an adapter for an underlying storage type.  This storage
+type is configurable via the template parameter \code{Container}.
+\code{Container} must be a \textit{contiguous container} (23.2.1/13).
+\code{vector} is a great candidate for this, but limiting \code{flat_map} only
+to use \code{vector} for its storage would be a mistake.  Many other suitable
+replacements exist, each suited to a certain use.  A user may have a
+small-buffer implementation of \code{vector}, like LLVM's \code{SmallVector},
+or \code{boost::container::small_vector}.  The user may also want to avoid
+allocations altogether, if the maximum number of elements N is know \textit{a
+  priori}.  If so, \code{boost::container::static_vector} could be used.
 
 \subsubsection{Differences From \code{map} Interface}
 
@@ -47,6 +83,10 @@ TODO
     if the given sequence is already sorted.  This can allow much more
     efficient construction and insertion.
 \end{itemize}
+
+\subsubsection{\code{flat_map} Requirements}
+
+TODO
 
 \subsubsection{Member Semantics}
 
