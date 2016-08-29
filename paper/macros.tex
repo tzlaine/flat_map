@@ -1,0 +1,19 @@
+
+
+% Define formatting for code.
+\newcommand{\code}[1]{\lstinline @#1@}
+
+% Define an environment for C++ programs.
+\lstnewenvironment{program}{\lstset{language=C++1y}}{}
+
+% Define an environment for program output.
+\lstnewenvironment{progout}{\lstset{language=Output}}{}
+
+% Define an environment for EBNF Grammars
+\lstnewenvironment{ebnf}{\lstset{language=Ebnf}}{}
+
+% Define formatting for indented blocks of text
+\newcommand{\blockindent}[1]{\hangindent=#1\setlength{\parindent}{#1}\setlength{\parskip}{1em plus0.2em minus0.2em}}
+
+% Define formatting for indented blocks of text
+\newcommand{\blockunindent}{\hangindent=0em\setlength{\parindent}{0em}\setlength{\parskip}{0em}}

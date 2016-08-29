@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{cite}
+\usepackage[pdftex, bookmarks=true]{hyperref}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{tikz}
+
+% Make a draft watermark.
+% \usepackage{draftwatermark}
+% \SetWatermarkFontSize{40pt}
+% \SetWatermarkScale{4.0}
+
+% TODO: Use bibtex or some better bibliography management
+% tool.
+
+\input{style.tex}
+\input{macros.tex}
+
+\begin{document}
+
+
+\title{\textbf{\Large A Standard \code{flat_map}}}
+\author{
+  \makebox[.25\linewidth]{T. Zachary Laine}\\NVIDIA\\whatwasthataddress@gmail.com\\
+}
+\date{}
+\maketitle
+
+
+\section{Introduction}
+\label{sec:intro}
+
+This paper outlines what a (mostly) API-compatible non-node-based
+\code{std::map} might look like.  Rather than presenting a final design, this
+paper is intended as a starting point for discussion and as a basis for future
+work.  Specifically, there is no mention of \code{multimap}, \code{set}, or
+\code{multiset}.  Those will be added in later papers.
+
+\input{motivation_and_scope}
+\input{impact_on_the_standard}
+\input{proposed_design}
+
+\end{document}

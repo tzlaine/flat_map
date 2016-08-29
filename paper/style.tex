@@ -1,0 +1,39 @@
+
+
+% Define the speculative C++1y language.
+\lstdefinelanguage{C++1y}{alsolanguage=C++,
+                          escapechar=@,
+                          breakatwhitespace=true,
+                          morekeywords = {alignof, 
+                                          decltype, 
+                                          concept, 
+                                          axiom, 
+                                          requires, 
+                                          property}}
+
+% Program output
+\lstdefinelanguage{Output}{}
+
+% EBNF
+\lstdefinelanguage{Ebnf}
+{
+  escapechar=@,
+  basicstyle=\itshape\small
+}
+
+
+% Default formatting for listings.
+%
+% TODO: Define this as a style and make the code and program macros refer
+% to the style.
+\lstset{language=C++1y,
+        basicstyle=\ttfamily\small,
+        keywordstyle=\bfseries\color[rgb]{0,0,1},
+        stringstyle=,
+        xleftmargin=1em,
+        showstringspaces=false,
+        commentstyle=\rmfamily\itshape,
+        columns=flexible,
+        keepspaces=true,
+        texcl=true}
+
