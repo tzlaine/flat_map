@@ -35,14 +35,12 @@ public:
     };
 
     // construct/copy/destroy:
-#if 1
     explicit flat_map(const Container&);
     template <class Alloc>
       flat_map(const Container&, const Alloc&);
     explicit flat_map(Container&& = Container());
     template <class Alloc>
       flat_map(Container&&, const Alloc&);
-#endif
 
     explicit flat_map(const Compare& comp);
     template <class Alloc>
@@ -59,7 +57,6 @@ public:
       flat_map(InputIterator first, InputIterator last, const Alloc& a)
         : flat_map(first, last, Compare(), a) { }
 
-#if 1
     template <class InputIterator>
       flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
                const Compare& comp = Compare());
@@ -70,7 +67,6 @@ public:
       flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
                const Alloc& a)
         : flat_map(first, last, Compare(), a) { }
-#endif
 
     template <class Alloc>
       flat_map(const flat_map&, const Alloc&);
@@ -106,11 +102,9 @@ public:
     bool      empty() const noexcept;
     size_type size() const noexcept;
     size_type max_size() const noexcept;
-#if 1
     size_type capacity() const noexcept;
     void reserve(size_type x);
     void shrink_to_fit();
-#endif
 
     // element access:
     T& operator[](const key_type& x);
@@ -130,16 +124,12 @@ public:
       iterator insert(const_iterator position, P&&);
     template <class InputIterator>
       void insert(InputIterator first, InputIterator last);
-#if 1
     template <class InputIterator>
       void insert(ordered_unique_sequence_tag, InputIterator first, InputIterator last);
-#endif
     void insert(initializer_list<value_type>);
 
-#if 1
     Container extract();
     void replace(Container&&);
-#endif
 
     template <class... Args>
       pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
@@ -171,12 +161,10 @@ public:
       void merge(flat_map<Key, T, C2, Container>& source);
     template<class C2>
       void merge(flat_map<Key, T, C2, Container>&& source);
-#if 0 // TODO
     template<class C2>
       void merge(flat_multimap<Key, T, C2, Container>& source);
     template<class C2>
       void merge(flat_multimap<Key, T, C2, Container>&& source);
-#endif
 
     // observers:
     key_compare key_comp() const;

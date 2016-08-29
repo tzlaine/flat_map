@@ -10,16 +10,48 @@
 
 \subsection{Design}
 
-TODO: Wrapper.
-
-\subsubsection{\code{flat_map} Differences From}
+\subsubsection{\code{flat_map} Is a Wrapper}
 
 TODO
 
-\subsubsection{\code{flat_map} \code{flat_map} Synopsis}
- 
+\subsubsection{Differences From \code{map} Interface}
+
+\begin{itemize}
+  \item Members \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()}
+    have been added, with the same semantics as the corresponding members of
+    \code{vector}.
+
+  \item Several new constructors have been added that take objects of the
+    \code{Container} type.  These members must only be used if the given
+    container is already sorted.
+
+  \item The \code{extract()} overloads from \code{map} are replaced with
+    \code{Container extract()}, that moves out the entire storage of the
+    \code{flat_map}.  Similarly, the \code{insert()} members taking a node
+    have been replaced with a member \code{void replace(Container&&)}, that
+    moves in the entire storage.
+
+    Many users have noted that N insertions of elements takes
+    O(N$\cdot$log(N)), and when N is known it should be possible instead to
+    append N times, and then re-sort, as one might with a sorted
+    \code{vector}.
+
+    Such users have often asked for an API in
+    \code{boost::container::flat_map} that allows this pattern of use.  Other
+    flat-map implementations have undoubtedly added such an API.  The
+    extract/replace API instead allows the same optimization opportunities
+    without violating the class invariants.
+
+  \item Several new constructors and an \code{insert()} overload use a new tag
+    type, \code{ordered_unique_sequence_tag}.  These members must only be used
+    if the given sequence is already sorted.  This can allow much more
+    efficient construction and insertion.
+\end{itemize}
+
+\subsubsection{Member Semantics}
+
+TODO
+
+\subsubsection{\code{flat_map} Synopsis}
+
 \lstinputlisting[language=C++]{map_synopsis.hpp}
-
-\subsubsection{\code{flat_map} Member Semantics}
-
-TODO
