@@ -4,7 +4,7 @@
 
 The Boost.Container documentation gives a nice summary of the tradeoffs
 between node-based and flat associative containers (quoted here, mostly
-verbatim):
+verbatim).  Note that they are not purely positive:
 
 \begin{itemize}
   \item Faster lookup than standard associative containers.
@@ -50,7 +50,7 @@ or \code{boost::container::small_vector}.  The user may also want to avoid
 allocations altogether, if the maximum number of elements N is know \textit{a
   priori}.  If so, \code{boost::container::static_vector} could be used.
 
-\subsubsection{Differences From \code{map} Interface}
+\subsubsection{Interface Differences From \code{map}}
 
 \begin{itemize}
   \item Members \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()}
@@ -67,10 +67,11 @@ allocations altogether, if the maximum number of elements N is know \textit{a
     have been replaced with a member \code{void replace(Container&&)}, that
     moves in the entire storage.
 
-    Many users have noted that N insertions of elements takes
-    O(N$\cdot$log(N)), and when N is known it should be possible instead to
-    append N times, and then re-sort, as one might with a sorted
-    \code{vector}.
+    Many users have noted that M insertions of elements into a map of size N
+    is O(M$\cdot$log(N+M)), and when M is known it should be possible instead
+    to append M times, and then re-sort, as one might with a sorted
+    \code{vector}.  This makes the insertion of multiple elements closer to
+    O(N), depending on the implementation of \code{sort()}.
 
     Such users have often asked for an API in
     \code{boost::container::flat_map} that allows this pattern of use.  Other
@@ -107,9 +108,28 @@ containers), except \S23.2.4/10, which applies to members not in
 \code{flat_map} and select portions of the table in \S23.2.4/8.  These table
 differences are outlined in ``Member Semantics'' below.
 
+\subsubsection{\code{Container} Requirements}
+
+Any contiguous container supporting operations \code{capacity()},
+\code{reserve()}, and \code{shrik_to_fit()} can be used for the
+\code{Container} template parameter.  \code{Container} must have a
+\code{value_type} of \code{pair<Key, T>}.
+
 \subsubsection{Member Semantics}
 
-TODO
+Members \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()} have
+the same semantics as the corresponding members of \code{vector}.
+
+Each member taking a \code{Container} reference or taking a parameter of type
+\code{ordered_unique_sequence_tag} has the precondition that the given
+elements are already sorted by \code{Compare}, and that the elements are
+unique.
+
+Each member taking an \code{Alloc} template parameter only participates in
+overload resolution if \code{uses_allocator_v<Container, Alloc>} is
+\code{true}.
+
+Other member semantics are the same as for \code{map}.
 
 \subsubsection{\code{flat_map} Synopsis}
 
