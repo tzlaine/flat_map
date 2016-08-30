@@ -2,12 +2,20 @@
 #include <functional>
 #include <vector>
 
-#if __cplusplus <= 201402L
 namespace std {
+
+#if __cplusplus <= 201402L
     template<class T>
     using default_order_t = std::less<T>;
-}
 #endif
+
+// TODO: Remove this once there is a multimap_synopsis.hpp.
+template <class Key, class T, class Compare = default_order_t<Key>,
+          class Container = vector<pair<Key, T>>>
+class flat_multimap
+{};
+
+}
 
 #include "map_synopsis.hpp"
 
