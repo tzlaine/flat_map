@@ -87,12 +87,12 @@ allocations altogether, if the maximum number of elements N is know \textit{a
 
 \subsubsection{\code{flat_map} Requirements}
 
-(TODO! Change the synopsis to reflect this!) Since the underlying container is
-contiguous and elements may be moved or copied during inserts and erases, the
-element type of \code{Container} must be \code{pair<Key, T>}, not
-\code{pair<const Key, T>}.  Even so, the element type of \code{flat_map}
-should still be \code{pair<const Key, T>}, for drop-in compatibility with
-\code{map} (\S23.2.4/5).
+Since the underlying container is contiguous and elements may be moved or
+copied during inserts and erases, the element type of \code{Container} must be
+\code{pair<Key, T>}, not \code{pair<const Key, T>}.  Even so, the element type
+of \code{flat_map} should still be \code{pair<const Key, T>}, for drop-in
+compatibility with \code{map} (\S23.2.4/5).  This requires \code{flat_map} to
+have an iterator that adapts the underlying \code{Container} iterator.
 
 Only the underlying container is allocator-aware.  \S23.2.4/7 regarding
 allocator awareness does not apply to \code{flat_map}.
@@ -104,8 +104,8 @@ The exception safety guarantees for associative containers (\S23.2.4.1) do not
 apply.
 
 The rest of the requirements follow the ones in (\S23.2.4 Associative
-containers), except \S23.2.4/10, which applies to members not in
-\code{flat_map} and select portions of the table in \S23.2.4/8.  These table
+containers), except \S23.2.4/10 (which applies to members not in
+\code{flat_map}) and some portions of the table in \S23.2.4/8; these table
 differences are outlined in ``Member Semantics'' below.
 
 \subsubsection{\code{Container} Requirements}

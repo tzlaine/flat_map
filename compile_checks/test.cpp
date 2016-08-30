@@ -17,6 +17,8 @@ class flat_multimap
 
 }
 
+using implementation_defined = int *;
+
 #include "map_synopsis.hpp"
 
 #define USE_BOOST_STATIC_VECTOR 0

@@ -9,18 +9,18 @@ public:
     // types:
     using key_type                 = Key;
     using mapped_type              = T;
-    using value_type               = typename Container::value_type;
+    using value_type               = pair<const Key, T>;
     using key_compare              = Compare;
     using allocator_type           = typename Container::allocator_type;
-    using pointer                  = typename Container::pointer;
-    using const_pointer            = typename Container::const_pointer;
-    using reference                = typename Container::reference;
-    using const_reference          = typename Container::const_reference;
+    using pointer                  = value_type*;
+    using const_pointer            = const value_type*;
+    using reference                = value_type&;
+    using const_reference          = const value_type&;
     using size_type                = typename Container::size_type;
-    using iterator                 = typename Container::iterator;
-    using const_iterator           = typename Container::const_iterator;
-    using reverse_iterator         = typename Container::reverse_iterator;
-    using const_reverse_iterator   = typename Container::const_reverse_iterator;
+    using iterator                 = implementation-defined;
+    using const_iterator           = implementation-defined;
+    using reverse_iterator         = implementation-defined;
+    using const_reverse_iterator   = implementation-defined;
     using container_type           = Container;
 
     class value_compare {
