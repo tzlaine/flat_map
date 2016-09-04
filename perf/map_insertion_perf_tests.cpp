@@ -13,8 +13,8 @@ enum MapImplKind
 {
     FlatMap,
     NodeBased,
-    LogVector,
-    LogVectorCustomPair
+    SortedVector,
+    SortedVectorCustomPair
 };
 
 template <typename T, typename U>
@@ -79,13 +79,13 @@ struct map_impl<T, FlatMap>
 };
 
 template <typename T>
-struct map_impl<T, LogVector>
+struct map_impl<T, SortedVector>
 {
     using type = log_vec_map<int, T>;
 };
 
 template <typename T>
-struct map_impl<T, LogVectorCustomPair>
+struct map_impl<T, SortedVectorCustomPair>
 {
     using type = log_vec_map_custom_pair<int, T>;
 };
@@ -150,7 +150,7 @@ void test(std::size_t size)
     t_prev = t_now;
 
     for (int i = 0; i < iterations; ++i) {
-        auto log_vector = make_map<T, LogVector>(v, rand);
+        auto log_vector = make_map<T, SortedVector>(v, rand);
     }
     t_now = std::chrono::system_clock::now();
     std::cout << "  vector-log:                  " << (dur(t_now - t_prev).count() * 1000)<< " ms\n";
@@ -158,7 +158,7 @@ void test(std::size_t size)
 
 
     for (int i = 0; i < iterations; ++i) {
-        auto log_vector = make_map<T, LogVectorCustomPair>(v, rand);
+        auto log_vector = make_map<T, SortedVectorCustomPair>(v, rand);
     }
     t_now = std::chrono::system_clock::now();
     std::cout << "  vector-log (custom-pair):    " << (dur(t_now - t_prev).count() * 1000)<< " ms\n";
