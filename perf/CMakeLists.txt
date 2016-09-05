@@ -45,4 +45,6 @@ add_custom_target(
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/make_tex.py
     DEPENDS
         make_data
+        ${CMAKE_CURRENT_SOURCE_DIR}/make_tex.py
+        ${CMAKE_SOURCE_DIR}/paper.in.tex
 )

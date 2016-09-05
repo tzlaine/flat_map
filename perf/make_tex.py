@@ -12,13 +12,10 @@ for v in variant_names:
     execfile('{}.py'.format(v))
     variant_data[v] = {'int': int_timings, 'struct': struct_timings}
 
-#print variant_data
-#exit(0)
-
 element_type_marks = {'int': 'square', 'struct': 'triangle'}
 operation_colors = {'insert': 'red', 'iterate': 'green', 'erase': 'blue'}
-operation_marks = {'insert': '+', 'iterate': 'o', 'erase': '-'}
-
+#operation_marks = {'insert': '+', 'iterate': 'o', 'erase': '-'}
+operation_marks = {'insert': '|', 'iterate': '|', 'erase': '|'}
 
 def operation_chart(operation, element_type):
     retval = ''
@@ -48,12 +45,27 @@ def operation_chart(operation, element_type):
     xmax = math.pow(2, math.floor(math.log(xmax, 2) - 0.5) + 1)
     ymax = math.pow(10, math.floor(math.log10(ymax) - 0.5) + 1)
 
-    xtick = ''
-    num_x_ticks = 10
-    for i in range(0, num_x_ticks):
-        if i != 0:
-            xtick += ','
-        xtick += str(xmax / num_x_ticks * i)
+    xtick_int = 8
+    xtick = str(xtick_int)
+    xtick_labels = xtick
+    while xtick_int < xmax:
+        xtick += ','
+        xtick_labels += ','
+
+        xtick_int <<= 2
+
+        xtick += str(xtick_int)
+        if 1024 * 1024 < xtick_int:
+            xtick_labels += '{}M'.format(xtick_int >> 20)
+        elif 1024 < xtick_int:
+            xtick_labels += '{}k'.format(xtick_int >> 10)
+
+#    xtick = ''
+#    num_x_ticks = 10
+#    for i in range(0, num_x_ticks):
+#        if i != 0:
+#            xtick += ','
+#        xtick += str(xmax / num_x_ticks * i)
 
     ytick = ''
     num_y_ticks = 10
@@ -72,11 +84,13 @@ def operation_chart(operation, element_type):
         xmin=0, xmax={xmax},
         ymin=0, ymax={ymax},
         xtick={{{xtick}}},
+        xticklabels={{{xtick_labels}}},
         ytick={{{ytick}}},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
-        legend entries={{{legends}}}
+        scaled x ticks=false,
+        legend entries={{{legends}}},
         ]
 
 '''.format(**locals())
@@ -96,7 +110,7 @@ def operation_chart(operation, element_type):
 
     return retval
 
-contents = open('../../paper/paper.in.tex', 'r').read()
+contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
 contents = contents.replace('%%% insert / int %%%', operation_chart('insert', 'int'))
 contents = contents.replace('%%% iterate / int %%%', operation_chart('iterate', 'int'))
@@ -106,4 +120,4 @@ contents = contents.replace('%%% insert / struct %%%', operation_chart('insert',
 contents = contents.replace('%%% iterate / struct %%%', operation_chart('iterate', 'struct'))
 contents = contents.replace('%%% erase / struct %%%', operation_chart('erase', 'struct'))
 
-open('../../paper/paper.tex', 'w').write(contents)
+open('../../paper/motivation_and_scope.tex', 'w').write(contents)
