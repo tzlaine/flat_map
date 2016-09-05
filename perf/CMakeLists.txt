@@ -20,6 +20,7 @@ set(perf_test_output
     vector.py
     vector_custom_pair.py
 )
+
 add_custom_command(
     OUTPUT
         ${perf_test_output}
@@ -30,11 +31,18 @@ add_custom_command(
     COMMENT
         "Running perf tests..."
 )
-#    ${PYTHON_EXECUTABLE}
+
+add_custom_target(
+    make_data
+    DEPENDS
+        ${perf_test_output}
+)
 
 add_custom_target(
     make_tex_file_from_data
     ALL
+    COMMAND
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/make_tex.py
     DEPENDS
-        ${perf_test_output}
+        make_data
 )

@@ -98,8 +98,12 @@ def operation_chart(operation, element_type):
 
 contents = open('../../paper/paper.in.tex', 'r').read()
 
-#print operation_chart('insert', 'int')
-
 contents = contents.replace('%%% insert / int %%%', operation_chart('insert', 'int'))
+contents = contents.replace('%%% iterate / int %%%', operation_chart('iterate', 'int'))
+contents = contents.replace('%%% erase / int %%%', operation_chart('erase', 'int'))
+
+contents = contents.replace('%%% insert / struct %%%', operation_chart('insert', 'struct'))
+contents = contents.replace('%%% iterate / struct %%%', operation_chart('iterate', 'struct'))
+contents = contents.replace('%%% erase / struct %%%', operation_chart('erase', 'struct'))
 
 open('../../paper/paper.tex', 'w').write(contents)
