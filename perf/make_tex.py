@@ -76,8 +76,10 @@ def operation_chart(operation, element_type):
 
     title = '{} Operations on {} Elements'.format(operation.title(), element_type)
 
-    retval = '''\\begin{{tikzpicture}}
+    retval = '''\\begin{{center}}
+    \\begin{{tikzpicture}}
     \\begin{{axis}}[
+        width=4.5in,
         title={{{title}}},
         xlabel={{N}},
         ylabel={{Time [milliseconds]}},
@@ -106,6 +108,7 @@ def operation_chart(operation, element_type):
 
     retval += '''    \\end{{axis}}
 \\end{{tikzpicture}}
+\\end{{center}}
 '''.format()
 
     return retval

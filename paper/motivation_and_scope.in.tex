@@ -11,11 +11,11 @@ Here are some numbers that show why.  The graphs that follow show runtimes for
 different \code{map}-like associative containers.  The containers used are
 Boost.FlatMap, \code{std::map}, and two thin wrappers over a sorted
 \code{std::vector}; the ``custom pair'' version of the sorted
-\code{std::vector} uses a simple struct instead of \code{std::pair} for its
-value type.  All containers use an \code{int} as the key type and an
-\code{int} or a struct with 5 \code{double}s for the value type.
+\code{std::vector} uses a simple \code{struct} instead of \code{std::pair} for
+its value type.  All containers use an \code{int} as the key type and an
+\code{int} or a \code{struct} with 5 \code{double}s for the value type.\\
 
-These first three graphs cover the int-value-type case.  The first
+These first three graphs cover the \code{int}-value-type case.  The first
 graph shows insertion of N elements with random keys; the second shows full
 iteration across all N elements; and the third shows erasure of all N
 elements, by the keys used in the original insertions.
@@ -25,8 +25,10 @@ elements, by the keys used in the original insertions.
 %%% erase / int %%%
 
 These next three graphs are just like the preceding ones, but cover the
-struct-value-type case.
+\code{struct}-value-type case.
 
 %%% insert / struct %%%
 %%% iterate / struct %%%
 %%% erase / struct %%%
+
+TODO

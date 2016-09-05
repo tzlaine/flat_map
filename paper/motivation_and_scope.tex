@@ -20,8 +20,10 @@ graph shows insertion of N elements with random keys; the second shows full
 iteration across all N elements; and the third shows erasure of all N
 elements, by the keys used in the original insertions.
 
-\begin{tikzpicture}
+\begin{center}
+    \begin{tikzpicture}
     \begin{axis}[
+        width=4.5in,
         title={Insert Operations on int Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
@@ -51,9 +53,12 @@ elements, by the keys used in the original insertions.
 
     \end{axis}
 \end{tikzpicture}
+\end{center}
 
-\begin{tikzpicture}
+\begin{center}
+    \begin{tikzpicture}
     \begin{axis}[
+        width=4.5in,
         title={Iterate Operations on int Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
@@ -83,9 +88,12 @@ elements, by the keys used in the original insertions.
 
     \end{axis}
 \end{tikzpicture}
+\end{center}
 
-\begin{tikzpicture}
+\begin{center}
+    \begin{tikzpicture}
     \begin{axis}[
+        width=4.5in,
         title={Erase Operations on int Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
@@ -115,13 +123,16 @@ elements, by the keys used in the original insertions.
 
     \end{axis}
 \end{tikzpicture}
+\end{center}
 
 
 These next three graphs are just like the preceding ones, but cover the
 struct-value-type case.
 
-\begin{tikzpicture}
+\begin{center}
+    \begin{tikzpicture}
     \begin{axis}[
+        width=4.5in,
         title={Insert Operations on struct Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
@@ -151,9 +162,12 @@ struct-value-type case.
 
     \end{axis}
 \end{tikzpicture}
+\end{center}
 
-\begin{tikzpicture}
+\begin{center}
+    \begin{tikzpicture}
     \begin{axis}[
+        width=4.5in,
         title={Iterate Operations on struct Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
@@ -183,9 +197,12 @@ struct-value-type case.
 
     \end{axis}
 \end{tikzpicture}
+\end{center}
 
-\begin{tikzpicture}
+\begin{center}
+    \begin{tikzpicture}
     \begin{axis}[
+        width=4.5in,
         title={Erase Operations on struct Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
@@ -215,4 +232,5 @@ struct-value-type case.
 
     \end{axis}
 \end{tikzpicture}
+\end{center}
 
