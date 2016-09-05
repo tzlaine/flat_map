@@ -3,18 +3,21 @@
 #include <algorithm>
 #include <array>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <vector>
 #include <random>
 
 
-enum MapImplKind
+enum map_impl_kind
 {
-    FlatMap,
-    NodeBased,
-    SortedVector,
-    SortedVectorCustomPair
+    flat_map,
+    node_based,
+    sorted_vector,
+    sorted_vector_custom_pair,
+
+    num_map_impl_kinds
 };
 
 template <typename T, typename U>
@@ -22,29 +25,27 @@ struct sorted_vec_map
 {
     using value_type = std::pair<T, U>;
 
-    U& operator[](T const & t)
+    typename std::vector<value_type>::iterator lower_bound(T const & t)
     {
-        value_type value(t, U());
-        auto it = std::lower_bound(
+        value_type value{t, U()};
+        return std::lower_bound(
             v.begin(), v.end(),
             value,
             [](value_type lhs, value_type rhs){
                 return lhs.first < rhs.first;
             }
         );
-        return v.insert(it, value)->second;
+    }
+
+    U& operator[](T const & t)
+    {
+        value_type value{t, U()};
+        return v.insert(lower_bound(t), value)->second;
     }
 
     void erase(T const & t)
     {
-        value_type value{t, U()};
-        auto it = std::lower_bound(
-            v.begin(), v.end(),
-            value,
-            [](value_type lhs, value_type rhs){
-                return lhs.first < rhs.first;
-            }
-        );
+        auto it = lower_bound(t);
         if (it != v.end())
             v.erase(it);
     }
@@ -71,29 +72,27 @@ struct sorted_vec_map_custom_pair
 {
     using value_type = custom_pair<T, U>;
 
-    U& operator[](T const & t)
+    typename std::vector<value_type>::iterator lower_bound(T const & t)
     {
         value_type value{t, U()};
-        auto it = std::lower_bound(
+        return std::lower_bound(
             v.begin(), v.end(),
             value,
             [](value_type lhs, value_type rhs){
                 return lhs.first < rhs.first;
             }
         );
-        return v.insert(it, value)->second;
+    }
+
+    U& operator[](T const & t)
+    {
+        value_type value{t, U()};
+        return v.insert(lower_bound(t), value)->second;
     }
 
     void erase(T const & t)
     {
-        value_type value{t, U()};
-        auto it = std::lower_bound(
-            v.begin(), v.end(),
-            value,
-            [](value_type lhs, value_type rhs){
-                return lhs.first < rhs.first;
-            }
-        );
+        auto it = lower_bound(t);
         if (it != v.end())
             v.erase(it);
     }
@@ -108,34 +107,34 @@ template <typename T, typename U>
 typename std::vector<custom_pair<T, U>>::const_iterator end(sorted_vec_map_custom_pair<T, U> const & c)
 { return c.v.end(); }
 
-template <typename T, MapImplKind MapImpl>
+template <typename T, map_impl_kind MapImpl>
 struct map_impl
 {
     using type = std::map<int, T>;
 };
 
 template <typename T>
-struct map_impl<T, FlatMap>
+struct map_impl<T, flat_map>
 {
     using type = boost::container::flat_map<int, T>;
 };
 
 template <typename T>
-struct map_impl<T, SortedVector>
+struct map_impl<T, sorted_vector>
 {
     using type = sorted_vec_map<int, T>;
 };
 
 template <typename T>
-struct map_impl<T, SortedVectorCustomPair>
+struct map_impl<T, sorted_vector_custom_pair>
 {
     using type = sorted_vec_map_custom_pair<int, T>;
 };
 
-template <typename T, MapImplKind MapImpl>
+template <typename T, map_impl_kind MapImpl>
 using map_impl_t = typename map_impl<T, MapImpl>::type;
 
-template <typename T, MapImplKind MapImpl, typename Rand>
+template <typename T, map_impl_kind MapImpl, typename Rand>
 auto make_map(std::vector<int> const & v, Rand const & rand) -> map_impl_t<T, MapImpl>
 {
     map_impl_t<T, MapImpl> m;
@@ -155,8 +154,13 @@ struct largish_struct
     std::array<double, 5> data;
 };
 
-template <typename T, MapImplKind MapImpl, typename RandFn>
-void test_map_type(int iterations, std::string kind_name, std::vector<int> const & v, RandFn Rand)
+struct output_files_t
+{
+    std::ofstream ofs[num_map_impl_kinds];
+};
+
+template <typename T, map_impl_kind MapImpl, typename RandFn>
+void test_map_type(int iterations, std::string kind_name, std::vector<int> const & v, RandFn Rand, output_files_t & output_files)
 {
     using dur = std::chrono::duration<double>;
 
@@ -164,6 +168,8 @@ void test_map_type(int iterations, std::string kind_name, std::vector<int> const
     std::chrono::time_point<std::chrono::system_clock> t_now;
 
     std::vector<map_impl_t<T, MapImpl>> maps(iterations);
+
+    output_files.ofs[MapImpl] << "    {'size': " << v.size() << ", ";
 
     kind_name += ':';
     kind_name += std::string(40 - kind_name.size(), ' ');
@@ -173,7 +179,9 @@ void test_map_type(int iterations, std::string kind_name, std::vector<int> const
         map = make_map<T, MapImpl>(v, Rand);
     }
     t_now = std::chrono::system_clock::now();
-    std::cout << "  " << kind_name << (dur(t_now - t_prev).count() * 1000) << " ms insert\n";
+    auto elapsed = dur(t_now - t_prev).count() * 1000;
+    output_files.ofs[MapImpl] << "'insert': " << elapsed << ",";
+    std::cout << "  " << kind_name << elapsed << " ms insert\n";
 
     t_prev = std::chrono::system_clock::now();
     int key_sum = 0; // To ensure the optimizer does not remove the loops below altogether, take a sum.
@@ -183,7 +191,9 @@ void test_map_type(int iterations, std::string kind_name, std::vector<int> const
         }
     }
     t_now = std::chrono::system_clock::now();
-    std::cout << "  " << kind_name << (dur(t_now - t_prev).count() * 1000) << " ms iterate\n";
+    elapsed = dur(t_now - t_prev).count() * 1000;
+    output_files.ofs[MapImpl] << "'iterate': " << elapsed << ",";
+    std::cout << "  " << kind_name << elapsed << " ms iterate\n";
     if (key_sum == 2)
         std::cout << "  SURPRISE! key_sum=" << key_sum << "\n";
 
@@ -194,11 +204,15 @@ void test_map_type(int iterations, std::string kind_name, std::vector<int> const
         }
     }
     t_now = std::chrono::system_clock::now();
-    std::cout << "  " << kind_name << (dur(t_now - t_prev).count() * 1000) << " ms erase\n";
+    elapsed = dur(t_now - t_prev).count() * 1000;
+    output_files.ofs[MapImpl] << "'erase': " << elapsed << ",";
+    std::cout << "  " << kind_name << elapsed << " ms erase\n";
+
+    output_files.ofs[MapImpl] << "},\n";
 }
 
 template <typename T>
-void test(std::size_t size)
+void test(std::size_t size, output_files_t & output_files)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -218,41 +232,55 @@ void test(std::size_t size)
     std::chrono::time_point<std::chrono::system_clock> t_prev;
     std::chrono::time_point<std::chrono::system_clock> t_now;
 
-    test_map_type<T, FlatMap>(iterations, "boost flat_map", v, rand);
-    test_map_type<T, NodeBased>(iterations, "std::map", v, rand);
-    test_map_type<T, SortedVector>(iterations, "vector", v, rand);
-    test_map_type<T, SortedVectorCustomPair>(iterations, "vector (custom-pair)", v, rand);
+    test_map_type<T, flat_map>(iterations, "boost flat_map", v, rand, output_files);
+    test_map_type<T, node_based>(iterations, "std::map", v, rand, output_files);
+    test_map_type<T, sorted_vector>(iterations, "vector", v, rand, output_files);
+    test_map_type<T, sorted_vector_custom_pair>(iterations, "vector (custom-pair)", v, rand, output_files);
 
     std::cout << "\n";
 }
 
-#define TEST(T, size)                                   \
-    std::cout << #T << ", " << size << " elements:\n";  \
-    test<T>(size)
+#define TEST(T, size)                                           \
+    std::cout << #T << ", " << (size) << " elements:\n";        \
+    test<T>((size), output_files)
 
 int main()
 {
-    TEST(int, 10u);
-    TEST(int, 100u);
-    TEST(int, 1000u);
-    TEST(int, 10000u);
-    TEST(int, 100000u);
-#if 0
-    TEST(int, 1000000u);
-    TEST(int, 10000000u);
-    TEST(int, 100000000u);
-#endif
+    output_files_t output_files = {
+        std::ofstream{"boost_flat_map.py"},
+        std::ofstream{"std_map.py"},
+        std::ofstream{"vector.py"},
+        std::ofstream{"vector_custom_pair.py"}
+    };
 
-    TEST(largish_struct, 10u);
-    TEST(largish_struct, 100u);
-    TEST(largish_struct, 1000u);
-    TEST(largish_struct, 10000u);
-    TEST(largish_struct, 100000u);
-#if 0
-    TEST(largish_struct, 1000000u);
-    TEST(largish_struct, 10000000u);
-    TEST(largish_struct, 100000000u);
-#endif
+    for (auto & of : output_files.ofs) {
+        of << "int_timings = [\n";
+    }
+
+    TEST(int, 8u);
+    TEST(int, 8u << 2);
+    TEST(int, 8u << 4);
+    TEST(int, 8u << 6);
+    TEST(int, 8u << 8);
+    TEST(int, 8u << 10);
+    TEST(int, 8u << 12);
+
+    for (auto & of : output_files.ofs) {
+        of << "]\n\n"
+           << "struct_timings = [\n";
+    }
+
+    TEST(largish_struct, 8u);
+    TEST(largish_struct, 8u << 2);
+    TEST(largish_struct, 8u << 4);
+    TEST(largish_struct, 8u << 6);
+    TEST(largish_struct, 8u << 8);
+    TEST(largish_struct, 8u << 10);
+    TEST(largish_struct, 8u << 12);
+
+    for (auto & of : output_files.ofs) {
+        of << "]\n";
+    }
 
     return 0;
 }

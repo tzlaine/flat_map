@@ -36,36 +36,7 @@
 
 \section{Introduction}
 
-\begin{tikzpicture}
-    \begin{axis}[
-        title={Insert Operations on int Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=1000.0,
-        xtick={0.0,3276.8,6553.6,9830.4,13107.2,16384.0,19660.8,22937.6,26214.4,29491.2},
-        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector}
-        ]
-
-    \addplot[color=blue,mark=+,]
-        coordinates {(8,0.0186)(32,0.0096)(128,0.0586)(512,0.335)(2048,3.3848)(8192,46.8747)(32768,784.108)};
-
-    \addplot[color=black,mark=+,]
-        coordinates {(8,0.0042)(32,0.0277)(128,0.0535)(512,0.2548)(2048,1.6507)(8192,18.8334)(32768,232.54)};
-
-    \addplot[color=red,mark=+,]
-        coordinates {(8,0.0069)(32,0.0336)(128,0.1421)(512,0.3239)(2048,1.4098)(8192,6.2119)(32768,31.3192)};
-
-    \addplot[color=green,mark=+,]
-        coordinates {(8,0.0042)(32,0.0126)(128,0.0535)(512,0.3964)(2048,3.7463)(8192,50.4702)(32768,779.241)};
-
-    \end{axis}
-\end{tikzpicture}
-
+%%% insert / int %%%
 
 \label{sec:intro}
 
