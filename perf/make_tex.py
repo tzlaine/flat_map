@@ -25,34 +25,43 @@ def operation_chart(operation, element_type):
     xmax = 0
     ymax = 0
 
+    operation_list = operation.split('/')
+
     for k,v in variant_data.items():
         points = ''
         for element in v[element_type]:
             x = element['size']
-            y = element[operation]
+            if len(operation_list) == 2:
+                y = element[operation_list[0]]
+                divisor = element[operation_list[1]]
+                if divisor == 0:
+                    divisor = 0.00001
+                y /= divisor
+            else:
+                y = element[operation]
             xmax = max(xmax, x)
             ymax = max(ymax, y)
             points += '({x},{y})'.format(**locals())
         plots.append({
             'color': variant_colors[k],
-            'mark': operation_marks[operation],
+            'mark': operation in operation_marks and operation_marks[operation] or '|',
             'points': points,
         })
         legends.append(pretty_variant_names[k])
 
     legends = ','.join(legends)
 
-    xmax = math.pow(2, math.floor(math.log(xmax, 2) - 0.5) + 1)
-    ymax = math.pow(10, math.floor(math.log10(ymax) - 0.5) + 1)
+    y_step = math.pow(10, math.trunc(math.log10(ymax)))
+    ymax = (math.trunc(ymax / y_step) + 1) * y_step
 
     xtick_int = 8
     xtick = str(xtick_int)
     xtick_labels = xtick
-    while xtick_int < xmax:
+    while xtick_int <= xmax:
         xtick += ','
         xtick_labels += ','
 
-        xtick_int <<= 2
+        xtick_int <<= 1
 
         xtick += str(xtick_int)
         if 1024 * 1024 < xtick_int:
@@ -60,22 +69,26 @@ def operation_chart(operation, element_type):
         elif 1024 < xtick_int:
             xtick_labels += '{}k'.format(xtick_int >> 10)
 
-    ytick = ''
-    num_y_ticks = 10
-    for i in range(0, num_y_ticks):
-        if i != 0:
-            ytick += ','
-        ytick += str(ymax / num_y_ticks * i)
+    ytick_float = 0.0
+    ytick = str(ytick_float)
+    while ytick_float <= ymax:
+        ytick += ','
+        ytick_float += y_step
+        ytick += str(ytick_float)
 
-    title = '{} Operations on {} Elements'.format(operation.title(), element_type)
+    title = '{} Operations, {}-Valued Elements'.format(operation.title(), element_type)
+    ylabel = 'Time [milliseconds]'
+    if len(operation_list) == 2:
+        title = '{} Cost Ratio, {}-Valued Elements'.format(operation.title(), element_type)
+        ylabel = 'Ratio'
 
     retval = '''\\begin{{center}}
     \\begin{{tikzpicture}}
     \\begin{{axis}}[
-        width=4in,
+        width=3.5in,
         title={{{title}}},
         xlabel={{N}},
-        ylabel={{Time [milliseconds]}},
+        ylabel={{{ylabel}}},
         xmin=0, xmax={xmax},
         ymin=0, ymax={ymax},
         xtick={{{xtick}}},
@@ -85,6 +98,7 @@ def operation_chart(operation, element_type):
         ymajorgrids=true,
         grid style=dashed,
         scaled x ticks=false,
+        scaled y ticks=true,
         legend entries={{{legends}}},
         ]
 
@@ -108,14 +122,17 @@ def operation_chart(operation, element_type):
 
 contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
-contents = contents.replace('%%% insert / int %%%', operation_chart('insert', 'int'))
-contents = contents.replace('%%% iterate / int %%%', operation_chart('iterate', 'int'))
-contents = contents.replace('%%% lower bound / int %%%', operation_chart('lower bound', 'int'))
-contents = contents.replace('%%% erase / int %%%', operation_chart('erase', 'int'))
+contents = contents.replace('%%% insert, int %%%', operation_chart('insert', 'int'))
+contents = contents.replace('%%% iterate, int %%%', operation_chart('iterate', 'int'))
+contents = contents.replace('%%% lower bound, int %%%', operation_chart('lower bound', 'int'))
+contents = contents.replace('%%% erase, int %%%', operation_chart('erase', 'int'))
 
-contents = contents.replace('%%% insert / struct %%%', operation_chart('insert', 'struct'))
-contents = contents.replace('%%% iterate / struct %%%', operation_chart('iterate', 'struct'))
-contents = contents.replace('%%% lower bound / struct %%%', operation_chart('lower bound', 'struct'))
-contents = contents.replace('%%% erase / struct %%%', operation_chart('erase', 'struct'))
+contents = contents.replace('%%% insert/iterate, int %%%', operation_chart('insert/iterate', 'int'))
+contents = contents.replace('%%% insert/lower bound, int %%%', operation_chart('insert/lower bound', 'int'))
+
+#contents = contents.replace('%%% insert, struct %%%', operation_chart('insert', 'struct'))
+#contents = contents.replace('%%% iterate, struct %%%', operation_chart('iterate', 'struct'))
+#contents = contents.replace('%%% lower bound, struct %%%', operation_chart('lower bound', 'struct'))
+#contents = contents.replace('%%% erase, struct %%%', operation_chart('erase', 'struct'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)

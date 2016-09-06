@@ -2,6 +2,10 @@
 
 \subsection{Design Goals}
 
+Overall, \code{flat_map} is meant to be a drop-in replacement for \code{map},
+jsut with better time- and space-efficiency.  Functionally it is not meant to
+do anything other than what we do with \code{map} now.\\
+
 The Boost.Container documentation gives a nice summary of the tradeoffs
 between node-based and flat associative containers (quoted here, mostly
 verbatim).  Note that they are not purely positive:
@@ -37,6 +41,21 @@ for customization by users.
 
 \subsection{Design}
 
+\subsubsection{\code{flat_map} Is Nearly API-Compatible With \code{map}}
+
+Most of \code{flat_map}'s interface is identical to \code{map}'s.  Some of the
+differences are required (more on this later), but a couple of interface
+changes are optional:
+
+\begin{itemize}
+  \item The overloads that take sorted containers or sequences.
+
+  \item Making \code{flat_map} a container adapter.
+\end{itemize}
+
+Both of these interface changes were added to increase optimization
+opportunities.
+
 \subsubsection{\code{flat_map} Is a Container Adapter}
 
 \code{flat_map} is an adapter for an underlying storage type.  This storage
@@ -47,7 +66,7 @@ to use \code{vector} for its storage would be a mistake.  Many other suitable
 replacements exist, each suited to a certain use.  A user may have a
 small-buffer implementation of \code{vector}, like LLVM's \code{SmallVector},
 or \code{boost::container::small_vector}.  The user may also want to avoid
-allocations altogether, if the maximum number of elements N is know \textit{a
+allocations altogether, if the maximum number of elements N is known \textit{a
   priori}.  If so, \code{boost::container::static_vector} could be used.
 
 \subsubsection{Interface Differences From \code{map}}
@@ -130,6 +149,13 @@ overload resolution if \code{uses_allocator_v<Container, Alloc>} is
 \code{true}.
 
 Other member semantics are the same as for \code{map}.
+
+\subsubsection{Design Alternatives}
+
+TODO Non-adapter
+TODO Internal algorithms
+TODO Add delayed-sort interface
+TODO Remove delayed-sort / storage-stealing interfaces
 
 \subsubsection{\code{flat_map} Synopsis}
 

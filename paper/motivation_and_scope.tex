@@ -2,307 +2,213 @@
 
 There has been a strong desire for a more space- and/or runtime-efficient
 representation for \code{map} among C++ users for some time now.  This has
-motivated discussions among the members of SG14, numerous articles and talks,
-and an implementation in Boost, \code{boost::container::flat_map}.  Virtually
-everyone who makes games, embedded, or system software in C++ uses the Boost
-implementation or one that they rolled themselves.\\
+motivated discussions among the members of SG14 resulting in a
+paper\footnote{See P0038R0,
+  \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0038r0.html}{here}.},
+numerous articles and talks, and an implementation in Boost,
+\code{boost::container::flat_map}\footnote{Part of Boost.Container,
+  \href{http://www.boost.org/doc/libs/1_61_0/doc/html/container.html}{here}.}.
+Virtually everyone who makes games, embedded, or system software in C++ uses
+the Boost implementation or one that they rolled themselves.\\
 
 Here are some numbers that show why.  The graphs that follow show runtimes for
 different \code{map}-like associative containers.  The containers used are
-Boost.FlatMap, \code{std::map}, and two thin wrappers over a sorted
-\code{std::vector}; the ``custom pair'' version of the sorted
-\code{std::vector} uses a simple \code{struct} instead of \code{std::pair} for
-its value type.  All containers use an \code{int} as the key type and an
-\code{int} or a \code{struct} with 5 \code{double}s for the value type.\\
+Boost.FlatMap, \code{map}, and two thin wrappers over a sorted \code{vector};
+the ``custom pair'' version of the sorted \code{vector} uses a simple
+\code{struct} instead of \code{pair} for its value type.  All containers use
+an \code{int} as the key type and an \code{int} or a \code{struct} with 5
+\code{double}s for the value type.\\
 
-These first three graphs cover the \code{int}-value-type case.  The first
-graph shows insertion of N elements with random keys; the second shows full
-iteration across all N elements; and the third shows erasure of all N
-elements, by the keys used in the original insertions.
+All the graphs below were produced on Windows with MSVC 2015.  Similar results
+were obtained on Linux, with Clang 3.9 and libc++, and with g++ 4.8.4 and
+libstdc++.\\
 
-\begin{center}
-    \begin{tikzpicture}
-    \begin{axis}[
-        width=4in,
-        title={Insert Operations on int Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=1000.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        scaled x ticks=false,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
-        ]
-
-    \addplot[color=blue,mark=|,]
-        coordinates {(8,0.088279)(32,0.269867)(128,0.896692)(512,6.36352)(2048,104.485)(8192,2168.83)};
-
-    \addplot[color=black,mark=|,]
-        coordinates {(8,0.073962)(32,0.112724)(128,0.408641)(512,1.14889)(2048,14.2758)(8192,91.7388)};
-
-    \addplot[color=red,mark=|,]
-        coordinates {(8,0.073123)(32,0.225377)(128,0.484908)(512,1.17082)(2048,14.6917)(8192,58.6582)};
-
-    \addplot[color=green,mark=|,]
-        coordinates {(8,0.067397)(32,0.141638)(128,0.7656)(512,4.29852)(2048,155.133)(8192,2333.62)};
-
-    \end{axis}
-\end{tikzpicture}
-\end{center}
+These first four graphs cover the \code{int}-value-type case.  The first graph
+shows insertion of N elements with random keys; the second shows full
+iteration across all N elements; the third shows \code{map.lower_bound()}
+called once for each key used in the original insertions; and the fourth shows
+erasure of all N elements, by the keys used in the original insertions.
 
 \begin{center}
     \begin{tikzpicture}
     \begin{axis}[
-        width=4in,
-        title={Iterate Operations on int Elements},
+        width=3.5in,
+        title={Insert Operations, int-Valued Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=1.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9},
+        xmin=0, xmax=16384,
+        ymin=0, ymax=200.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k},
+        ytick={0.0,100.0,200.0,300.0},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
         scaled x ticks=false,
+        scaled y ticks=true,
         legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.003562)(32,0.014108)(128,0.020673)(512,0.032895)(2048,0.201143)(8192,0.707493)};
+        coordinates {(8,0.0057276)(16,0.0107692)(32,0.0214416)(64,0.0445022)(128,0.075722)(256,0.16104)(512,0.334246)(1024,0.735082)(2048,2.12155)(4096,8.74114)(8192,53.8606)(16384,197.326)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.003632)(32,0.01285)(128,0.025213)(512,0.041346)(2048,0.300039)(8192,0.901582)};
+        coordinates {(8,0.0054478)(16,0.0105188)(32,0.0206046)(64,0.0422692)(128,0.079827)(256,0.150927)(512,0.300043)(1024,0.668588)(2048,1.55036)(4096,4.64456)(8192,9.15801)(16384,79.7067)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.014387)(32,0.016902)(128,0.03122)(512,0.06586)(2048,0.526114)(8192,2.49543)};
+        coordinates {(8,0.0058806)(16,0.011215)(32,0.0223082)(64,0.0439032)(128,0.0759592)(256,0.164184)(512,0.304031)(1024,0.700694)(2048,1.31409)(4096,2.92277)(8192,6.18145)(16384,12.6075)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.003632)(32,0.013968)(128,0.025422)(512,0.046375)(2048,0.3036)(8192,0.903467)};
-
-    \end{axis}
-\end{tikzpicture}
-\end{center}
-
-\begin{center}
-    \begin{tikzpicture}
-    \begin{axis}[
-        width=4in,
-        title={Lower Bound Operations on int Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=100.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,10.0,20.0,30.0,40.0,50.0,60.0,70.0,80.0,90.0},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        scaled x ticks=false,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
-        ]
-
-    \addplot[color=blue,mark=|,]
-        coordinates {(8,0.027169)(32,0.096521)(128,0.276921)(512,0.675016)(2048,6.59581)(8192,37.3482)};
-
-    \addplot[color=black,mark=|,]
-        coordinates {(8,0.027238)(32,0.065022)(128,0.280273)(512,0.720274)(2048,8.70921)(8192,40.353)};
-
-    \addplot[color=red,mark=|,]
-        coordinates {(8,0.022699)(32,0.081155)(128,0.231594)(512,0.571721)(2048,7.00634)(8192,33.819)};
-
-    \addplot[color=green,mark=|,]
-        coordinates {(8,0.030102)(32,0.067816)(128,0.288165)(512,0.895226)(2048,8.76403)(8192,40.7894)};
-
-    \end{axis}
-\end{tikzpicture}
-\end{center}
-
-\begin{center}
-    \begin{tikzpicture}
-    \begin{axis}[
-        width=4in,
-        title={Erase Operations on int Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=1000.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        scaled x ticks=false,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
-        ]
-
-    \addplot[color=blue,mark=|,]
-        coordinates {(8,0.049029)(32,0.182076)(128,0.732076)(512,3.80041)(2048,138.355)(8192,2113.37)};
-
-    \addplot[color=black,mark=|,]
-        coordinates {(8,0.043372)(32,0.085904)(128,0.359194)(512,0.930635)(2048,14.5091)(8192,91.9592)};
-
-    \addplot[color=red,mark=|,]
-        coordinates {(8,0.053638)(32,0.115727)(128,0.380914)(512,0.914012)(2048,12.0617)(8192,50.9554)};
-
-    \addplot[color=green,mark=|,]
-        coordinates {(8,0.052241)(32,0.121384)(128,0.737175)(512,5.42716)(2048,151.442)(8192,2266.69)};
+        coordinates {(8,0.0054478)(16,0.0106014)(32,0.020604)(64,0.0427862)(128,0.081883)(256,0.176755)(512,0.381274)(1024,0.825943)(2048,3.53353)(4096,11.7211)(8192,54.0627)(16384,179.264)};
 
     \end{axis}
 \end{tikzpicture}
 \end{center}
 
 
-These next three graphs are just like the preceding ones, but cover the
-\code{struct}-value-type case.
+As one might expect, insertionion takes longer in contiguous-storage
+implementations.  Boost.FlatMap and a sorted \code{vector<pair<int, int>>}
+have superlinear growth in insertion time.  While the curve for sorted
+\code{vector} using a custom \code{struct} instead of a \code{pair} is
+superlinear as well, it is dramatically flatter in its growth -- much closer
+to node-based \code{map}.
 
 \begin{center}
     \begin{tikzpicture}
     \begin{axis}[
-        width=4in,
-        title={Insert Operations on struct Elements},
+        width=3.5in,
+        title={Iterate Operations, int-Valued Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=1000.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
+        xmin=0, xmax=16384,
+        ymin=0, ymax=2.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k},
+        ytick={0.0,1.0,2.0,3.0},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
         scaled x ticks=false,
+        scaled y ticks=true,
         legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.069283)(32,0.280622)(128,1.54419)(512,14.175)(2048,182.555)(8192,2756.55)};
+        coordinates {(8,0.000615)(16,0.0007266)(32,0.0006982)(64,0.0006702)(128,0.0006286)(256,0.00088)(512,0.0008798)(1024,0.0009358)(2048,0.0016902)(4096,0.006691)(8192,0.0177678)(16384,0.0270706)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.049518)(32,0.167689)(128,0.918134)(512,7.64839)(2048,92.9722)(8192,1372.1)};
+        coordinates {(8,0.0006704)(16,0.0007122)(32,0.000628)(64,0.0010894)(128,0.0006288)(256,0.0007542)(512,0.0007128)(1024,0.0010618)(2048,0.0019976)(4096,0.0052664)(8192,0.0157284)(16384,0.027182)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.046095)(32,0.160565)(128,0.685981)(512,3.09634)(2048,13.9592)(8192,62.0826)};
+        coordinates {(8,0.0007266)(16,0.0007544)(32,0.0009082)(64,0.0013968)(128,0.001271)(256,0.0024584)(512,0.0038694)(1024,0.0183544)(2048,0.0236622)(4096,0.12158)(8192,0.359138)(16384,1.40895)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.050076)(32,0.213854)(128,1.32873)(512,13.5)(2048,184.269)(8192,2814.09)};
-
-    \end{axis}
-\end{tikzpicture}
-\end{center}
-
-\begin{center}
-    \begin{tikzpicture}
-    \begin{axis}[
-        width=4in,
-        title={Iterate Operations on struct Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=1.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        scaled x ticks=false,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
-        ]
-
-    \addplot[color=blue,mark=|,]
-        coordinates {(8,0.002445)(32,0.005168)(128,0.016343)(512,0.060343)(2048,0.187524)(8192,0.741295)};
-
-    \addplot[color=black,mark=|,]
-        coordinates {(8,0.002375)(32,0.005378)(128,0.016832)(512,0.065511)(2048,0.24626)(8192,0.957664)};
-
-    \addplot[color=red,mark=|,]
-        coordinates {(8,0.003142)(32,0.007752)(128,0.025003)(512,0.116705)(2048,0.595816)(8192,2.7954)};
-
-    \addplot[color=green,mark=|,]
-        coordinates {(8,0.002514)(32,0.005378)(128,0.016552)(512,0.06167)(2048,0.245353)(8192,0.922045)};
-
-    \end{axis}
-\end{tikzpicture}
-\end{center}
-
-\begin{center}
-    \begin{tikzpicture}
-    \begin{axis}[
-        width=4in,
-        title={Lower Bound Operations on struct Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=100.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,10.0,20.0,30.0,40.0,50.0,60.0,70.0,80.0,90.0},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        scaled x ticks=false,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
-        ]
-
-    \addplot[color=blue,mark=|,]
-        coordinates {(8,0.021581)(32,0.091492)(128,0.404172)(512,1.84709)(2048,8.46113)(8192,40.2611)};
-
-    \addplot[color=black,mark=|,]
-        coordinates {(8,0.01725)(32,0.093587)(128,0.436857)(512,2.07093)(2048,9.6969)(8192,45.6048)};
-
-    \addplot[color=red,mark=|,]
-        coordinates {(8,0.018787)(32,0.063695)(128,0.301016)(512,1.50389)(2048,7.20106)(8192,35.5892)};
-
-    \addplot[color=green,mark=|,]
-        coordinates {(8,0.025422)(32,0.094356)(128,0.442095)(512,2.11375)(2048,9.86641)(8192,47.2265)};
-
-    \end{axis}
-\end{tikzpicture}
-\end{center}
-
-\begin{center}
-    \begin{tikzpicture}
-    \begin{axis}[
-        width=4in,
-        title={Erase Operations on struct Elements},
-        xlabel={N},
-        ylabel={Time [milliseconds]},
-        xmin=0, xmax=8192.0,
-        ymin=0, ymax=1000.0,
-        xtick={8,32,128,512,2048,8192},
-        xticklabels={8,,,,2k,8k},
-        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
-        legend pos=north west,
-        ymajorgrids=true,
-        grid style=dashed,
-        scaled x ticks=false,
-        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
-        ]
-
-    \addplot[color=blue,mark=|,]
-        coordinates {(8,0.038063)(32,0.165244)(128,1.1623)(512,12.7604)(2048,178.236)(8192,2711.97)};
-
-    \addplot[color=black,mark=|,]
-        coordinates {(8,0.025981)(32,0.135702)(128,0.833067)(512,7.66222)(2048,94.6428)(8192,1380.28)};
-
-    \addplot[color=red,mark=|,]
-        coordinates {(8,0.030521)(32,0.122502)(128,0.541619)(512,2.42489)(2048,11.4262)(8192,52.4469)};
-
-    \addplot[color=green,mark=|,]
-        coordinates {(8,0.036318)(32,0.159378)(128,1.17312)(512,13.0225)(2048,181.464)(8192,2753.11)};
+        coordinates {(8,0.0007126)(16,0.0006844)(32,0.000629)(64,0.000726)(128,0.0005868)(256,0.0008658)(512,0.000866)(1024,0.0011592)(2048,0.0032544)(4096,0.005392)(8192,0.0225308)(16384,0.0279502)};
 
     \end{axis}
 \end{tikzpicture}
 \end{center}
 
 
-TODO
+For all variants but \code{map}, iteration is relatively similar, and much
+faster that \code{map}'s.
+
+\begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+        width=3.5in,
+        title={Lower Bound Operations, int-Valued Elements},
+        xlabel={N},
+        ylabel={Time [milliseconds]},
+        xmin=0, xmax=16384,
+        ymin=0, ymax=20.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k},
+        ytick={0.0,10.0,20.0,30.0},
+        legend pos=north west,
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
+        ]
+
+    \addplot[color=blue,mark=|,]
+        coordinates {(8,0.0048888)(16,0.0097784)(32,0.0194572)(64,0.0387614)(128,0.0719788)(256,0.15062)(512,0.28597)(1024,0.694518)(2048,1.28027)(4096,2.59875)(8192,5.30652)(16384,10.7638)};
+
+    \addplot[color=black,mark=|,]
+        coordinates {(8,0.0050988)(16,0.0099448)(32,0.0195278)(64,0.0388038)(128,0.07649)(256,0.143357)(512,0.283663)(1024,0.585327)(2048,1.30256)(4096,2.73305)(8192,5.50775)(16384,11.4704)};
+
+    \addplot[color=red,mark=|,]
+        coordinates {(8,0.0050146)(16,0.0098338)(32,0.0192202)(64,0.0385802)(128,0.0713516)(256,0.147967)(512,0.291103)(1024,0.62142)(2048,1.36704)(4096,2.59982)(8192,5.2311)(16384,10.4881)};
+
+    \addplot[color=green,mark=|,]
+        coordinates {(8,0.0051684)(16,0.0099876)(32,0.0194584)(64,0.0389582)(128,0.071921)(256,0.14913)(512,0.306088)(1024,0.587018)(2048,1.41528)(4096,2.74166)(8192,5.63672)(16384,11.3943)};
+
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+
+\code{lower_bound()} performance is roughly similar across all the
+implementations, and they all show superlinear growth.  Note that
+Boost.FlatMap performs the best here.
+
+\begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+        width=3.5in,
+        title={Erase Operations, int-Valued Elements},
+        xlabel={N},
+        ylabel={Time [milliseconds]},
+        xmin=0, xmax=16384,
+        ymin=0, ymax=200.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k},
+        ytick={0.0,100.0,200.0,300.0},
+        legend pos=north west,
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
+        ]
+
+    \addplot[color=blue,mark=|,]
+        coordinates {(8,0.0051958)(16,0.010211)(32,0.020157)(64,0.040955)(128,0.0754832)(256,0.170906)(512,0.325072)(1024,1.15706)(2048,2.66907)(4096,8.09283)(8192,52.7669)(16384,196.443)};
+
+    \addplot[color=black,mark=|,]
+        coordinates {(8,0.0056156)(16,0.0100154)(32,0.0197504)(64,0.0371264)(128,0.072537)(256,0.146989)(512,0.296743)(1024,0.660295)(2048,1.7662)(4096,4.56922)(8192,15.7069)(16384,80.9934)};
+
+    \addplot[color=red,mark=|,]
+        coordinates {(8,0.0054056)(16,0.0106724)(32,0.021665)(64,0.0408292)(128,0.0730398)(256,0.156864)(512,0.321395)(1024,0.600078)(2048,1.46327)(4096,2.88768)(8192,5.82895)(16384,13.094)};
+
+    \addplot[color=green,mark=|,]
+        coordinates {(8,0.005336)(16,0.0100574)(32,0.0200302)(64,0.0406328)(128,0.0744786)(256,0.16494)(512,0.336185)(1024,0.813833)(2048,2.27156)(4096,11.5982)(8192,51.69)(16384,196.705)};
+
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+
+Erasure has a similar performance profile to insertion, except that the sorted
+\code{vector<pair<int, int>>} performs substantially better than
+Boost.FlatMap.\\
+
+
+\subsection{Implications}
+
+TODO Iteration is vastly cheaper for contiguous-storage variants.  It has been
+suggested that a \code{map} with a custom allocator can achieve similar
+performance to flat data structures, but this would not apply to iteration
+performance, unless the values were added to the \code{map} in sorted order.\\
+
+In all the graphs above, the reason the custom-\code{pair} sorted vector
+performs so much better than \code{vector<pair<int, int>>} seems to be that
+the custom-\code{pair} type has \code{nothrow} special functions.
+Implementing all the special functions and adding \code{nothrow(false)} to
+each makes the custom-\code{pair} version perform identically to the
+\code{pair<int, int>} version.
+
+Boost.FlatMap differs quite a bit from a sorted \code{vector}.  Clearly there
+are a lot of QOI choices to make in implementing a standard \code{flat_map}.

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <vector>
 #include <random>
 
@@ -20,10 +21,16 @@ enum map_impl_kind
     num_map_impl_kinds
 };
 
-template <typename T, typename U>
+template <typename T, typename U, typename ValueType = std::pair<T, U>>
 struct sorted_vec_map
 {
-    using value_type = std::pair<T, U>;
+    using value_type = ValueType;
+
+    size_t size() const
+    { return v.size(); }
+
+    void reserve(size_t size)
+    { v.reserve(size); }
 
     typename std::vector<value_type>::iterator lower_bound(T const & t)
     {
@@ -31,7 +38,7 @@ struct sorted_vec_map
         return std::lower_bound(
             v.begin(), v.end(),
             value,
-            [](value_type lhs, value_type rhs){
+            [](value_type const & lhs, value_type const & rhs){
                 return lhs.first < rhs.first;
             }
         );
@@ -52,6 +59,13 @@ struct sorted_vec_map
 
     std::vector<value_type> v;
 };
+
+template <typename Map>
+void reserve(Map & m, size_t size)
+{ m.reserve(size); }
+
+template <typename ...T>
+void reserve(std::map<T...> &, size_t) {}
 
 template <typename T, typename U>
 typename std::vector<std::pair<T, U>>::const_iterator begin(sorted_vec_map<T, U> const & c)
@@ -63,42 +77,30 @@ typename std::vector<std::pair<T, U>>::const_iterator end(sorted_vec_map<T, U> c
 template <typename T, typename U>
 struct custom_pair
 {
+#if 0 // Set to nonzero to see the performance of this custom type match that of std::pair.
+    custom_pair() :
+        first{T()}, second{U()} {}
+
+    custom_pair(T const & t, U const & u) :
+        first{t}, second{u} {}
+
+    custom_pair(custom_pair const & rhs) noexcept(false) :
+        first{rhs.first}, second{rhs.second} {}
+    custom_pair(custom_pair && rhs) noexcept(false) :
+        first{std::move(rhs.first)}, second{std::move(rhs.second)} {}
+
+    custom_pair& operator=(custom_pair const & rhs) noexcept(false)
+    { first = rhs.first; second = rhs.second; return *this; }
+    custom_pair& operator=(custom_pair && rhs) noexcept(false)
+    { first = std::move(rhs.first); second = std::move(rhs.second); return *this; }
+#endif
+
     T first;
     U second;
 };
 
 template <typename T, typename U>
-struct sorted_vec_map_custom_pair
-{
-    using value_type = custom_pair<T, U>;
-
-    typename std::vector<value_type>::iterator lower_bound(T const & t)
-    {
-        value_type value{t, U()};
-        return std::lower_bound(
-            v.begin(), v.end(),
-            value,
-            [](value_type lhs, value_type rhs){
-                return lhs.first < rhs.first;
-            }
-        );
-    }
-
-    U& operator[](T const & t)
-    {
-        value_type value{t, U()};
-        return v.insert(lower_bound(t), value)->second;
-    }
-
-    void erase(T const & t)
-    {
-        auto it = lower_bound(t);
-        if (it != v.end())
-            v.erase(it);
-    }
-
-    std::vector<value_type> v;
-};
+using sorted_vec_map_custom_pair = sorted_vec_map<T, U, custom_pair<T, U>>;
 
 template <typename T, typename U>
 typename std::vector<custom_pair<T, U>>::const_iterator begin(sorted_vec_map_custom_pair<T, U> const & c)
@@ -134,22 +136,11 @@ struct map_impl<T, sorted_vector_custom_pair>
 template <typename T, map_impl_kind MapImpl>
 using map_impl_t = typename map_impl<T, MapImpl>::type;
 
-template <typename T, map_impl_kind MapImpl, typename Rand>
-auto make_map(std::vector<int> const & v, Rand const & rand) -> map_impl_t<T, MapImpl>
-{
-    map_impl_t<T, MapImpl> m;
-    for (auto e : v)
-    {
-        m[e] = T(0);
-    }
-
-    return m;
-}
-
 struct largish_struct
 {
     largish_struct() {}
     largish_struct(int k) : key{k} {}
+    operator int() {return key;}
     int key;
     std::array<double, 5> data;
 };
@@ -159,69 +150,119 @@ struct output_files_t
     std::ofstream ofs[num_map_impl_kinds];
 };
 
-template <typename T, map_impl_kind MapImpl, typename RandFn>
-void test_map_type(int iterations, std::string kind_name, std::vector<int> const & v, RandFn Rand, output_files_t & output_files)
+double single_elapsed_value(std::vector<double> & times)
+{
+    // Take the mean after throwing out the smallest and largest values.
+    std::sort(times.begin(), times.end());
+    return std::accumulate(times.begin() + 1, times.end() - 1, 0.0) / (times.size() - 2);
+}
+
+template <typename T, map_impl_kind MapImpl, int Iterations>
+void test_map_type(std::string kind_name, std::vector<int> const & v, output_files_t & output_files)
 {
     using dur = std::chrono::duration<double>;
 
-    std::chrono::time_point<std::chrono::system_clock> t_prev;
-    std::chrono::time_point<std::chrono::system_clock> t_now;
+    using map_t = map_impl_t<T, MapImpl>;
 
-    std::vector<map_impl_t<T, MapImpl>> maps(iterations);
+    std::vector<map_t> maps(Iterations);
 
     output_files.ofs[MapImpl] << "    {'size': " << v.size() << ", ";
 
     kind_name += ':';
     kind_name += std::string(40 - kind_name.size(), ' ');
 
-    t_prev = std::chrono::system_clock::now();
-    for (auto & map : maps) {
-        map = make_map<T, MapImpl>(v, Rand);
-    }
-    t_now = std::chrono::system_clock::now();
-    auto elapsed = dur(t_now - t_prev).count() * 1000;
-    output_files.ofs[MapImpl] << "'insert': " << elapsed << ",";
-    std::cout << "  " << kind_name << elapsed << " ms insert\n";
+#if 0
+    std::cout << "********************************************************************************\n";
+    std::cout << std::chrono::high_resolution_clock::period().num
+              << " / "
+              << std::chrono::high_resolution_clock::period().den
+              << "\n";
+#endif
 
-    t_prev = std::chrono::system_clock::now();
-    int key_sum = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
-    for (auto const & map : maps) {
-        for (auto const & element : map) {
-            key_sum += element.first;
+    {
+        std::vector<double> times;
+        for (auto & map : maps) {
+#if 0
+            reserve(map, v.size());
+#endif
+            double time = 0.0;
+            for (auto e : v)
+            {
+                auto start = std::chrono::high_resolution_clock::now();
+                map[e] = T(0);
+                auto stop = std::chrono::high_resolution_clock::now();
+                time += dur(stop - start).count() * 1000;
+            }
+            times.push_back(time);
         }
+        auto const elapsed = single_elapsed_value(times);
+        output_files.ofs[MapImpl] << "'insert': " << elapsed << ",";
+        std::cout << "  " << kind_name << elapsed << " ms insert\n";
     }
-    t_now = std::chrono::system_clock::now();
-    elapsed = dur(t_now - t_prev).count() * 1000;
-    output_files.ofs[MapImpl] << "'iterate': " << elapsed << ",";
-    std::cout << "  " << kind_name << elapsed << " ms iterate\n";
-    if (key_sum == 2)
-        std::cout << "  SURPRISE! key_sum=" << key_sum << "\n";
 
-    t_prev = std::chrono::system_clock::now();
-    int find_count = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
-    for (auto & map : maps) {
-        for (auto e : v) {
-            auto const it = map.lower_bound(e);
-            find_count += it != end(map);
+    {
+        std::vector<double> times;
+        int copy_sum = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
+        for (auto const & map : maps) {
+            std::vector<T> values(map.size());
+            using value_type = typename map_t::value_type;
+            auto start = std::chrono::high_resolution_clock::now();
+            std::transform(
+                begin(map), end(map), begin(values),
+                [](value_type const & elem){ return elem.second; }
+            );
+            auto stop = std::chrono::high_resolution_clock::now();
+            times.push_back(dur(stop - start).count() * 1000);
+            for (auto x : values) {
+                copy_sum += static_cast<int>(x);
+            }
         }
+        auto const elapsed = single_elapsed_value(times);
+        output_files.ofs[MapImpl] << "'iterate': " << elapsed << ",";
+        std::cout << "  " << kind_name << elapsed << " ms iterate\n";
+        if (copy_sum == 2)
+            std::cout << "  SURPRISE! copy_sum=" << copy_sum << "\n";
     }
-    t_now = std::chrono::system_clock::now();
-    elapsed = dur(t_now - t_prev).count() * 1000;
-    output_files.ofs[MapImpl] << "'lower bound': " << elapsed << ",";
-    std::cout << "  " << kind_name << elapsed << " ms lower bound\n";
-    if (find_count == 2)
-        std::cout << "  SURPRISE! key_sum=" << find_count << "\n";
 
-    t_prev = std::chrono::system_clock::now();
-    for (auto & map : maps) {
-        for (auto e : v) {
-            map.erase(e);
+    {
+        std::vector<double> times;
+        int key_sum = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
+        for (auto & map : maps) {
+            auto const end_ = end(map);
+            double time = 0.0;
+            for (auto e : v) {
+                auto start = std::chrono::high_resolution_clock::now();
+                auto const it = map.lower_bound(e);
+                if (it != end_)
+                    key_sum += it->first;
+                auto stop = std::chrono::high_resolution_clock::now();
+                time += dur(stop - start).count() * 1000;
+            }
+            times.push_back(time);
         }
+        auto const elapsed = single_elapsed_value(times);
+        output_files.ofs[MapImpl] << "'lower bound': " << elapsed << ",";
+        std::cout << "  " << kind_name << elapsed << " ms lower bound\n";
+        if (key_sum == 2)
+            std::cout << "  SURPRISE! key_sum=" << key_sum << "\n";
     }
-    t_now = std::chrono::system_clock::now();
-    elapsed = dur(t_now - t_prev).count() * 1000;
-    output_files.ofs[MapImpl] << "'erase': " << elapsed << ",";
-    std::cout << "  " << kind_name << elapsed << " ms erase\n";
+
+    {
+        std::vector<double> times;
+        for (auto & map : maps) {
+            double time = 0.0;
+            for (auto e : v) {
+                auto start = std::chrono::high_resolution_clock::now();
+                map.erase(e);
+                auto stop = std::chrono::high_resolution_clock::now();
+                time += dur(stop - start).count() * 1000;
+            }
+            times.push_back(time);
+        }
+        auto const elapsed = single_elapsed_value(times);
+        output_files.ofs[MapImpl] << "'erase': " << elapsed << ",";
+        std::cout << "  " << kind_name << elapsed << " ms erase\n";
+    }
 
     output_files.ofs[MapImpl] << "},\n";
 }
@@ -240,19 +281,14 @@ void test(std::size_t size, output_files_t & output_files)
     std::vector<int> v(size);
     std::generate(v.begin(), v.end(), rand);
 
-    int const iterations = 5;
+    int const iterations = 7;
 
-    using dur = std::chrono::duration<double>;
+    test_map_type<T, boost_flat_map, iterations>("boost flat_map", v, output_files);
+    test_map_type<T, std_map, iterations>("std::map", v, output_files);
+    test_map_type<T, sorted_vector, iterations>("vector", v, output_files);
+    test_map_type<T, sorted_vector_custom_pair, iterations>("vector (custom-pair)", v, output_files);
 
-    std::chrono::time_point<std::chrono::system_clock> t_prev;
-    std::chrono::time_point<std::chrono::system_clock> t_now;
-
-    test_map_type<T, boost_flat_map>(iterations, "boost flat_map", v, rand, output_files);
-    test_map_type<T, std_map>(iterations, "std::map", v, rand, output_files);
-    test_map_type<T, sorted_vector>(iterations, "vector", v, rand, output_files);
-    test_map_type<T, sorted_vector_custom_pair>(iterations, "vector (custom-pair)", v, rand, output_files);
-
-    std::cout << "\n";
+    std::cout << std::endl;
 }
 
 #define TEST(T, size)                                           \
@@ -272,13 +308,25 @@ int main()
     }
 
     TEST(int, 8u);
+    TEST(int, 8u << 1);
     TEST(int, 8u << 2);
+    TEST(int, 8u << 3);
     TEST(int, 8u << 4);
+    TEST(int, 8u << 5);
     TEST(int, 8u << 6);
+    TEST(int, 8u << 7);
     TEST(int, 8u << 8);
+    TEST(int, 8u << 9);
     TEST(int, 8u << 10);
+    TEST(int, 8u << 11);
 #if 0
     TEST(int, 8u << 12);
+    TEST(int, 8u << 13);
+    TEST(int, 8u << 14);
+    TEST(int, 8u << 15);
+    TEST(int, 8u << 16);
+    TEST(int, 8u << 17);
+    TEST(int, 8u << 18);
 #endif
 
     for (auto & of : output_files.ofs) {
@@ -286,14 +334,28 @@ int main()
            << "struct_timings = [\n";
     }
 
+#if 0
     TEST(largish_struct, 8u);
+    TEST(largish_struct, 8u << 1);
     TEST(largish_struct, 8u << 2);
+    TEST(largish_struct, 8u << 3);
     TEST(largish_struct, 8u << 4);
+    TEST(largish_struct, 8u << 5);
     TEST(largish_struct, 8u << 6);
+    TEST(largish_struct, 8u << 7);
     TEST(largish_struct, 8u << 8);
+    TEST(largish_struct, 8u << 9);
     TEST(largish_struct, 8u << 10);
+    TEST(largish_struct, 8u << 11);
 #if 0
     TEST(largish_struct, 8u << 12);
+    TEST(largish_struct, 8u << 13);
+    TEST(largish_struct, 8u << 14);
+    TEST(largish_struct, 8u << 15);
+    TEST(largish_struct, 8u << 16);
+    TEST(largish_struct, 8u << 17);
+    TEST(largish_struct, 8u << 18);
+#endif
 #endif
 
     for (auto & of : output_files.ofs) {

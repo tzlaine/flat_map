@@ -2,18 +2,26 @@
 
 There has been a strong desire for a more space- and/or runtime-efficient
 representation for \code{map} among C++ users for some time now.  This has
-motivated discussions among the members of SG14, numerous articles and talks,
-and an implementation in Boost, \code{boost::container::flat_map}.  Virtually
-everyone who makes games, embedded, or system software in C++ uses the Boost
-implementation or one that they rolled themselves.\\
+motivated discussions among the members of SG14 resulting in a
+paper\footnote{See P0038R0,
+  \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0038r0.html}{here}.},
+numerous articles and talks, and an implementation in Boost,
+\code{boost::container::flat_map}\footnote{Part of Boost.Container,
+  \href{http://www.boost.org/doc/libs/1_61_0/doc/html/container.html}{here}.}.
+Virtually everyone who makes games, embedded, or system software in C++ uses
+the Boost implementation or one that they rolled themselves.\\
 
 Here are some numbers that show why.  The graphs that follow show runtimes for
 different \code{map}-like associative containers.  The containers used are
-Boost.FlatMap, \code{std::map}, and two thin wrappers over a sorted
-\code{std::vector}; the ``custom pair'' version of the sorted
-\code{std::vector} uses a simple \code{struct} instead of \code{std::pair} for
-its value type.  All containers use an \code{int} as the key type and an
-\code{int} or a \code{struct} with 5 \code{double}s for the value type.\\
+Boost.FlatMap, \code{map}, and two thin wrappers over a sorted \code{vector};
+the ``custom pair'' version of the sorted \code{vector} uses a simple
+\code{struct} instead of \code{pair} for its value type.  All containers use
+an \code{int} as the key type and an \code{int} or a \code{struct} with 5
+\code{double}s for the value type.\\
+
+All the graphs below were produced on Windows with MSVC 2015.  Similar results
+were obtained on Linux, with Clang 3.9 and libc++, and with g++ 4.8.4 and
+libstdc++.\\
 
 These first four graphs cover the \code{int}-value-type case.  The first graph
 shows insertion of N elements with random keys; the second shows full
@@ -21,17 +29,46 @@ iteration across all N elements; the third shows \code{map.lower_bound()}
 called once for each key used in the original insertions; and the fourth shows
 erasure of all N elements, by the keys used in the original insertions.
 
-%%% insert / int %%%
-%%% iterate / int %%%
-%%% lower bound / int %%%
-%%% erase / int %%%
+%%% insert, int %%%
 
-These next four graphs are just like the preceding ones, but cover the
-\code{struct}-value-type case.
+As one might expect, insertionion takes longer in contiguous-storage
+implementations.  Boost.FlatMap and a sorted \code{vector<pair<int, int>>}
+have superlinear growth in insertion time.  While the curve for sorted
+\code{vector} using a custom \code{struct} instead of a \code{pair} is
+superlinear as well, it is dramatically flatter in its growth -- much closer
+to node-based \code{map}.
 
-%%% insert / struct %%%
-%%% iterate / struct %%%
-%%% lower bound / struct %%%
-%%% erase / struct %%%
+%%% iterate, int %%%
 
-TODO
+For all variants but \code{map}, iteration is relatively similar, and much
+faster that \code{map}'s.
+
+%%% lower bound, int %%%
+
+\code{lower_bound()} performance is roughly similar across all the
+implementations, and they all show superlinear growth.  Note that
+Boost.FlatMap performs the best here.
+
+%%% erase, int %%%
+
+Erasure has a similar performance profile to insertion, except that the sorted
+\code{vector<pair<int, int>>} performs substantially better than
+Boost.FlatMap.\\
+
+
+\subsection{Implications}
+
+TODO Iteration is vastly cheaper for contiguous-storage variants.  It has been
+suggested that a \code{map} with a custom allocator can achieve similar
+performance to flat data structures, but this would not apply to iteration
+performance, unless the values were added to the \code{map} in sorted order.\\
+
+In all the graphs above, the reason the custom-\code{pair} sorted vector
+performs so much better than \code{vector<pair<int, int>>} seems to be that
+the custom-\code{pair} type has \code{nothrow} special functions.
+Implementing all the special functions and adding \code{nothrow(false)} to
+each makes the custom-\code{pair} version perform identically to the
+\code{pair<int, int>} version.
+
+Boost.FlatMap differs quite a bit from a sorted \code{vector}.  Clearly there
+are a lot of QOI choices to make in implementing a standard \code{flat_map}.
