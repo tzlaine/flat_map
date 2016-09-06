@@ -27,11 +27,11 @@ elements, by the keys used in the original insertions.
         title={Insert Operations on int Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=10000.0,
-        xtick={8,32,128,512,2048,8192,32768},
-        xticklabels={8,,,,2k,8k,32k},
-        ytick={0.0,1000.0,2000.0,3000.0,4000.0,5000.0,6000.0,7000.0,8000.0,9000.0},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=1000.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
@@ -40,16 +40,16 @@ elements, by the keys used in the original insertions.
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.069911)(32,0.302622)(128,1.42784)(512,5.56055)(2048,55.7729)(8192,2194.15)(32768,23721.7)};
+        coordinates {(8,0.088279)(32,0.269867)(128,0.896692)(512,6.36352)(2048,104.485)(8192,2168.83)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.034153)(32,0.169993)(128,0.606432)(512,1.32712)(2048,14.2242)(8192,93.3417)(32768,1099.65)};
+        coordinates {(8,0.073962)(32,0.112724)(128,0.408641)(512,1.14889)(2048,14.2758)(8192,91.7388)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.040857)(32,0.199188)(128,0.730959)(512,1.12619)(2048,14.5855)(8192,58.5812)(32768,94.0076)};
+        coordinates {(8,0.073123)(32,0.225377)(128,0.484908)(512,1.17082)(2048,14.6917)(8192,58.6582)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.024585)(32,0.214133)(128,1.18521)(512,4.36878)(2048,156.937)(8192,2374.02)(32768,28552.8)};
+        coordinates {(8,0.067397)(32,0.141638)(128,0.7656)(512,4.29852)(2048,155.133)(8192,2333.62)};
 
     \end{axis}
 \end{tikzpicture}
@@ -62,11 +62,11 @@ elements, by the keys used in the original insertions.
         title={Iterate Operations on int Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=10.0,
-        xtick={8,32,128,512,2048,8192,32768},
-        xticklabels={8,,,,2k,8k,32k},
-        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=1.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
@@ -75,16 +75,51 @@ elements, by the keys used in the original insertions.
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.001607)(32,0.014177)(128,0.021511)(512,0.03548)(2048,0.120266)(8192,0.709866)(32768,1.0185)};
+        coordinates {(8,0.003562)(32,0.014108)(128,0.020673)(512,0.032895)(2048,0.201143)(8192,0.707493)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.001746)(32,0.015365)(128,0.033454)(512,0.044489)(2048,0.298292)(8192,0.902349)(32768,3.56938)};
+        coordinates {(8,0.003632)(32,0.01285)(128,0.025213)(512,0.041346)(2048,0.300039)(8192,0.901582)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.002933)(32,0.017111)(128,0.039111)(512,0.071028)(2048,0.520877)(8192,2.47664)(32768,4.88896)};
+        coordinates {(8,0.014387)(32,0.016902)(128,0.03122)(512,0.06586)(2048,0.526114)(8192,2.49543)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.001746)(32,0.015365)(128,0.032407)(512,0.049238)(2048,0.304647)(8192,0.903956)(32768,3.64641)};
+        coordinates {(8,0.003632)(32,0.013968)(128,0.025422)(512,0.046375)(2048,0.3036)(8192,0.903467)};
+
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+        width=4in,
+        title={Lower Bound Operations on int Elements},
+        xlabel={N},
+        ylabel={Time [milliseconds]},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=100.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,10.0,20.0,30.0,40.0,50.0,60.0,70.0,80.0,90.0},
+        legend pos=north west,
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
+        ]
+
+    \addplot[color=blue,mark=|,]
+        coordinates {(8,0.027169)(32,0.096521)(128,0.276921)(512,0.675016)(2048,6.59581)(8192,37.3482)};
+
+    \addplot[color=black,mark=|,]
+        coordinates {(8,0.027238)(32,0.065022)(128,0.280273)(512,0.720274)(2048,8.70921)(8192,40.353)};
+
+    \addplot[color=red,mark=|,]
+        coordinates {(8,0.022699)(32,0.081155)(128,0.231594)(512,0.571721)(2048,7.00634)(8192,33.819)};
+
+    \addplot[color=green,mark=|,]
+        coordinates {(8,0.030102)(32,0.067816)(128,0.288165)(512,0.895226)(2048,8.76403)(8192,40.7894)};
 
     \end{axis}
 \end{tikzpicture}
@@ -97,11 +132,11 @@ elements, by the keys used in the original insertions.
         title={Erase Operations on int Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=100000.0,
-        xtick={8,32,128,512,2048,8192,32768},
-        xticklabels={8,,,,2k,8k,32k},
-        ytick={0.0,10000.0,20000.0,30000.0,40000.0,50000.0,60000.0,70000.0,80000.0,90000.0},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=1000.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
@@ -110,16 +145,16 @@ elements, by the keys used in the original insertions.
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.022349)(32,0.198419)(128,1.06271)(512,3.71137)(2048,122.628)(8192,2083.85)(32768,11155.7)};
+        coordinates {(8,0.049029)(32,0.182076)(128,0.732076)(512,3.80041)(2048,138.355)(8192,2113.37)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.017531)(32,0.138565)(128,0.55901)(512,1.30366)(2048,14.1557)(8192,90.8456)(32768,719.457)};
+        coordinates {(8,0.043372)(32,0.085904)(128,0.359194)(512,0.930635)(2048,14.5091)(8192,91.9592)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.019834)(32,0.156165)(128,0.568019)(512,0.928749)(2048,11.4119)(8192,49.8328)(32768,81.8665)};
+        coordinates {(8,0.053638)(32,0.115727)(128,0.380914)(512,0.914012)(2048,12.0617)(8192,50.9554)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.021441)(32,0.181517)(128,1.08638)(512,4.14138)(2048,150.503)(8192,2241.38)(32768,35677.9)};
+        coordinates {(8,0.052241)(32,0.121384)(128,0.737175)(512,5.42716)(2048,151.442)(8192,2266.69)};
 
     \end{axis}
 \end{tikzpicture}
@@ -136,11 +171,11 @@ These next three graphs are just like the preceding ones, but cover the
         title={Insert Operations on struct Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=10000.0,
-        xtick={8,32,128,512,2048,8192,32768},
-        xticklabels={8,,,,2k,8k,32k},
-        ytick={0.0,1000.0,2000.0,3000.0,4000.0,5000.0,6000.0,7000.0,8000.0,9000.0},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=1000.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
@@ -149,16 +184,16 @@ These next three graphs are just like the preceding ones, but cover the
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.036737)(32,0.100921)(128,0.549651)(512,5.00853)(2048,63.213)(8192,926.91)(32768,15505.9)};
+        coordinates {(8,0.069283)(32,0.280622)(128,1.54419)(512,14.175)(2048,182.555)(8192,2756.55)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.024585)(32,0.066488)(128,0.337194)(512,2.68142)(2048,31.3329)(8192,507.779)(32768,21672.2)};
+        coordinates {(8,0.049518)(32,0.167689)(128,0.918134)(512,7.64839)(2048,92.9722)(8192,1372.1)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.025841)(32,0.070819)(128,0.265047)(512,1.02932)(2048,4.63257)(8192,21.1444)(32768,104.896)};
+        coordinates {(8,0.046095)(32,0.160565)(128,0.685981)(512,3.09634)(2048,13.9592)(8192,62.0826)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.025423)(32,0.084438)(128,0.475061)(512,4.77959)(2048,61.6609)(8192,1012.57)(32768,26664.8)};
+        coordinates {(8,0.050076)(32,0.213854)(128,1.32873)(512,13.5)(2048,184.269)(8192,2814.09)};
 
     \end{axis}
 \end{tikzpicture}
@@ -171,11 +206,11 @@ These next three graphs are just like the preceding ones, but cover the
         title={Iterate Operations on struct Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=10.0,
-        xtick={8,32,128,512,2048,8192,32768},
-        xticklabels={8,,,,2k,8k,32k},
-        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=1.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
@@ -184,16 +219,51 @@ These next three graphs are just like the preceding ones, but cover the
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.00887)(32,0.002375)(128,0.024235)(512,0.033454)(2048,0.078013)(8192,0.302902)(32768,1.23514)};
+        coordinates {(8,0.002445)(32,0.005168)(128,0.016343)(512,0.060343)(2048,0.187524)(8192,0.741295)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.001187)(32,0.002234)(128,0.006635)(512,0.03534)(2048,0.098266)(8192,0.377352)(32768,3.95344)};
+        coordinates {(8,0.002375)(32,0.005378)(128,0.016832)(512,0.065511)(2048,0.24626)(8192,0.957664)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.001467)(32,0.002863)(128,0.016273)(512,0.059645)(2048,0.245353)(8192,1.41708)(32768,11.825)};
+        coordinates {(8,0.003142)(32,0.007752)(128,0.025003)(512,0.116705)(2048,0.595816)(8192,2.7954)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.001187)(32,0.002444)(128,0.024933)(512,0.032826)(2048,0.101479)(8192,0.366387)(32768,3.74713)};
+        coordinates {(8,0.002514)(32,0.005378)(128,0.016552)(512,0.06167)(2048,0.245353)(8192,0.922045)};
+
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+        width=4in,
+        title={Lower Bound Operations on struct Elements},
+        xlabel={N},
+        ylabel={Time [milliseconds]},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=100.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,10.0,20.0,30.0,40.0,50.0,60.0,70.0,80.0,90.0},
+        legend pos=north west,
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        legend entries={Boost.FlatMap,std::vector (custom pair),std::map,std::vector},
+        ]
+
+    \addplot[color=blue,mark=|,]
+        coordinates {(8,0.021581)(32,0.091492)(128,0.404172)(512,1.84709)(2048,8.46113)(8192,40.2611)};
+
+    \addplot[color=black,mark=|,]
+        coordinates {(8,0.01725)(32,0.093587)(128,0.436857)(512,2.07093)(2048,9.6969)(8192,45.6048)};
+
+    \addplot[color=red,mark=|,]
+        coordinates {(8,0.018787)(32,0.063695)(128,0.301016)(512,1.50389)(2048,7.20106)(8192,35.5892)};
+
+    \addplot[color=green,mark=|,]
+        coordinates {(8,0.025422)(32,0.094356)(128,0.442095)(512,2.11375)(2048,9.86641)(8192,47.2265)};
 
     \end{axis}
 \end{tikzpicture}
@@ -206,11 +276,11 @@ These next three graphs are just like the preceding ones, but cover the
         title={Erase Operations on struct Elements},
         xlabel={N},
         ylabel={Time [milliseconds]},
-        xmin=0, xmax=32768.0,
-        ymin=0, ymax=100000.0,
-        xtick={8,32,128,512,2048,8192,32768},
-        xticklabels={8,,,,2k,8k,32k},
-        ytick={0.0,10000.0,20000.0,30000.0,40000.0,50000.0,60000.0,70000.0,80000.0,90000.0},
+        xmin=0, xmax=8192.0,
+        ymin=0, ymax=1000.0,
+        xtick={8,32,128,512,2048,8192},
+        xticklabels={8,,,,2k,8k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0},
         legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
@@ -219,16 +289,16 @@ These next three graphs are just like the preceding ones, but cover the
         ]
 
     \addplot[color=blue,mark=|,]
-        coordinates {(8,0.018298)(32,0.053778)(128,0.417581)(512,4.1066)(2048,60.6217)(8192,918.988)(32768,15343.2)};
+        coordinates {(8,0.038063)(32,0.165244)(128,1.1623)(512,12.7604)(2048,178.236)(8192,2711.97)};
 
     \addplot[color=black,mark=|,]
-        coordinates {(8,0.016971)(32,0.051892)(128,0.304927)(512,2.45792)(2048,32.2945)(8192,501.866)(32768,21440)};
+        coordinates {(8,0.025981)(32,0.135702)(128,0.833067)(512,7.66222)(2048,94.6428)(8192,1380.28)};
 
     \addplot[color=red,mark=|,]
-        coordinates {(8,0.016902)(32,0.047701)(128,0.193112)(512,0.842076)(2048,3.71674)(8192,17.5163)(32768,102.89)};
+        coordinates {(8,0.030521)(32,0.122502)(128,0.541619)(512,2.42489)(2048,11.4262)(8192,52.4469)};
 
     \addplot[color=green,mark=|,]
-        coordinates {(8,0.016902)(32,0.06593)(128,0.41346)(512,4.11924)(2048,60.78)(8192,984.497)(32768,42785.3)};
+        coordinates {(8,0.036318)(32,0.159378)(128,1.17312)(512,13.0225)(2048,181.464)(8192,2753.11)};
 
     \end{axis}
 \end{tikzpicture}

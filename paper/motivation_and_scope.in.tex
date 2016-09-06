@@ -15,20 +15,23 @@ Boost.FlatMap, \code{std::map}, and two thin wrappers over a sorted
 its value type.  All containers use an \code{int} as the key type and an
 \code{int} or a \code{struct} with 5 \code{double}s for the value type.\\
 
-These first three graphs cover the \code{int}-value-type case.  The first
-graph shows insertion of N elements with random keys; the second shows full
-iteration across all N elements; and the third shows erasure of all N
-elements, by the keys used in the original insertions.
+These first four graphs cover the \code{int}-value-type case.  The first graph
+shows insertion of N elements with random keys; the second shows full
+iteration across all N elements; the third shows \code{map.lower_bound()}
+called once for each key used in the original insertions; and the fourth shows
+erasure of all N elements, by the keys used in the original insertions.
 
 %%% insert / int %%%
 %%% iterate / int %%%
+%%% lower bound / int %%%
 %%% erase / int %%%
 
-These next three graphs are just like the preceding ones, but cover the
+These next four graphs are just like the preceding ones, but cover the
 \code{struct}-value-type case.
 
 %%% insert / struct %%%
 %%% iterate / struct %%%
+%%% lower bound / struct %%%
 %%% erase / struct %%%
 
 TODO

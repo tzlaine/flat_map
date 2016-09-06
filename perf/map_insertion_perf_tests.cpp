@@ -184,7 +184,7 @@ void test_map_type(int iterations, std::string kind_name, std::vector<int> const
     std::cout << "  " << kind_name << elapsed << " ms insert\n";
 
     t_prev = std::chrono::system_clock::now();
-    int key_sum = 0; // To ensure the optimizer does not remove the loops below altogether, take a sum.
+    int key_sum = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
     for (auto const & map : maps) {
         for (auto const & element : map) {
             key_sum += element.first;
@@ -196,6 +196,21 @@ void test_map_type(int iterations, std::string kind_name, std::vector<int> const
     std::cout << "  " << kind_name << elapsed << " ms iterate\n";
     if (key_sum == 2)
         std::cout << "  SURPRISE! key_sum=" << key_sum << "\n";
+
+    t_prev = std::chrono::system_clock::now();
+    int find_count = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
+    for (auto & map : maps) {
+        for (auto e : v) {
+            auto const it = map.lower_bound(e);
+            find_count += it != end(map);
+        }
+    }
+    t_now = std::chrono::system_clock::now();
+    elapsed = dur(t_now - t_prev).count() * 1000;
+    output_files.ofs[MapImpl] << "'lower bound': " << elapsed << ",";
+    std::cout << "  " << kind_name << elapsed << " ms lower bound\n";
+    if (find_count == 2)
+        std::cout << "  SURPRISE! key_sum=" << find_count << "\n";
 
     t_prev = std::chrono::system_clock::now();
     for (auto & map : maps) {
@@ -262,7 +277,9 @@ int main()
     TEST(int, 8u << 6);
     TEST(int, 8u << 8);
     TEST(int, 8u << 10);
+#if 0
     TEST(int, 8u << 12);
+#endif
 
     for (auto & of : output_files.ofs) {
         of << "]\n\n"
@@ -275,7 +292,9 @@ int main()
     TEST(largish_struct, 8u << 6);
     TEST(largish_struct, 8u << 8);
     TEST(largish_struct, 8u << 10);
+#if 0
     TEST(largish_struct, 8u << 12);
+#endif
 
     for (auto & of : output_files.ofs) {
         of << "]\n";

@@ -14,8 +14,8 @@ for v in variant_names:
 
 element_type_marks = {'int': 'square', 'struct': 'triangle'}
 operation_colors = {'insert': 'red', 'iterate': 'green', 'erase': 'blue'}
-#operation_marks = {'insert': '+', 'iterate': 'o', 'erase': '-'}
-operation_marks = {'insert': '|', 'iterate': '|', 'erase': '|'}
+#operation_marks = {'insert': '+', 'iterate': 'o', 'lower bound': '|', 'erase': '-'}
+operation_marks = {'insert': '|', 'iterate': '|', 'lower bound': '|', 'erase': '|'}
 
 def operation_chart(operation, element_type):
     retval = ''
@@ -59,13 +59,6 @@ def operation_chart(operation, element_type):
             xtick_labels += '{}M'.format(xtick_int >> 20)
         elif 1024 < xtick_int:
             xtick_labels += '{}k'.format(xtick_int >> 10)
-
-#    xtick = ''
-#    num_x_ticks = 10
-#    for i in range(0, num_x_ticks):
-#        if i != 0:
-#            xtick += ','
-#        xtick += str(xmax / num_x_ticks * i)
 
     ytick = ''
     num_y_ticks = 10
@@ -117,10 +110,12 @@ contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
 contents = contents.replace('%%% insert / int %%%', operation_chart('insert', 'int'))
 contents = contents.replace('%%% iterate / int %%%', operation_chart('iterate', 'int'))
+contents = contents.replace('%%% lower bound / int %%%', operation_chart('lower bound', 'int'))
 contents = contents.replace('%%% erase / int %%%', operation_chart('erase', 'int'))
 
 contents = contents.replace('%%% insert / struct %%%', operation_chart('insert', 'struct'))
 contents = contents.replace('%%% iterate / struct %%%', operation_chart('iterate', 'struct'))
+contents = contents.replace('%%% lower bound / struct %%%', operation_chart('lower bound', 'struct'))
 contents = contents.replace('%%% erase / struct %%%', operation_chart('erase', 'struct'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)
