@@ -12,8 +12,8 @@
 
 enum map_impl_kind
 {
-    flat_map,
-    node_based,
+    boost_flat_map,
+    std_map,
     sorted_vector,
     sorted_vector_custom_pair,
 
@@ -114,7 +114,7 @@ struct map_impl
 };
 
 template <typename T>
-struct map_impl<T, flat_map>
+struct map_impl<T, boost_flat_map>
 {
     using type = boost::container::flat_map<int, T>;
 };
@@ -232,8 +232,8 @@ void test(std::size_t size, output_files_t & output_files)
     std::chrono::time_point<std::chrono::system_clock> t_prev;
     std::chrono::time_point<std::chrono::system_clock> t_now;
 
-    test_map_type<T, flat_map>(iterations, "boost flat_map", v, rand, output_files);
-    test_map_type<T, node_based>(iterations, "std::map", v, rand, output_files);
+    test_map_type<T, boost_flat_map>(iterations, "boost flat_map", v, rand, output_files);
+    test_map_type<T, std_map>(iterations, "std::map", v, rand, output_files);
     test_map_type<T, sorted_vector>(iterations, "vector", v, rand, output_files);
     test_map_type<T, sorted_vector_custom_pair>(iterations, "vector (custom-pair)", v, rand, output_files);
 
@@ -246,12 +246,11 @@ void test(std::size_t size, output_files_t & output_files)
 
 int main()
 {
-    output_files_t output_files = {
-        std::ofstream{"boost_flat_map.py"},
-        std::ofstream{"std_map.py"},
-        std::ofstream{"vector.py"},
-        std::ofstream{"vector_custom_pair.py"}
-    };
+    output_files_t output_files;
+    output_files.ofs[boost_flat_map].open("boost_flat_map.py");
+    output_files.ofs[std_map].open("std_map.py");
+    output_files.ofs[sorted_vector].open("vector.py");
+    output_files.ofs[sorted_vector_custom_pair].open("vector_custom_pair.py");
 
     for (auto & of : output_files.ofs) {
         of << "int_timings = [\n";

@@ -42,5 +42,5 @@ add_custom_target(
     DEPENDS
         make_data
         ${CMAKE_CURRENT_SOURCE_DIR}/make_tex.py
-        ${CMAKE_SOURCE_DIR}/paper.in.tex
+        ${CMAKE_SOURCE_DIR}/../paper/motivation_and_scope.in.tex
 )

@@ -79,7 +79,7 @@ def operation_chart(operation, element_type):
     retval = '''\\begin{{center}}
     \\begin{{tikzpicture}}
     \\begin{{axis}}[
-        width=4.5in,
+        width=4in,
         title={{{title}}},
         xlabel={{N}},
         ylabel={{Time [milliseconds]}},
