@@ -319,11 +319,11 @@ int main()
     TEST(int, 8u << 9);
     TEST(int, 8u << 10);
     TEST(int, 8u << 11);
-#if 0
     TEST(int, 8u << 12);
     TEST(int, 8u << 13);
     TEST(int, 8u << 14);
     TEST(int, 8u << 15);
+#if 0
     TEST(int, 8u << 16);
     TEST(int, 8u << 17);
     TEST(int, 8u << 18);

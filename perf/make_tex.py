@@ -64,10 +64,11 @@ def operation_chart(operation, element_type):
         xtick_int <<= 1
 
         xtick += str(xtick_int)
-        if 1024 * 1024 < xtick_int:
-            xtick_labels += '{}M'.format(xtick_int >> 20)
-        elif 1024 < xtick_int:
-            xtick_labels += '{}k'.format(xtick_int >> 10)
+        if 16 * 1024 < xtick_int:
+            if 1024 * 1024 < xtick_int:
+                xtick_labels += '{}M'.format(xtick_int >> 20)
+            elif 1024 < xtick_int:
+                xtick_labels += '{}k'.format(xtick_int >> 10)
 
     ytick_float = 0.0
     ytick = str(ytick_float)
