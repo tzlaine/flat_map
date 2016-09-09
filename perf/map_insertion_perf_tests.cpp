@@ -323,9 +323,9 @@ int main()
     TEST(int, 8u << 13);
     TEST(int, 8u << 14);
     TEST(int, 8u << 15);
-#if 0
     TEST(int, 8u << 16);
     TEST(int, 8u << 17);
+#if 0
     TEST(int, 8u << 18);
 #endif
 
