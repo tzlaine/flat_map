@@ -125,38 +125,50 @@ template <typename T, typename U>
 typename std::vector<custom_pair<T, U>>::const_iterator end(sorted_vec_map_custom_pair<T, U> const & c)
 { return c.v.end(); }
 
-template <typename T, map_impl_kind MapImpl>
+template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
 struct map_impl
 {
-    using type = std::map<int, T>;
+    using type = std::map<KeyType, ValueType>;
 };
 
-template <typename T>
-struct map_impl<T, boost_flat_map>
+template <typename KeyType, typename ValueType>
+struct map_impl<KeyType, ValueType, boost_flat_map>
 {
-    using type = boost::container::flat_map<int, T>;
+    using type = boost::container::flat_map<KeyType, ValueType>;
 };
 
-template <typename T>
-struct map_impl<T, unordered_map>
+template <typename KeyType, typename ValueType>
+struct map_impl<KeyType, ValueType, unordered_map>
 {
-    using type = std::unordered_map<int, T>;
+    using type = std::unordered_map<KeyType, ValueType>;
 };
 
-template <typename T>
-struct map_impl<T, sorted_vector>
+template <typename KeyType, typename ValueType>
+struct map_impl<KeyType, ValueType, sorted_vector>
 {
-    using type = sorted_vec_map<int, T>;
+    using type = sorted_vec_map<KeyType, ValueType>;
 };
 
-template <typename T>
-struct map_impl<T, sorted_vector_custom_pair>
+template <typename KeyType, typename ValueType>
+struct map_impl<KeyType, ValueType, sorted_vector_custom_pair>
 {
-    using type = sorted_vec_map_custom_pair<int, T>;
+    using type = sorted_vec_map_custom_pair<KeyType, ValueType>;
 };
 
-template <typename T, map_impl_kind MapImpl>
-using map_impl_t = typename map_impl<T, MapImpl>::type;
+template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
+using map_impl_t = typename map_impl<KeyType, ValueType, MapImpl>::type;
+
+template <typename KeyType>
+KeyType make_key(int x)
+{ return x; }
+
+template <>
+std::string make_key(int x)
+{ return std::to_string(x); }
+
+template <typename ValueType>
+ValueType make_value()
+{ return ValueType(); }
 
 struct largish_struct
 {
@@ -179,12 +191,12 @@ double single_elapsed_value(std::vector<double> & times)
     return std::accumulate(times.begin() + 1, times.end() - 1, 0.0) / (times.size() - 2);
 }
 
-template <typename T, map_impl_kind MapImpl, int Iterations>
+template <typename KeyType, typename ValueType, map_impl_kind MapImpl, int Iterations>
 void test_map_type(std::string kind_name, std::vector<int> const & v, output_files_t & output_files)
 {
     using dur = std::chrono::duration<double>;
 
-    using map_t = map_impl_t<T, MapImpl>;
+    using map_t = map_impl_t<KeyType, ValueType, MapImpl>;
 
     std::vector<map_t> maps(Iterations);
 
@@ -204,14 +216,15 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
     {
         std::vector<double> times;
         for (auto & map : maps) {
-#if 0
+#if 0 // Disabled, as it seems to make no difference (at least on Linux+GCC/Clang). TODO: Try MSVC!
             reserve(map, v.size());
 #endif
             double time = 0.0;
             for (auto e : v)
             {
+                auto const key = make_key<KeyType>(e);
                 auto start = std::chrono::high_resolution_clock::now();
-                map[e] = T(0);
+                map[key] = make_value<ValueType>();
                 auto stop = std::chrono::high_resolution_clock::now();
                 time += dur(stop - start).count() * 1000;
             }
@@ -224,9 +237,9 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
 
     {
         std::vector<double> times;
-        int copy_sum = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
+        int copy_count = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
         for (auto const & map : maps) {
-            std::vector<T> values(map.size());
+            std::vector<ValueType> values(map.size());
             using value_type = typename map_t::value_type;
             auto start = std::chrono::high_resolution_clock::now();
             std::transform(
@@ -236,27 +249,28 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
             auto stop = std::chrono::high_resolution_clock::now();
             times.push_back(dur(stop - start).count() * 1000);
             for (auto x : values) {
-                copy_sum += static_cast<int>(x);
+                ++copy_count;
             }
         }
         auto const elapsed = single_elapsed_value(times);
         output_files.ofs[MapImpl] << "'iterate': " << elapsed << ",";
         std::cout << "  " << kind_name << elapsed << " ms iterate\n";
-        if (copy_sum == 2)
-            std::cout << "  SURPRISE! copy_sum=" << copy_sum << "\n";
+        if (copy_count == 2)
+            std::cout << "  SURPRISE! copy_count=" << copy_count << "\n";
     }
 
     {
         std::vector<double> times;
-        int key_sum = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
+        int key_count = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
         for (auto & map : maps) {
             auto const end_ = end(map);
             double time = 0.0;
             for (auto e : v) {
+                auto const key = make_key<KeyType>(e);
                 auto start = std::chrono::high_resolution_clock::now();
-                auto const it = map.find(e);
+                auto const it = map.find(key);
                 if (it != end_)
-                    key_sum += it->first;
+                    ++key_count;
                 auto stop = std::chrono::high_resolution_clock::now();
                 time += dur(stop - start).count() * 1000;
             }
@@ -265,8 +279,8 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
         auto const elapsed = single_elapsed_value(times);
         output_files.ofs[MapImpl] << "'find': " << elapsed << ",";
         std::cout << "  " << kind_name << elapsed << " ms find\n";
-        if (key_sum == 2)
-            std::cout << "  SURPRISE! key_sum=" << key_sum << "\n";
+        if (key_count == 2)
+            std::cout << "  SURPRISE! key_count=" << key_count << "\n";
     }
 
     {
@@ -274,8 +288,9 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
         for (auto & map : maps) {
             double time = 0.0;
             for (auto e : v) {
+                auto const key = make_key<KeyType>(e);
                 auto start = std::chrono::high_resolution_clock::now();
-                map.erase(e);
+                map.erase(key);
                 auto stop = std::chrono::high_resolution_clock::now();
                 time += dur(stop - start).count() * 1000;
             }
@@ -289,7 +304,7 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
     output_files.ofs[MapImpl] << "},\n";
 }
 
-template <typename T>
+template <typename KeyType, typename ValueType>
 void test(std::size_t size, output_files_t & output_files)
 {
     std::random_device rd;
@@ -305,18 +320,19 @@ void test(std::size_t size, output_files_t & output_files)
 
     int const iterations = 7;
 
-    test_map_type<T, boost_flat_map, iterations>("boost flat_map", v, output_files);
-    test_map_type<T, std_map, iterations>("std::map", v, output_files);
-    test_map_type<T, unordered_map, iterations>("std::unordered_map", v, output_files);
-    test_map_type<T, sorted_vector, iterations>("vector", v, output_files);
-    test_map_type<T, sorted_vector_custom_pair, iterations>("vector (custom-pair)", v, output_files);
+    test_map_type<KeyType, ValueType, boost_flat_map, iterations>("boost flat_map", v, output_files);
+    test_map_type<KeyType, ValueType, std_map, iterations>("std::map", v, output_files);
+    test_map_type<KeyType, ValueType, unordered_map, iterations>("std::unordered_map", v, output_files);
+    test_map_type<KeyType, ValueType, sorted_vector, iterations>("vector", v, output_files);
+    test_map_type<KeyType, ValueType, sorted_vector_custom_pair, iterations>("vector (custom-pair)", v, output_files);
 
     std::cout << std::endl;
 }
 
-#define TEST(T, size)                                           \
-    std::cout << #T << ", " << (size) << " elements:\n";        \
-    test<T>((size), output_files)
+#define TEST(key_t, value_t, size)                              \
+    std::cout << "<" << #key_t << ", " << #value_t << ">, "     \
+              << (size) << " elements:\n";                      \
+    test<key_t, value_t>((size), output_files)
 
 int main()
 {
@@ -333,55 +349,53 @@ int main()
 
     // TODO: Try std::string keys!
 
-    TEST(int, 8u);
-    TEST(int, 8u << 1);
-    TEST(int, 8u << 2);
-    TEST(int, 8u << 3);
-    TEST(int, 8u << 4);
-    TEST(int, 8u << 5);
-    TEST(int, 8u << 6);
-    TEST(int, 8u << 7);
-    TEST(int, 8u << 8);
-    TEST(int, 8u << 9);
-    TEST(int, 8u << 10);
-    TEST(int, 8u << 11);
-    TEST(int, 8u << 12);
+    TEST(int, int, 8u);
+    TEST(int, int, 8u << 1);
+    TEST(int, int, 8u << 2);
+    TEST(int, int, 8u << 3);
+    TEST(int, int, 8u << 4);
+    TEST(int, int, 8u << 5);
+    TEST(int, int, 8u << 6);
+    TEST(int, int, 8u << 7);
+    TEST(int, int, 8u << 8);
+    TEST(int, int, 8u << 9);
+    TEST(int, int, 8u << 10);
 #if 0
-    TEST(int, 8u << 13);
-    TEST(int, 8u << 14);
-    TEST(int, 8u << 15);
-    TEST(int, 8u << 16);
-    TEST(int, 8u << 17);
-    TEST(int, 8u << 18);
+    TEST(int, int, 8u << 11);
+    TEST(int, int, 8u << 12);
+    TEST(int, int, 8u << 13);
+    TEST(int, int, 8u << 14);
+    TEST(int, int, 8u << 15);
+    TEST(int, int, 8u << 16);
+    TEST(int, int, 8u << 17);
+    TEST(int, int, 8u << 18);
 #endif
 
     for (auto & of : output_files.ofs) {
         of << "]\n\n"
-           << "struct_timings = [\n";
+           << "string_timings = [\n";
     }
 
+    TEST(std::string, std::string, 8u);
+    TEST(std::string, std::string, 8u << 1);
+    TEST(std::string, std::string, 8u << 2);
+    TEST(std::string, std::string, 8u << 3);
+    TEST(std::string, std::string, 8u << 4);
+    TEST(std::string, std::string, 8u << 5);
+    TEST(std::string, std::string, 8u << 6);
+    TEST(std::string, std::string, 8u << 7);
+    TEST(std::string, std::string, 8u << 8);
+    TEST(std::string, std::string, 8u << 9);
+    TEST(std::string, std::string, 8u << 10);
 #if 0
-    TEST(largish_struct, 8u);
-    TEST(largish_struct, 8u << 1);
-    TEST(largish_struct, 8u << 2);
-    TEST(largish_struct, 8u << 3);
-    TEST(largish_struct, 8u << 4);
-    TEST(largish_struct, 8u << 5);
-    TEST(largish_struct, 8u << 6);
-    TEST(largish_struct, 8u << 7);
-    TEST(largish_struct, 8u << 8);
-    TEST(largish_struct, 8u << 9);
-    TEST(largish_struct, 8u << 10);
-    TEST(largish_struct, 8u << 11);
-#if 0
-    TEST(largish_struct, 8u << 12);
-    TEST(largish_struct, 8u << 13);
-    TEST(largish_struct, 8u << 14);
-    TEST(largish_struct, 8u << 15);
-    TEST(largish_struct, 8u << 16);
-    TEST(largish_struct, 8u << 17);
-    TEST(largish_struct, 8u << 18);
-#endif
+    TEST(std::string, std::string, 8u << 11);
+    TEST(std::string, std::string, 8u << 12);
+    TEST(std::string, std::string, 8u << 13);
+    TEST(std::string, std::string, 8u << 14);
+    TEST(std::string, std::string, 8u << 15);
+    TEST(std::string, std::string, 8u << 16);
+    TEST(std::string, std::string, 8u << 17);
+    TEST(std::string, std::string, 8u << 18);
 #endif
 
     for (auto & of : output_files.ofs) {

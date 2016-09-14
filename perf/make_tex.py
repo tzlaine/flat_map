@@ -10,9 +10,9 @@ pretty_variant_names = {'boost_flat_map': 'Boost.FlatMap', 'std_map': 'std::map'
 variant_data = {}
 for v in variant_names:
     execfile('{}.py'.format(v))
-    variant_data[v] = {'int': int_timings, 'struct': struct_timings}
+    variant_data[v] = {'int': int_timings, 'string': string_timings}
 
-element_type_marks = {'int': 'square', 'struct': 'triangle'}
+element_type_marks = {'int': 'square', 'string': 'triangle'}
 operation_colors = {'insert': 'red', 'iterate': 'green', 'erase': 'blue'}
 #operation_marks = {'insert': '+', 'iterate': 'o', 'find': '|', 'erase': '-'}
 operation_marks = {'insert': '|', 'iterate': '|', 'find': '|', 'erase': '|'}
@@ -78,10 +78,10 @@ def operation_chart(operation, element_type):
         ytick_float += y_step
         ytick += str(ytick_float)
 
-    title = '{} Operations, {}-Valued Elements'.format(operation.title(), element_type)
+    title = '{0} Operations, <{1}, {1}> Elements'.format(operation.title(), element_type)
     ylabel = 'Time [milliseconds]'
     if len(operation_list) == 2:
-        title = '{} Cost Ratio, {}-Valued Elements'.format(operation.title(), element_type)
+        title = '{0} Cost Ratio, <{1}, {1}> Elements'.format(operation.title(), element_type)
         ylabel = 'Ratio'
 
     retval = '''\\begin{{center}}
@@ -125,16 +125,17 @@ def operation_chart(operation, element_type):
 contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
 contents = contents.replace('%%% insert, int %%%', operation_chart('insert', 'int'))
+contents = contents.replace('%%% insert, string %%%', operation_chart('insert', 'string'))
 contents = contents.replace('%%% iterate, int %%%', operation_chart('iterate', 'int'))
+contents = contents.replace('%%% iterate, string %%%', operation_chart('iterate', 'string'))
 contents = contents.replace('%%% find, int %%%', operation_chart('find', 'int'))
+contents = contents.replace('%%% find, string %%%', operation_chart('find', 'string'))
 contents = contents.replace('%%% erase, int %%%', operation_chart('erase', 'int'))
+contents = contents.replace('%%% erase, string %%%', operation_chart('erase', 'string'))
 
 contents = contents.replace('%%% insert/iterate, int %%%', operation_chart('insert/iterate', 'int'))
+contents = contents.replace('%%% insert/iterate, string %%%', operation_chart('insert/iterate', 'string'))
 contents = contents.replace('%%% insert/find, int %%%', operation_chart('insert/find', 'int'))
-
-#contents = contents.replace('%%% insert, struct %%%', operation_chart('insert', 'struct'))
-#contents = contents.replace('%%% iterate, struct %%%', operation_chart('iterate', 'struct'))
-#contents = contents.replace('%%% find, struct %%%', operation_chart('find', 'struct'))
-#contents = contents.replace('%%% erase, struct %%%', operation_chart('erase', 'struct'))
+contents = contents.replace('%%% insert/find, string %%%', operation_chart('insert/find', 'string'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)

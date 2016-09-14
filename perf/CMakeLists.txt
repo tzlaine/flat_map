@@ -21,6 +21,7 @@ find_package(PythonInterp)
 set(perf_test_output
     boost_flat_map.py
     std_map.py
+    unordered_map.py
     vector.py
     vector_custom_pair.py
 )
