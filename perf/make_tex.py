@@ -2,10 +2,10 @@
 
 import math
 
-variant_names = ['boost_flat_map', 'std_map', 'vector', 'vector_custom_pair']
-variant_colors = {'boost_flat_map': 'blue', 'std_map': 'red', 'vector': 'green', 'vector_custom_pair': 'black'}
+variant_names = ['boost_flat_map', 'std_map', 'unordered_map', 'vector', 'vector_custom_pair']
+variant_colors = {'boost_flat_map': 'blue', 'std_map': 'red', 'unordered_map': 'brown', 'vector': 'green', 'vector_custom_pair': 'black'}
 
-pretty_variant_names = {'boost_flat_map': 'Boost.FlatMap', 'std_map': 'std::map', 'vector': 'std::vector', 'vector_custom_pair': 'std::vector (custom pair)'}
+pretty_variant_names = {'boost_flat_map': 'Boost.FlatMap', 'std_map': 'std::map', 'unordered_map': 'std::unordered\\_map', 'vector': 'std::vector', 'vector_custom_pair': 'std::vector (custom pair)'}
 
 variant_data = {}
 for v in variant_names:
@@ -14,8 +14,8 @@ for v in variant_names:
 
 element_type_marks = {'int': 'square', 'struct': 'triangle'}
 operation_colors = {'insert': 'red', 'iterate': 'green', 'erase': 'blue'}
-#operation_marks = {'insert': '+', 'iterate': 'o', 'lower bound': '|', 'erase': '-'}
-operation_marks = {'insert': '|', 'iterate': '|', 'lower bound': '|', 'erase': '|'}
+#operation_marks = {'insert': '+', 'iterate': 'o', 'find': '|', 'erase': '-'}
+operation_marks = {'insert': '|', 'iterate': '|', 'find': '|', 'erase': '|'}
 
 def operation_chart(operation, element_type):
     retval = ''
@@ -125,15 +125,15 @@ contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
 contents = contents.replace('%%% insert, int %%%', operation_chart('insert', 'int'))
 contents = contents.replace('%%% iterate, int %%%', operation_chart('iterate', 'int'))
-contents = contents.replace('%%% lower bound, int %%%', operation_chart('lower bound', 'int'))
+contents = contents.replace('%%% find, int %%%', operation_chart('find', 'int'))
 contents = contents.replace('%%% erase, int %%%', operation_chart('erase', 'int'))
 
 contents = contents.replace('%%% insert/iterate, int %%%', operation_chart('insert/iterate', 'int'))
-contents = contents.replace('%%% insert/lower bound, int %%%', operation_chart('insert/lower bound', 'int'))
+contents = contents.replace('%%% insert/find, int %%%', operation_chart('insert/find', 'int'))
 
 #contents = contents.replace('%%% insert, struct %%%', operation_chart('insert', 'struct'))
 #contents = contents.replace('%%% iterate, struct %%%', operation_chart('iterate', 'struct'))
-#contents = contents.replace('%%% lower bound, struct %%%', operation_chart('lower bound', 'struct'))
+#contents = contents.replace('%%% find, struct %%%', operation_chart('find', 'struct'))
 #contents = contents.replace('%%% erase, struct %%%', operation_chart('erase', 'struct'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)

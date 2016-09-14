@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <unordered_map>
 #include <numeric>
 #include <vector>
 #include <random>
@@ -15,6 +16,7 @@ enum map_impl_kind
 {
     boost_flat_map,
     std_map,
+    unordered_map,
     sorted_vector,
     sorted_vector_custom_pair,
 
@@ -34,7 +36,7 @@ struct sorted_vec_map
 
     typename std::vector<value_type>::iterator lower_bound(T const & t)
     {
-        value_type value{t, U()};
+        value_type const value{t, U()};
         return std::lower_bound(
             v.begin(), v.end(),
             value,
@@ -44,15 +46,26 @@ struct sorted_vec_map
         );
     }
 
+    typename std::vector<value_type>::iterator find(T const & t)
+    {
+        auto const it = lower_bound(t);
+        if (it != v.end() && it->first == t)
+            return it;
+        return v.end();
+    }
+
     U& operator[](T const & t)
     {
-        value_type value{t, U()};
-        return v.insert(lower_bound(t), value)->second;
+        value_type const value{t, U()};
+        auto const it = lower_bound(t);
+        if (it != v.end() && it->first == t)
+            return it->second;
+        return v.insert(it, value)->second;
     }
 
     void erase(T const & t)
     {
-        auto it = lower_bound(t);
+        auto it = find(t);
         if (it != v.end())
             v.erase(it);
     }
@@ -66,6 +79,9 @@ void reserve(Map & m, size_t size)
 
 template <typename ...T>
 void reserve(std::map<T...> &, size_t) {}
+
+template <typename ...T>
+void reserve(std::unordered_map<T...> &, size_t) {}
 
 template <typename T, typename U>
 typename std::vector<std::pair<T, U>>::const_iterator begin(sorted_vec_map<T, U> const & c)
@@ -119,6 +135,12 @@ template <typename T>
 struct map_impl<T, boost_flat_map>
 {
     using type = boost::container::flat_map<int, T>;
+};
+
+template <typename T>
+struct map_impl<T, unordered_map>
+{
+    using type = std::unordered_map<int, T>;
 };
 
 template <typename T>
@@ -232,7 +254,7 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
             double time = 0.0;
             for (auto e : v) {
                 auto start = std::chrono::high_resolution_clock::now();
-                auto const it = map.lower_bound(e);
+                auto const it = map.find(e);
                 if (it != end_)
                     key_sum += it->first;
                 auto stop = std::chrono::high_resolution_clock::now();
@@ -241,8 +263,8 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
             times.push_back(time);
         }
         auto const elapsed = single_elapsed_value(times);
-        output_files.ofs[MapImpl] << "'lower bound': " << elapsed << ",";
-        std::cout << "  " << kind_name << elapsed << " ms lower bound\n";
+        output_files.ofs[MapImpl] << "'find': " << elapsed << ",";
+        std::cout << "  " << kind_name << elapsed << " ms find\n";
         if (key_sum == 2)
             std::cout << "  SURPRISE! key_sum=" << key_sum << "\n";
     }
@@ -285,6 +307,7 @@ void test(std::size_t size, output_files_t & output_files)
 
     test_map_type<T, boost_flat_map, iterations>("boost flat_map", v, output_files);
     test_map_type<T, std_map, iterations>("std::map", v, output_files);
+    test_map_type<T, unordered_map, iterations>("std::unordered_map", v, output_files);
     test_map_type<T, sorted_vector, iterations>("vector", v, output_files);
     test_map_type<T, sorted_vector_custom_pair, iterations>("vector (custom-pair)", v, output_files);
 
@@ -300,12 +323,15 @@ int main()
     output_files_t output_files;
     output_files.ofs[boost_flat_map].open("boost_flat_map.py");
     output_files.ofs[std_map].open("std_map.py");
+    output_files.ofs[unordered_map].open("unordered_map.py");
     output_files.ofs[sorted_vector].open("vector.py");
     output_files.ofs[sorted_vector_custom_pair].open("vector_custom_pair.py");
 
     for (auto & of : output_files.ofs) {
         of << "int_timings = [\n";
     }
+
+    // TODO: Try std::string keys!
 
     TEST(int, 8u);
     TEST(int, 8u << 1);
@@ -320,12 +346,12 @@ int main()
     TEST(int, 8u << 10);
     TEST(int, 8u << 11);
     TEST(int, 8u << 12);
+#if 0
     TEST(int, 8u << 13);
     TEST(int, 8u << 14);
     TEST(int, 8u << 15);
     TEST(int, 8u << 16);
     TEST(int, 8u << 17);
-#if 0
     TEST(int, 8u << 18);
 #endif
 

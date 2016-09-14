@@ -25,9 +25,9 @@ libstdc++.\\
 
 These first four graphs cover the \code{int}-value-type case.  The first graph
 shows insertion of N elements with random keys; the second shows full
-iteration across all N elements; the third shows \code{map.lower_bound()}
-called once for each key used in the original insertions; and the fourth shows
-erasure of all N elements, by the keys used in the original insertions.
+iteration across all N elements; the third shows \code{map.find()} called once
+for each key used in the original insertions; and the fourth shows erasure of
+all N elements, by the keys used in the original insertions.
 
 %%% insert, int %%%
 
@@ -43,9 +43,9 @@ to node-based \code{map}.
 For all variants but \code{map}, iteration is relatively similar, and much
 faster that \code{map}'s.
 
-%%% lower bound, int %%%
+%%% find, int %%%
 
-\code{lower_bound()} performance is roughly similar across all the
+\code{find()} performance is roughly similar across all the
 implementations, and they all show superlinear growth.  Note that
 Boost.FlatMap performs the best here.
 
