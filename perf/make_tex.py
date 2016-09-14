@@ -27,9 +27,10 @@ def operation_chart(operation, element_type):
 
     operation_list = operation.split('/')
 
-    for k,v in variant_data.items():
+    for variant_name in variant_names:
+        data = variant_data[variant_name]
         points = ''
-        for element in v[element_type]:
+        for element in data[element_type]:
             x = element['size']
             if len(operation_list) == 2:
                 y = element[operation_list[0]]
@@ -43,11 +44,11 @@ def operation_chart(operation, element_type):
             ymax = max(ymax, y)
             points += '({x},{y})'.format(**locals())
         plots.append({
-            'color': variant_colors[k],
+            'color': variant_colors[variant_name],
             'mark': operation in operation_marks and operation_marks[operation] or '|',
             'points': points,
         })
-        legends.append(pretty_variant_names[k])
+        legends.append(pretty_variant_names[variant_name])
 
     legends = ','.join(legends)
 
