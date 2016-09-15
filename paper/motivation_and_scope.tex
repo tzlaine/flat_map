@@ -30,8 +30,10 @@ for each key used in the original insertions; and the fourth shows erasure of
 all N elements, by the keys used in the original insertions.
 
 \begin{tikzpicture}[baseline]
-    \begin{axis}[
-        small,legend pos=outer north east,legend entries={Boost.FlatMap,std::map,std::unordered\_map,std::vector,std::vector (custom pair)},
+    \begin{groupplot}[group style={group size= 2 by 4}, width=3.25in]
+
+    \nextgroupplot[
+        %small,%legend pos=outer north east,legend entries={Boost.FlatMap,std::map,std::unordered\_map,std::vector,std::vector (custom pair)},
         %width=3.75in,
         title={Insert Operations, <int, int> Elements},
         xlabel={N},
@@ -62,13 +64,10 @@ all N elements, by the keys used in the original insertions.
     \addplot[color=black,mark=|,no markers,]
         coordinates {(10,0.006927)(100,0.0595058)(1000,0.628059)(10000,11.1191)};
 
-    \end{axis}%
-\end{tikzpicture}%
-~%
-%
-\begin{tikzpicture}[baseline]
-    \begin{axis}[
-        small,
+    \coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+
+    \nextgroupplot[
+        %small,
         %width=3.75in,
         title={Insert Operations, <string, string> Elements},
         xlabel={N},
@@ -86,23 +85,52 @@ all N elements, by the keys used in the original insertions.
 
     \addplot[color=blue,mark=|,no markers,]
         coordinates {(10,0.0070676)(100,0.0932798)(1000,4.41807)(10000,293.533)};
+    \label{plots:plot1}
 
     \addplot[color=red,mark=|,no markers,]
         coordinates {(10,0.0065504)(100,0.0683816)(1000,0.777764)(10000,8.74438)};
+    \label{plots:plot2}
 
     \addplot[color=brown,mark=|,no markers,]
         coordinates {(10,0.007151)(100,0.0716148)(1000,0.740306)(10000,7.42573)};
+    \label{plots:plot3}
 
     \addplot[color=green,mark=|,no markers,]
         coordinates {(10,0.0071808)(100,0.0908476)(1000,4.43712)(10000,302.252)};
+    \label{plots:plot4}
 
     \addplot[color=black,mark=|,no markers,]
         coordinates {(10,0.007098)(100,0.0902228)(1000,4.43289)(10000,286.363)};
+    \label{plots:plot5}
 
-    \end{axis}%
-\end{tikzpicture}%
-~%
-%
+    \coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+
+    \end{groupplot}%
+    \path (top-|current bounding box.west)-- 
+          node[anchor=south,rotate=90] {Time [milliseconds]} 
+          (bot-|current bounding box.west);
+
+% legend
+\path (top|-current bounding box.south)--
+      coordinate(legendpos)
+      (bot|-current bounding box.south);
+\matrix[
+    matrix of nodes,
+    anchor=south,
+    draw,
+    inner sep=0.2em,
+    draw
+  ]at([yshift=-5ex]legendpos)
+  {
+    \ref{plots:plot1}& Boost.FlatMap&[5pt]
+    \ref{plots:plot2}& std::map&[5pt]
+    \ref{plots:plot3}& std::unordered\_map&[5pt]
+    \ref{plots:plot4}& std::vector&[5pt]
+    \ref{plots:plot5}& std::vector (custom pair)&[5pt]\\
+  };
+\end{tikzpicture}
+\\
+\\
 
 As one might expect, insertionion takes longer in contiguous-storage
 implementations.  Boost.FlatMap and a sorted \code{vector<pair<int, int>>}
