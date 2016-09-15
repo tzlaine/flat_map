@@ -17,7 +17,11 @@ operation_colors = {'insert': 'red', 'iterate': 'green', 'erase': 'blue'}
 #operation_marks = {'insert': '+', 'iterate': 'o', 'find': '|', 'erase': '-'}
 operation_marks = {'insert': '|', 'iterate': '|', 'find': '|', 'erase': '|'}
 
-def operation_chart(operation, element_type):
+x_is_power_of_2 = False
+power_of_2_initial = 8
+non_power_of_2_initial = 10
+
+def operation_chart(operation, element_type, show_legend = False):
     retval = ''
 
     plots = []
@@ -56,21 +60,34 @@ def operation_chart(operation, element_type):
     y_step = math.pow(10, math.trunc(math.log10(ymax)))
     ymax = (math.trunc(ymax / y_step) + 1) * y_step
 
-    xtick_int = 8
+    if x_is_power_of_2:
+        xtick_int = power_of_2_initial
+    else:
+        xtick_int = non_power_of_2_initial
     xtick = str(xtick_int)
     xtick_labels = xtick
+    steps = 2
     while xtick_int <= xmax:
         xtick += ','
         xtick_labels += ','
 
-        xtick_int <<= 1
+        if x_is_power_of_2:
+            xtick_int <<= 1
+        else:
+            xtick_int *= non_power_of_2_initial
 
         xtick += str(xtick_int)
-        if 64 * 1024 < xtick_int:
-            if 1024 * 1024 <= xtick_int:
-                xtick_labels += '{}M'.format(xtick_int >> 20)
-            elif 1024 <= xtick_int:
-                xtick_labels += '{}k'.format(xtick_int >> 10)
+        if x_is_power_of_2:
+            if 64 * 1024 < xtick_int:
+                if 1024 * 1024 <= xtick_int:
+                    xtick_labels += '{}M'.format(xtick_int >> 20)
+                elif 1024 <= xtick_int:
+                    xtick_labels += '{}k'.format(xtick_int >> 10)
+        else:
+            if non_power_of_2_initial ** 2 < xtick_int:
+                xtick_labels += '${}^{{{}}}$'.format(non_power_of_2_initial, steps)
+
+        steps += 1
 
     ytick_float = 0.0
     ytick = str(ytick_float)
@@ -85,24 +102,30 @@ def operation_chart(operation, element_type):
         title = '{0} Cost Ratio, <{1}, {1}> Elements'.format(operation.title(), element_type)
         ylabel = 'Ratio'
 
-    retval = '''\\begin{{center}}
-\\begin{{tikzpicture}}[baseline]
+    legend_pos = ''
+    legend_entries = ''
+    if show_legend:
+        legend_pos = 'legend pos=outer north east,'
+        legend_entries = 'legend entries={{{legends}}},'.format(**locals())
+
+    #TODO: Use \groupplot ?
+
+    retval = '''\\begin{{tikzpicture}}[baseline]
     \\begin{{axis}}[
-        width=3.75in,
+        small,{legend_pos}{legend_entries}
+        %width=3.75in,
         title={{{title}}},
         xlabel={{N}},
-        ylabel={{{ylabel}}},
+        ylabel={{{ylabel}}},%\empty,
         xmin=0, xmax={xmax},
         ymin=0, ymax={ymax},
         xtick={{{xtick}}},
         xticklabels={{{xtick_labels}}},
         ytick={{{ytick}}},
-        legend pos=north west,
         ymajorgrids=true,
         grid style=dashed,
         scaled x ticks=false,
         scaled y ticks=true,
-        legend entries={{{legends}}},
         ]
 
 '''.format(**locals())
@@ -117,26 +140,27 @@ def operation_chart(operation, element_type):
 
 '''.format(**locals())
 
-    retval += '''    \\end{{axis}}
-\\end{{tikzpicture}}
-\\end{{center}}'''.format()
+    retval += '''    \\end{{axis}}%
+\\end{{tikzpicture}}%
+~%
+%'''.format()
 
     return retval
 
 contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
-contents = contents.replace('%%% insert, int %%%', operation_chart('insert', 'int'))
+contents = contents.replace('%%% insert, int %%%', operation_chart('insert', 'int', True))
 contents = contents.replace('%%% insert, string %%%', operation_chart('insert', 'string'))
-contents = contents.replace('%%% iterate, int %%%', operation_chart('iterate', 'int'))
+contents = contents.replace('%%% iterate, int %%%', operation_chart('iterate', 'int', True))
 contents = contents.replace('%%% iterate, string %%%', operation_chart('iterate', 'string'))
-contents = contents.replace('%%% find, int %%%', operation_chart('find', 'int'))
+contents = contents.replace('%%% find, int %%%', operation_chart('find', 'int', True))
 contents = contents.replace('%%% find, string %%%', operation_chart('find', 'string'))
-contents = contents.replace('%%% erase, int %%%', operation_chart('erase', 'int'))
+contents = contents.replace('%%% erase, int %%%', operation_chart('erase', 'int', True))
 contents = contents.replace('%%% erase, string %%%', operation_chart('erase', 'string'))
 
-contents = contents.replace('%%% insert/iterate, int %%%', operation_chart('insert/iterate', 'int'))
+contents = contents.replace('%%% insert/iterate, int %%%', operation_chart('insert/iterate', 'int', True))
 contents = contents.replace('%%% insert/iterate, string %%%', operation_chart('insert/iterate', 'string'))
-contents = contents.replace('%%% insert/find, int %%%', operation_chart('insert/find', 'int'))
+contents = contents.replace('%%% insert/find, int %%%', operation_chart('insert/find', 'int', True))
 contents = contents.replace('%%% insert/find, string %%%', operation_chart('insert/find', 'string'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)

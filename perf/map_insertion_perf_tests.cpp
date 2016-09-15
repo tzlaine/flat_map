@@ -347,8 +347,7 @@ int main()
         of << "int_timings = [\n";
     }
 
-    // TODO: Try std::string keys!
-
+#if 0
     TEST(int, int, 8u);
     TEST(int, int, 8u << 1);
     TEST(int, int, 8u << 2);
@@ -360,7 +359,6 @@ int main()
     TEST(int, int, 8u << 8);
     TEST(int, int, 8u << 9);
     TEST(int, int, 8u << 10);
-#if 0
     TEST(int, int, 8u << 11);
     TEST(int, int, 8u << 12);
     TEST(int, int, 8u << 13);
@@ -368,7 +366,15 @@ int main()
     TEST(int, int, 8u << 15);
     TEST(int, int, 8u << 16);
     TEST(int, int, 8u << 17);
-    TEST(int, int, 8u << 18);
+#else
+    TEST(int, int, 10u);
+    TEST(int, int, 100u);
+    TEST(int, int, 1000u);
+    TEST(int, int, 10000u);
+#if 0
+    TEST(int, int, 100000u);
+    TEST(int, int, 1000000u);
+#endif
 #endif
 
     for (auto & of : output_files.ofs) {
@@ -376,6 +382,7 @@ int main()
            << "string_timings = [\n";
     }
 
+#if 0
     TEST(std::string, std::string, 8u);
     TEST(std::string, std::string, 8u << 1);
     TEST(std::string, std::string, 8u << 2);
@@ -387,7 +394,6 @@ int main()
     TEST(std::string, std::string, 8u << 8);
     TEST(std::string, std::string, 8u << 9);
     TEST(std::string, std::string, 8u << 10);
-#if 0
     TEST(std::string, std::string, 8u << 11);
     TEST(std::string, std::string, 8u << 12);
     TEST(std::string, std::string, 8u << 13);
@@ -395,7 +401,15 @@ int main()
     TEST(std::string, std::string, 8u << 15);
     TEST(std::string, std::string, 8u << 16);
     TEST(std::string, std::string, 8u << 17);
-    TEST(std::string, std::string, 8u << 18);
+#else
+    TEST(std::string, std::string, 10u);
+    TEST(std::string, std::string, 100u);
+    TEST(std::string, std::string, 1000u);
+    TEST(std::string, std::string, 10000u);
+#if 0
+    TEST(std::string, std::string, 100000u);
+    TEST(std::string, std::string, 1000000u);
+#endif
 #endif
 
     for (auto & of : output_files.ofs) {
