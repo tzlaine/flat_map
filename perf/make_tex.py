@@ -47,6 +47,7 @@ def operation_chart(operation, element_type):
             'color': variant_colors[variant_name],
             'mark': operation in operation_marks and operation_marks[operation] or '|',
             'points': points,
+            'dashed': False # TODO: Perhaps use this to show multiple platforms on one chart.
         })
         legends.append(pretty_variant_names[variant_name])
 
@@ -85,9 +86,9 @@ def operation_chart(operation, element_type):
         ylabel = 'Ratio'
 
     retval = '''\\begin{{center}}
-    \\begin{{tikzpicture}}
+\\begin{{tikzpicture}}[baseline]
     \\begin{{axis}}[
-        width=3.5in,
+        width=3.75in,
         title={{{title}}},
         xlabel={{N}},
         ylabel={{{ylabel}}},
@@ -110,15 +111,15 @@ def operation_chart(operation, element_type):
         color = plot['color']
         mark = plot['mark']
         points = plot['points']
-        retval += '''    \\addplot[color={color},mark={mark},]
+        dashed = plot['dashed'] and 'dashed' or ''
+        retval += '''    \\addplot[color={color},mark={mark},no markers,{dashed}]
         coordinates {{{points}}};
 
 '''.format(**locals())
 
     retval += '''    \\end{{axis}}
 \\end{{tikzpicture}}
-\\end{{center}}
-'''.format()
+\\end{{center}}'''.format()
 
     return retval
 
