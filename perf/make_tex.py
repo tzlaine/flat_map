@@ -21,107 +21,151 @@ x_is_power_of_2 = False
 power_of_2_initial = 8
 non_power_of_2_initial = 10
 
-def operation_chart(operation, element_type, show_legend = False):
+class plot_t:
+    def __init__(
+        self,
+        color,
+        mark,
+        points,
+        dashed
+    ):
+        self.color = color
+        self.mark = mark
+        self.points = points
+        self.dashed = dashed
+
+class graph_t:
+    def __init__(
+        self,
+        title,
+        plots,
+        xmax,
+        ymax,
+        xtick,
+        xtick_labels,
+        ytick
+    ):
+        self.title = title
+        self.plots = plots
+        self.xmax = xmax
+        self.ymax = ymax
+        self.xtick = xtick
+        self.xtick_labels = xtick_labels
+        self.ytick = ytick
+
+def operation_chart(operation, *element_types):
     retval = ''
 
-    plots = []
-    legends = []
-    xmax = 0
-    ymax = 0
+    graphs = []
 
-    operation_list = operation.split('/')
-
-    for variant_name in variant_names:
-        data = variant_data[variant_name]
-        points = ''
-        for element in data[element_type]:
-            x = element['size']
-            if len(operation_list) == 2:
-                y = element[operation_list[0]]
-                divisor = element[operation_list[1]]
-                if divisor == 0:
-                    divisor = 0.00001
-                y /= divisor
-            else:
-                y = element[operation]
-            xmax = max(xmax, x)
-            ymax = max(ymax, y)
-            points += '({x},{y})'.format(**locals())
-        plots.append({
-            'color': variant_colors[variant_name],
-            'mark': operation in operation_marks and operation_marks[operation] or '|',
-            'points': points,
-            'dashed': False # TODO: Perhaps use this to show multiple platforms on one chart.
-        })
-        legends.append(pretty_variant_names[variant_name])
-
-    legends = ','.join(legends)
-
-    y_step = math.pow(10, math.trunc(math.log10(ymax)))
-    ymax = (math.trunc(ymax / y_step) + 1) * y_step
-
-    if x_is_power_of_2:
-        xtick_int = power_of_2_initial
-    else:
-        xtick_int = non_power_of_2_initial
-    xtick = str(xtick_int)
-    xtick_labels = xtick
-    steps = 2
-    while xtick_int <= xmax:
-        xtick += ','
-        xtick_labels += ','
-
-        if x_is_power_of_2:
-            xtick_int <<= 1
-        else:
-            xtick_int *= non_power_of_2_initial
-
-        xtick += str(xtick_int)
-        if x_is_power_of_2:
-            if 64 * 1024 < xtick_int:
-                if 1024 * 1024 <= xtick_int:
-                    xtick_labels += '{}M'.format(xtick_int >> 20)
-                elif 1024 <= xtick_int:
-                    xtick_labels += '{}k'.format(xtick_int >> 10)
-        else:
-            if non_power_of_2_initial ** 2 < xtick_int:
-                xtick_labels += '${}^{{{}}}$'.format(non_power_of_2_initial, steps)
-
-        steps += 1
-
-    ytick_float = 0.0
-    ytick = str(ytick_float)
-    while ytick_float <= ymax:
-        ytick += ','
-        ytick_float += y_step
-        ytick += str(ytick_float)
-
-    title = '{0} Operations, <{1}, {1}> Elements'.format(operation.title(), element_type)
     ylabel = 'Time [milliseconds]'
+    operation_list = operation.split('/')
     if len(operation_list) == 2:
-        title = '{0} Cost Ratio, <{1}, {1}> Elements'.format(operation.title(), element_type)
         ylabel = 'Ratio'
 
-    legend_pos = ''
-    legend_entries = ''
-    if show_legend:
-        legend_pos = 'legend pos=outer north east,'
-        legend_entries = 'legend entries={{{legends}}},'.format(**locals())
+    for element_type in element_types:
+        plots = []
+        xmax = 0
+        ymax = 0
 
-    #TODO: Use \groupplot ?
+        for variant_name in variant_names:
+            data = variant_data[variant_name]
+            points = ''
+            for element in data[element_type]:
+                x = element['size']
+                if len(operation_list) == 2:
+                    y = element[operation_list[0]]
+                    divisor = element[operation_list[1]]
+                    if divisor == 0:
+                        divisor = 0.00001
+                    y /= divisor
+                else:
+                    y = element[operation]
+                xmax = max(xmax, x)
+                ymax = max(ymax, y)
+                points += '({x},{y})'.format(**locals())
+            plots.append(
+                plot_t(
+                    variant_colors[variant_name],
+                    operation in operation_marks and operation_marks[operation] or '|',
+                    points,
+                    False # TODO: Perhaps use this to show multiple platforms on one chart.
+                )
+            )
 
-    retval = '''\\begin{{tikzpicture}}[baseline]
-    \\begin{{axis}}[
-        small,{legend_pos}{legend_entries}
-        %width=3.75in,
-        title={{{title}}},
+        y_step = math.pow(10, math.trunc(math.log10(ymax)))
+        ymax = (math.trunc(ymax / y_step) + 1) * y_step
+
+        if x_is_power_of_2:
+            xtick_int = power_of_2_initial
+        else:
+            xtick_int = non_power_of_2_initial
+        xtick = str(xtick_int)
+        xtick_labels = xtick
+        steps = 2
+        while xtick_int <= xmax:
+            xtick += ','
+            xtick_labels += ','
+
+            if x_is_power_of_2:
+                xtick_int <<= 1
+            else:
+                xtick_int *= non_power_of_2_initial
+
+            xtick += str(xtick_int)
+            if x_is_power_of_2:
+                if 64 * 1024 < xtick_int:
+                    if 1024 * 1024 <= xtick_int:
+                        xtick_labels += '{}M'.format(xtick_int >> 20)
+                    elif 1024 <= xtick_int:
+                        xtick_labels += '{}k'.format(xtick_int >> 10)
+            else:
+                if non_power_of_2_initial ** 2 < xtick_int:
+                    xtick_labels += '${}^{{{}}}$'.format(non_power_of_2_initial, steps)
+
+            steps += 1
+
+        ytick_float = 0.0
+        ytick = str(ytick_float)
+        while ytick_float <= ymax:
+            ytick += ','
+            ytick_float += y_step
+            ytick += str(ytick_float)
+
+        title = '<{0}, {0}> Elements'.format(element_type)
+        if len(operation_list) == 2:
+            title = '<{0}, {0}> Elements'.format(element_type)
+
+        graphs.append(
+            graph_t(
+                title,
+                plots,
+                xmax,
+                ymax,
+                xtick,
+                xtick_labels,
+                ytick
+            )
+        )
+
+    num_element_types = len(element_types)
+    retval = '''\\begin{{tikzpicture}}
+    \\begin{{groupplot}}[group style={{group size={} by 1}}, width={}in]
+
+'''.format(num_element_types, 6.5 / num_element_types)
+
+    for i in range(len(graphs)):
+        graph = graphs[i]
+        retval += '''
+    \\nextgroupplot[
+        title={{{graph.title}}},
         xlabel={{N}},
-        ylabel={{{ylabel}}},%\empty,
-        xmin=0, xmax={xmax},
-        ymin=0, ymax={ymax},
-        xtick={{{xtick}}},
-        xticklabels={{{xtick_labels}}},
-        ytick={{{ytick}}},
+        ylabel=\empty,
+        xmin=0, xmax={graph.xmax},
+        ymin=0, ymax={graph.ymax},
+        xtick={{{graph.xtick}}},
+        xticklabels={{{graph.xtick_labels}}},
+        ytick={{{graph.ytick}}},
         ymajorgrids=true,
         grid style=dashed,
         scaled x ticks=false,
@@ -130,37 +174,66 @@ def operation_chart(operation, element_type, show_legend = False):
 
 '''.format(**locals())
 
-    for plot in plots:
-        color = plot['color']
-        mark = plot['mark']
-        points = plot['points']
-        dashed = plot['dashed'] and 'dashed' or ''
-        retval += '''    \\addplot[color={color},mark={mark},no markers,{dashed}]
-        coordinates {{{points}}};
+        for j in range(len(graph.plots)):
+            plot = graph.plots[j]
+            dashed = plot.dashed and 'dashed' or ''
+            retval += '''    \\addplot[color={plot.color},mark={plot.mark},no markers,{dashed}]
+        coordinates {{{plot.points}}};
+        \\label{{plots:plot{j}}}
 
 '''.format(**locals())
 
-    retval += '''    \\end{{axis}}%
-\\end{{tikzpicture}}%
-~%
-%'''.format()
+        if i == 0:
+            retval += '''    \coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+
+'''
+        if i == len(graphs) - 1:
+            retval += '''    \coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+
+'''
+
+    retval += '''    \\end{{groupplot}}
+
+    \\path (top-|current bounding box.west)-- 
+          node[anchor=south,rotate=90] {{{ylabel}}} 
+          (bot-|current bounding box.west);
+
+    % legend
+    \path (top|-current bounding box.south)--
+          coordinate(legendpos)
+          (bot|-current bounding box.south);
+    \matrix[
+        matrix of nodes,
+        anchor=south,
+        draw,
+        inner sep=0.2em,
+        draw
+      ]at([yshift=-5ex]legendpos)
+      {{'''.format(ylabel=ylabel)
+
+    legends = map(lambda x: pretty_variant_names[x], variant_names)
+    for i in range(len(legends)):
+        retval += '''
+        \\ref{{plots:plot{}}}& {}&[5pt]'''.format(i, legends[i])
+
+    retval += '''\\\\
+      };
+
+\\end{tikzpicture}
+\\\\
+\\\\
+'''
 
     return retval
 
 contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
-contents = contents.replace('%%% insert, int %%%', operation_chart('insert', 'int', True))
-contents = contents.replace('%%% insert, string %%%', operation_chart('insert', 'string'))
-contents = contents.replace('%%% iterate, int %%%', operation_chart('iterate', 'int', True))
-contents = contents.replace('%%% iterate, string %%%', operation_chart('iterate', 'string'))
-contents = contents.replace('%%% find, int %%%', operation_chart('find', 'int', True))
-contents = contents.replace('%%% find, string %%%', operation_chart('find', 'string'))
-contents = contents.replace('%%% erase, int %%%', operation_chart('erase', 'int', True))
-contents = contents.replace('%%% erase, string %%%', operation_chart('erase', 'string'))
+contents = contents.replace('%%% insert, int, string %%%', operation_chart('insert', 'int', 'string'))
+contents = contents.replace('%%% iterate, int, string %%%', operation_chart('iterate', 'int', 'string'))
+contents = contents.replace('%%% find, int, string %%%', operation_chart('find', 'int', 'string'))
+contents = contents.replace('%%% erase, int, string %%%', operation_chart('erase', 'int', 'string'))
 
-contents = contents.replace('%%% insert/iterate, int %%%', operation_chart('insert/iterate', 'int', True))
-contents = contents.replace('%%% insert/iterate, string %%%', operation_chart('insert/iterate', 'string'))
-contents = contents.replace('%%% insert/find, int %%%', operation_chart('insert/find', 'int', True))
-contents = contents.replace('%%% insert/find, string %%%', operation_chart('insert/find', 'string'))
+contents = contents.replace('%%% insert/iterate, int, string %%%', operation_chart('insert/iterate', 'int', 'string'))
+contents = contents.replace('%%% insert/find, int, string %%%', operation_chart('insert/find', 'int', 'string'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)

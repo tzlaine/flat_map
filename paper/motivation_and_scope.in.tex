@@ -29,8 +29,7 @@ iteration across all N elements; the third shows \code{map.find()} called once
 for each key used in the original insertions; and the fourth shows erasure of
 all N elements, by the keys used in the original insertions.
 
-%%% insert, int %%%
-%%% insert, string %%%
+%%% insert, int, string %%%
 
 As one might expect, insertionion takes longer in contiguous-storage
 implementations.  Boost.FlatMap and a sorted \code{vector<pair<int, int>>}
@@ -39,21 +38,18 @@ have superlinear growth in insertion time.  While the curve for sorted
 superlinear as well, it is dramatically flatter in its growth -- much closer
 to node-based \code{map}.
 
-%%% iterate, int %%%
-%%% iterate, string %%%
+%%% iterate, int, string %%%
 
 For all variants but \code{map}, iteration is relatively similar, and much
 faster that \code{map}'s.
 
-%%% find, int %%%
-%%% find, string %%%
+%%% find, int, string %%%
 
 \code{find()} performance is roughly similar across all the
 implementations, and they all show superlinear growth.  Note that
 Boost.FlatMap performs the best here.
 
-%%% erase, int %%%
-%%% erase, string %%%
+%%% erase, int, string %%%
 
 Erasure has a similar performance profile to insertion, except that the sorted
 \code{vector<pair<int, int>>} performs substantially better than
