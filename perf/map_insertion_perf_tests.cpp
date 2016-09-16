@@ -347,7 +347,7 @@ int main()
         of << "int_timings = [\n";
     }
 
-#if 0
+#if 1
     TEST(int, int, 8u);
     TEST(int, int, 8u << 1);
     TEST(int, int, 8u << 2);
@@ -365,7 +365,6 @@ int main()
     TEST(int, int, 8u << 14);
     TEST(int, int, 8u << 15);
     TEST(int, int, 8u << 16);
-    TEST(int, int, 8u << 17);
 #else
     TEST(int, int, 10u);
     TEST(int, int, 100u);
@@ -382,7 +381,7 @@ int main()
            << "string_timings = [\n";
     }
 
-#if 0
+#if 1
     TEST(std::string, std::string, 8u);
     TEST(std::string, std::string, 8u << 1);
     TEST(std::string, std::string, 8u << 2);
@@ -400,7 +399,6 @@ int main()
     TEST(std::string, std::string, 8u << 14);
     TEST(std::string, std::string, 8u << 15);
     TEST(std::string, std::string, 8u << 16);
-    TEST(std::string, std::string, 8u << 17);
 #else
     TEST(std::string, std::string, 10u);
     TEST(std::string, std::string, 100u);
