@@ -29,7 +29,7 @@ operation_colors = {'insert': 'red', 'iterate': 'green', 'erase': 'blue'}
 #operation_marks = {'insert': '+', 'iterate': 'o', 'find': '|', 'erase': '-'}
 operation_marks = {'insert': '|', 'iterate': '|', 'find': '|', 'erase': '|'}
 
-x_is_power_of_2 = False
+x_is_power_of_2 = True
 power_of_2_initial = 8
 non_power_of_2_initial = 10
 
