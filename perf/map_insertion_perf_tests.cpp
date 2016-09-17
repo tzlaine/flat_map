@@ -360,13 +360,10 @@ int main()
     TEST(int, int, 8u << 9);
     TEST(int, int, 8u << 10);
     TEST(int, int, 8u << 11);
-#if 0
     TEST(int, int, 8u << 12);
     TEST(int, int, 8u << 13);
     TEST(int, int, 8u << 14);
     TEST(int, int, 8u << 15);
-    TEST(int, int, 8u << 16);
-#endif
 #else
     TEST(int, int, 10u);
     TEST(int, int, 100u);
@@ -393,13 +390,10 @@ int main()
     TEST(std::string, std::string, 8u << 9);
     TEST(std::string, std::string, 8u << 10);
     TEST(std::string, std::string, 8u << 11);
-#if 0
     TEST(std::string, std::string, 8u << 12);
     TEST(std::string, std::string, 8u << 13);
     TEST(std::string, std::string, 8u << 14);
     TEST(std::string, std::string, 8u << 15);
-    TEST(std::string, std::string, 8u << 16);
-#endif
 #else
     TEST(std::string, std::string, 10u);
     TEST(std::string, std::string, 100u);
