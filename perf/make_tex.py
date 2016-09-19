@@ -127,7 +127,7 @@ def operation_graphs(operation, *element_types):
 
                 xtick += str(xtick_int)
                 if x_is_power_of_2:
-                    if 64 * 1024 < xtick_int:
+                    if 32 * 1024 <= xtick_int:
                         if 1024 * 1024 <= xtick_int:
                             xtick_labels += '{}M'.format(xtick_int >> 20)
                         elif 1024 <= xtick_int:

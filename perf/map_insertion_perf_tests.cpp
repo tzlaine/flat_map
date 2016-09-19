@@ -93,7 +93,7 @@ typename std::vector<std::pair<T, U>>::const_iterator end(sorted_vec_map<T, U> c
 template <typename T, typename U>
 struct custom_pair
 {
-#if 0 // Set to nonzero to see the performance of this custom type match that of std::pair.
+#if 0 // Set to nonzero to see the performance of this custom type match that of std::pair<int, int>.
     custom_pair() :
         first{T()}, second{U()} {}
 
