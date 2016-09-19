@@ -31,7 +31,9 @@ These four sets of graphs cover the most commonly-used operations.  The first
 set shows insertion of N elements with random keys; the second shows full
 iteration across all N elements; the third shows \code{map.find()} called once
 for each key used in the original insertions; and the fourth shows erasure of
-all N elements, by the keys used in the original insertions.
+all N elements, by the keys used in the original insertions.\\
+
+\subsection{Insert}
 
 %%% insert, int, string %%%
 
@@ -42,10 +44,14 @@ growth curves.  The curve for sorted \code{vector} using a custom
 runs.  Note that the custom-pair vector does about the same as the
 \code{vector} of \code{pair} in the \code{<std::string, std::string>} runs.
 
+\subsection{Iterate}
+
 %%% iterate, int, string %%%
 
 For all variants but \code{map} and \code{unordered_map}, iteration is
 relatively similar, and much faster than \code{map}'s.
+
+\subsection{Find}
 
 %%% find, int, string %%%
 
@@ -61,6 +67,8 @@ GCC and Clang on Linux produce nearly identical results.  For \code{<int,
   int>} runs, all implementations are nearly identical.  \code{unordered_map}
 is faster in the \code{<std::string, std::string>} runs, but all other
 variants are very close.
+
+\subsection{Erase}
 
 %%% erase, int, string %%%
 
