@@ -13,62 +13,82 @@ the Boost implementation or one that they rolled themselves.\\
 
 Here are some numbers that show why.  The graphs that follow show runtimes for
 different \code{map}-like associative containers.  The containers used are
-Boost.FlatMap, \code{map}, and two thin wrappers over a sorted \code{vector};
-the ``custom pair'' version of the sorted \code{vector} uses a simple
-\code{struct} instead of \code{pair} for its value type.  All containers use
-an \code{int} as the key type and an \code{int} or a \code{struct} with 5
-\code{double}s for the value type.\\
+Boost.FlatMap, \code{map}, \code{unordered_map}, and two thin wrappers over a
+sorted \code{vector}.  The ``custom pair'' version of the sorted \code{vector}
+uses a simple \code{struct} instead of \code{pair} for its value type.  All
+containers use either \code{<int, int>} or \code{<std::string, std::string>}
+for the value type.\\
 
-All the graphs below were produced on Windows with MSVC 2015.  Similar results
-were obtained on Linux, with Clang 3.9 and libc++, and with g++ 4.8.4 and
-libstdc++.\\
+All data in the graphs below were produced on Windows with MSVC 2015, on Linux
+with Clang 3.8 and libc++, or on Linux with g++ 4.8.4 and libstdc++.\\
 
-These four TODO graphs cover the \code{int}-value-type case.  The first graph
-shows insertion of N elements with random keys; the second shows full
+Each set of six graphs shows the performance of a single operation on all
+map-variants.  The left column shows the \code{<int, int>} runs, and the right
+column shows the \code{<std::string, std::string>} ones.  Each row shows one
+platform/compiler configuration. \\
+
+These four sets of graphs cover the most commonly-used operations.  The first
+set shows insertion of N elements with random keys; the second shows full
 iteration across all N elements; the third shows \code{map.find()} called once
 for each key used in the original insertions; and the fourth shows erasure of
 all N elements, by the keys used in the original insertions.
 
 %%% insert, int, string %%%
 
-As one might expect, insertionion takes longer in contiguous-storage
-implementations.  Boost.FlatMap and a sorted \code{vector<pair<int, int>>}
-have superlinear growth in insertion time.  While the curve for sorted
-\code{vector} using a custom \code{struct} instead of a \code{pair} is
-superlinear as well, it is dramatically flatter in its growth -- much closer
-to node-based \code{map}.
+Unsurprisingly, insertion takes longer in contiguous-storage implementations.
+Boost.FlatMap and a sorted \code{vector<pair<int, int>>} have the steepest
+growth curves.  The curve for sorted \code{vector} using a custom
+\code{struct} is dramatically flatter in its growth in the \code{<int, int>}
+runs.  Note that the custom-pair vector does about the same as the
+\code{vector} of \code{pair} in the \code{<std::string, std::string>} runs.
 
 %%% iterate, int, string %%%
 
-For all variants but \code{map}, iteration is relatively similar, and much
-faster that \code{map}'s.
+For all variants but \code{map} and \code{unordered_map}, iteration is
+relatively similar, and much faster than \code{map}'s.
 
 %%% find, int, string %%%
 
-\code{find()} performance is roughly similar across all the
-implementations, and they all show superlinear growth.  Note that
-Boost.FlatMap performs the best here.
+\code{find()} performance is where things get interesting.  The different
+platforms produce strikingly different results.\\
+
+In the MSVC runs, there is a large differentiation between Boost.FlatMap and
+\code{map}; in fact, Boost.FlatMap even beats both the sorted \code{vector}
+variants.  Also, \code{unordered_map} is the clear winner, regardless of
+valkue type.\\
+
+GCC and Clang on Linux produce nearly identical results.  For \code{<int,
+  int>} runs, all implementations are nearly identical.  \code{unordered_map}
+is faster in the \code{<std::string, std::string>} runs, but all other
+variants are very close.
 
 %%% erase, int, string %%%
 
-Erasure has a similar performance profile to insertion, except that the sorted
-\code{vector<pair<int, int>>} performs substantially better than
-Boost.FlatMap.\\
+Erasure has a nearly identical performance profile to insertion.\\
 
 
 \subsection{Implications}
 
-TODO Iteration is vastly cheaper for contiguous-storage variants.  It has been
-suggested that a \code{map} with a custom allocator can achieve similar
-performance to flat data structures, but this would not apply to iteration
-performance, unless the values were added to the \code{map} in sorted order.\\
+Iteration is vastly cheaper for contiguous-storage variants.  Any node-based
+associative container will always be slower than a flattened one for
+iteration.  For use cases where there is a lot of iteration, this can be the
+deciding runtime performance consideration.\\
 
 In all the graphs above, the reason the custom-\code{pair} sorted vector
 performs so much better than \code{vector<pair<int, int>>} seems to be that
 the custom-\code{pair} type has \code{nothrow} special functions.
 Implementing all the special functions and adding \code{nothrow(false)} to
 each makes the custom-\code{pair} version perform identically to the
-\code{pair<int, int>} version.
+\code{pair<int, int>} version.\\
 
-Boost.FlatMap differs quite a bit from a sorted \code{vector}.  Clearly there
-are a lot of QOI choices to make in implementing a standard \code{flat_map}.
+Boost.FlatMap differs significantly from a sorted \code{vector}.  Clearly
+there are a lot of QOI choices that affect the runtime performance of a
+standard \code{flat_map}.\\
+
+The fact that insertion and erasure operations produce such similar results
+implies that pre-\code{reserve()}ing space will probably not make much
+difference when using a flat map.\\
+
+Use cases in which the runtime performance of a flat map would be no better
+than \code{map} or \code{unordered_map}, the user may still decide to use a
+flat implementation for the storage savings.
