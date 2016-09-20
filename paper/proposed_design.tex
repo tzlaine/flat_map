@@ -41,6 +41,11 @@ for customization by users.
 
 \subsection{Design}
 
+\subsubsection{\code{flat_map} Is Based On Boost.FlatMap}
+
+This proposal represents existing practice in widespread use -- Boost.FlatMap
+has been available since 2011 (Boost 1.48).
+
 \subsubsection{\code{flat_map} Is Nearly API-Compatible With \code{map}}
 
 Most of \code{flat_map}'s interface is identical to \code{map}'s.  Some of the
@@ -67,7 +72,20 @@ replacements exist, each suited to a certain use.  A user may have a
 small-buffer implementation of \code{vector}, like LLVM's \code{SmallVector},
 or \code{boost::container::small_vector}.  The user may also want to avoid
 allocations altogether, if the maximum number of elements N is known \textit{a
-  priori}.  If so, \code{boost::container::static_vector} could be used.
+  priori}.  If so, \code{boost::container::static_vector} could be used.  The
+user's specific performance requirements will dictate which of these is most
+appropriate.\\
+
+There are certain optimization opportunities that are lost to the user of a
+non-adapter \code{flat_map}.  For instance, if one does not care about the
+strong or weak exception guarantees in the code that uses \code{flat_map}, one
+can use a \code{Container} that blindly uses \code{move} all the time, even if
+exceptions may occur.  This allows performance curves more like the
+\code{<int, int>} custom-pair sorted \code{vector} in the graphs above.\\
+
+While this may not be a use case for a majority of users, there are numerous
+such niche use cases, and these niches are not well served by a fixed
+underlying storage implementation.
 
 \subsubsection{Interface Differences From \code{map}}
 
@@ -153,3 +171,13 @@ Other member semantics are the same as for \code{map}.
 \subsubsection{\code{flat_map} Synopsis}
 
 \lstinputlisting[language=C++]{map_synopsis.hpp}
+
+
+\section{Acknowledgements}
+
+Thanks to Ion Gazta\~{n}aga for writing Boost.FlatMap.\\
+
+Thanks to David Sankel, for reviews of early drafts of this paper.\\
+
+Thanks to Bloomberg, for sharing performance data they used for internal
+decisionmaking on their use of flat maps.
