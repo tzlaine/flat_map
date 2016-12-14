@@ -14,9 +14,63 @@ enum map_impl_kind
 {
     boost_flat_map,
     std_map,
+    split_map,
 
     num_map_impl_kinds
 };
+
+template <typename T, typename U, typename ValueType = std::pair<T, U>>
+struct split_map_t
+{
+    using const_iterator = typename std::vector<U>::const_iterator;
+
+    size_t size() const
+    { return values.size(); }
+
+    typename std::vector<U>::iterator lower_bound(T const & t)
+    {
+        auto const keys_it = std::lower_bound(keys.begin(), keys.end(), t);
+        return values.begin() + (keys_it - keys.begin());
+    }
+
+    typename std::vector<U>::iterator find(T const & t)
+    {
+        auto const it = lower_bound(t);
+        if (it != values.end() && *it == t)
+            return it;
+        return values.end();
+    }
+
+    U& operator[](T const & t)
+    {
+        auto const values_it = lower_bound(t);
+        if (values_it != values.end() && *values_it == t)
+            return *values_it;
+        auto const keys_it = keys.begin() + (values_it - values.begin());
+        keys.insert(keys_it, t);
+        return *values.insert(values_it, U());
+    }
+
+    void erase(T const & t)
+    {
+        auto values_it = find(t);
+        if (values_it != values.end()) {
+            auto const keys_it = keys.begin() + (values_it - values.begin());
+            keys.erase(keys_it);
+            values.erase(values_it);
+        }
+    }
+
+    std::vector<U> keys;
+    std::vector<U> values;
+};
+
+template <typename T, typename U>
+typename split_map_t<T, U>::const_iterator begin(split_map_t<T, U> const & c)
+{ return c.values.begin(); }
+template <typename T, typename U>
+typename split_map_t<T, U>::const_iterator end(split_map_t<T, U> const & c)
+{ return c.values.end(); }
 
 template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
 struct map_impl
@@ -28,6 +82,12 @@ template <typename KeyType, typename ValueType>
 struct map_impl<KeyType, ValueType, boost_flat_map>
 {
     using type = boost::container::flat_map<KeyType, ValueType>;
+};
+
+template <typename KeyType, typename ValueType>
+struct map_impl<KeyType, ValueType, split_map>
+{
+    using type = split_map_t<KeyType, ValueType>;
 };
 
 template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
@@ -44,6 +104,14 @@ std::string make_key(int x)
 template <typename ValueType>
 ValueType make_value()
 { return ValueType(); }
+
+template <typename T>
+auto value_of(T const & x)
+{ return x; }
+
+template <typename T, typename U>
+auto value_of(std::pair<T, U> const & x)
+{ return x.second; }
 
 struct output_files_t
 {
@@ -107,11 +175,10 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
         int copy_count = 0; // To ensure the optimizer does not remove the loops below altogether, do some work.
         for (auto const & map : maps) {
             std::vector<ValueType> values(map.size());
-            using value_type = typename map_t::value_type;
             auto start = std::chrono::high_resolution_clock::now();
             std::transform(
                 begin(map), end(map), begin(values),
-                [](value_type const & elem){ return elem.second; }
+                [](auto const & elem){ return value_of(elem); }
             );
             auto stop = std::chrono::high_resolution_clock::now();
             times.push_back(dur(stop - start).count() * 1000);
@@ -171,6 +238,7 @@ void test(std::size_t size, output_files_t & output_files)
 
     test_map_type<KeyType, ValueType, boost_flat_map, iterations>("boost flat_map", v, output_files);
     test_map_type<KeyType, ValueType, std_map, iterations>("std::map", v, output_files);
+    test_map_type<KeyType, ValueType, split_map, iterations>("split_map", v, output_files);
 
     std::cout << std::endl;
 }
@@ -185,6 +253,7 @@ int main()
     output_files_t output_files;
     output_files.ofs[boost_flat_map].open("boost_flat_map.py");
     output_files.ofs[std_map].open("std_map.py");
+    output_files.ofs[split_map].open("split_map.py");
 
     for (auto & of : output_files.ofs) {
         of << "int_timings = [\n";
@@ -201,10 +270,10 @@ int main()
     TEST(int, int, 8u << 7);
     TEST(int, int, 8u << 8);
     TEST(int, int, 8u << 9);
-#if 0
     TEST(int, int, 8u << 10);
     TEST(int, int, 8u << 11);
     TEST(int, int, 8u << 12);
+#if 0
     TEST(int, int, 8u << 13);
     TEST(int, int, 8u << 14);
     TEST(int, int, 8u << 15);
@@ -233,10 +302,10 @@ int main()
     TEST(std::string, std::string, 8u << 7);
     TEST(std::string, std::string, 8u << 8);
     TEST(std::string, std::string, 8u << 9);
-#if 0
     TEST(std::string, std::string, 8u << 10);
     TEST(std::string, std::string, 8u << 11);
     TEST(std::string, std::string, 8u << 12);
+#if 0
     TEST(std::string, std::string, 8u << 13);
     TEST(std::string, std::string, 8u << 14);
     TEST(std::string, std::string, 8u << 15);

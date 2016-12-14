@@ -1,0 +1,31 @@
+int_timings = [
+    {'size': 8, 'insert': 0.010253,'iterate': 0.0006006,'find': 0.0048748,},
+    {'size': 16, 'insert': 0.0151146,'iterate': 0.0007122,'find': 0.0097772,},
+    {'size': 32, 'insert': 0.0219452,'iterate': 0.0006288,'find': 0.0195278,},
+    {'size': 64, 'insert': 0.0431486,'iterate': 0.0005864,'find': 0.0385112,},
+    {'size': 128, 'insert': 0.0852888,'iterate': 0.0006282,'find': 0.0756658,},
+    {'size': 256, 'insert': 0.170372,'iterate': 0.0005868,'find': 0.15038,},
+    {'size': 512, 'insert': 0.342062,'iterate': 0.0006708,'find': 0.296645,},
+    {'size': 1024, 'insert': 0.684861,'iterate': 0.0007684,'find': 0.595536,},
+    {'size': 2048, 'insert': 6.7155,'iterate': 0.0016062,'find': 1.3851,},
+    {'size': 4096, 'insert': 9.94744,'iterate': 0.003003,'find': 2.83163,},
+    {'size': 8192, 'insert': 22.0898,'iterate': 0.009778,'find': 5.74449,},
+    {'size': 16384, 'insert': 27.2314,'iterate': 0.01327,'find': 9.83455,},
+    {'size': 32768, 'insert': 328.261,'iterate': 0.0331886,'find': 24.4262,},
+]
+
+string_timings = [
+    {'size': 8, 'insert': 0.007138,'iterate': 0.0008522,'find': 0.005825,},
+    {'size': 16, 'insert': 0.0161472,'iterate': 0.0010058,'find': 0.0136178,},
+    {'size': 32, 'insert': 0.0344466,'iterate': 0.001341,'find': 0.0247928,},
+    {'size': 64, 'insert': 0.0896054,'iterate': 0.0021372,'find': 0.0524512,},
+    {'size': 128, 'insert': 0.24183,'iterate': 0.0035062,'find': 0.106253,},
+    {'size': 256, 'insert': 0.854771,'iterate': 0.0151694,'find': 0.222168,},
+    {'size': 512, 'insert': 3.38741,'iterate': 0.0194438,'find': 0.475994,},
+    {'size': 1024, 'insert': 12.016,'iterate': 0.0318056,'find': 1.0183,},
+    {'size': 2048, 'insert': 39.6661,'iterate': 0.0542948,'find': 2.12132,},
+    {'size': 4096, 'insert': 133.414,'iterate': 0.099468,'find': 4.55145,},
+    {'size': 8192, 'insert': 484.712,'iterate': 0.189437,'find': 9.77859,},
+    {'size': 16384, 'insert': 1814.42,'iterate': 0.370508,'find': 20.9983,},
+    {'size': 32768, 'insert': 6355.59,'iterate': 0.74631,'find': 45.6506,},
+]
