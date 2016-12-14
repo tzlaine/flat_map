@@ -1,12 +1,10 @@
 #include <boost/container/flat_map.hpp>
 
 #include <algorithm>
-#include <array>
 #include <chrono>
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <unordered_map>
 #include <numeric>
 #include <vector>
 #include <random>
@@ -16,114 +14,9 @@ enum map_impl_kind
 {
     boost_flat_map,
     std_map,
-    unordered_map,
-    sorted_vector,
-    sorted_vector_custom_pair,
 
     num_map_impl_kinds
 };
-
-template <typename T, typename U, typename ValueType = std::pair<T, U>>
-struct sorted_vec_map
-{
-    using value_type = ValueType;
-
-    size_t size() const
-    { return v.size(); }
-
-    void reserve(size_t size)
-    { v.reserve(size); }
-
-    typename std::vector<value_type>::iterator lower_bound(T const & t)
-    {
-        value_type const value{t, U()};
-        return std::lower_bound(
-            v.begin(), v.end(),
-            value,
-            [](value_type const & lhs, value_type const & rhs){
-                return lhs.first < rhs.first;
-            }
-        );
-    }
-
-    typename std::vector<value_type>::iterator find(T const & t)
-    {
-        auto const it = lower_bound(t);
-        if (it != v.end() && it->first == t)
-            return it;
-        return v.end();
-    }
-
-    U& operator[](T const & t)
-    {
-        value_type const value{t, U()};
-        auto const it = lower_bound(t);
-        if (it != v.end() && it->first == t)
-            return it->second;
-        return v.insert(it, value)->second;
-    }
-
-    void erase(T const & t)
-    {
-        auto it = find(t);
-        if (it != v.end())
-            v.erase(it);
-    }
-
-    std::vector<value_type> v;
-};
-
-template <typename Map>
-void reserve(Map & m, size_t size)
-{ m.reserve(size); }
-
-template <typename ...T>
-void reserve(std::map<T...> &, size_t) {}
-
-template <typename ...T>
-void reserve(std::unordered_map<T...> &, size_t) {}
-
-template <typename T, typename U>
-typename std::vector<std::pair<T, U>>::const_iterator begin(sorted_vec_map<T, U> const & c)
-{ return c.v.begin(); }
-template <typename T, typename U>
-typename std::vector<std::pair<T, U>>::const_iterator end(sorted_vec_map<T, U> const & c)
-{ return c.v.end(); }
-
-template <typename T, typename U>
-struct custom_pair
-{
-#if 0 // Set to nonzero to see the performance of this custom type match that of std::pair<int, int>.
-    custom_pair() :
-        first{T()}, second{U()} {}
-
-    custom_pair(T const & t, U const & u) :
-        first{t}, second{u} {}
-
-    custom_pair(custom_pair const & rhs) noexcept(false) :
-        first{rhs.first}, second{rhs.second} {}
-    custom_pair(custom_pair && rhs) noexcept(false) :
-        first{std::move(rhs.first)}, second{std::move(rhs.second)} {}
-
-    custom_pair& operator=(custom_pair const & rhs) noexcept(false)
-    { first = rhs.first; second = rhs.second; return *this; }
-    custom_pair& operator=(custom_pair && rhs) noexcept(false)
-    { first = std::move(rhs.first); second = std::move(rhs.second); return *this; }
-#endif
-
-    T first;
-    U second;
-};
-
-template <typename T, typename U>
-using sorted_vec_map_custom_pair = sorted_vec_map<T, U, custom_pair<T, U>>;
-
-template <typename T, typename U>
-typename std::vector<custom_pair<T, U>>::const_iterator begin(sorted_vec_map_custom_pair<T, U> const & c)
-{ return c.v.begin(); }
-template <typename T, typename U>
-typename std::vector<custom_pair<T, U>>::const_iterator end(sorted_vec_map_custom_pair<T, U> const & c)
-{ return c.v.end(); }
 
 template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
 struct map_impl
@@ -135,24 +28,6 @@ template <typename KeyType, typename ValueType>
 struct map_impl<KeyType, ValueType, boost_flat_map>
 {
     using type = boost::container::flat_map<KeyType, ValueType>;
-};
-
-template <typename KeyType, typename ValueType>
-struct map_impl<KeyType, ValueType, unordered_map>
-{
-    using type = std::unordered_map<KeyType, ValueType>;
-};
-
-template <typename KeyType, typename ValueType>
-struct map_impl<KeyType, ValueType, sorted_vector>
-{
-    using type = sorted_vec_map<KeyType, ValueType>;
-};
-
-template <typename KeyType, typename ValueType>
-struct map_impl<KeyType, ValueType, sorted_vector_custom_pair>
-{
-    using type = sorted_vec_map_custom_pair<KeyType, ValueType>;
 };
 
 template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
@@ -169,15 +44,6 @@ std::string make_key(int x)
 template <typename ValueType>
 ValueType make_value()
 { return ValueType(); }
-
-struct largish_struct
-{
-    largish_struct() {}
-    largish_struct(int k) : key{k} {}
-    operator int() {return key;}
-    int key;
-    std::array<double, 5> data;
-};
 
 struct output_files_t
 {
@@ -200,28 +66,29 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
 
     std::vector<map_t> maps(Iterations);
 
+    int const other_map_factor = 64;
+    std::vector<map_t> other_maps_were_not_measuring(other_map_factor * Iterations);
+
     output_files.ofs[MapImpl] << "    {'size': " << v.size() << ", ";
 
     kind_name += ':';
     kind_name += std::string(40 - kind_name.size(), ' ');
 
-#if 0
-    std::cout << "********************************************************************************\n";
-    std::cout << std::chrono::high_resolution_clock::period().num
-              << " / "
-              << std::chrono::high_resolution_clock::period().den
-              << "\n";
-#endif
-
     {
         std::vector<double> times;
-        for (auto & map : maps) {
-#if 0 // Disabled, as it seems to make no difference (at least on Linux+GCC/Clang). TODO: Try MSVC!
-            reserve(map, v.size());
-#endif
+        for (int i = 0, size = (int)maps.size(); i < size; ++i) {
+            map_t & map = maps[i];
             double time = 0.0;
             for (auto e : v)
             {
+                // allocate a bunch of nodes of the same size to fragment
+                // memory.
+                for (int j = 0; j < other_map_factor; ++j) {
+                    map_t & other_map =
+                        other_maps_were_not_measuring[other_map_factor * i + j];
+                    auto const key = make_key<KeyType>(other_map_factor * e + j);
+                    other_map[key] = make_value<ValueType>();
+                }
                 auto const key = make_key<KeyType>(e);
                 auto start = std::chrono::high_resolution_clock::now();
                 map[key] = make_value<ValueType>();
@@ -283,24 +150,6 @@ void test_map_type(std::string kind_name, std::vector<int> const & v, output_fil
             std::cout << "  SURPRISE! key_count=" << key_count << "\n";
     }
 
-    {
-        std::vector<double> times;
-        for (auto & map : maps) {
-            double time = 0.0;
-            for (auto e : v) {
-                auto const key = make_key<KeyType>(e);
-                auto start = std::chrono::high_resolution_clock::now();
-                map.erase(key);
-                auto stop = std::chrono::high_resolution_clock::now();
-                time += dur(stop - start).count() * 1000;
-            }
-            times.push_back(time);
-        }
-        auto const elapsed = single_elapsed_value(times);
-        output_files.ofs[MapImpl] << "'erase': " << elapsed << ",";
-        std::cout << "  " << kind_name << elapsed << " ms erase\n";
-    }
-
     output_files.ofs[MapImpl] << "},\n";
 }
 
@@ -322,9 +171,6 @@ void test(std::size_t size, output_files_t & output_files)
 
     test_map_type<KeyType, ValueType, boost_flat_map, iterations>("boost flat_map", v, output_files);
     test_map_type<KeyType, ValueType, std_map, iterations>("std::map", v, output_files);
-    test_map_type<KeyType, ValueType, unordered_map, iterations>("std::unordered_map", v, output_files);
-    test_map_type<KeyType, ValueType, sorted_vector, iterations>("vector", v, output_files);
-    test_map_type<KeyType, ValueType, sorted_vector_custom_pair, iterations>("vector (custom-pair)", v, output_files);
 
     std::cout << std::endl;
 }
@@ -339,9 +185,6 @@ int main()
     output_files_t output_files;
     output_files.ofs[boost_flat_map].open("boost_flat_map.py");
     output_files.ofs[std_map].open("std_map.py");
-    output_files.ofs[unordered_map].open("unordered_map.py");
-    output_files.ofs[sorted_vector].open("vector.py");
-    output_files.ofs[sorted_vector_custom_pair].open("vector_custom_pair.py");
 
     for (auto & of : output_files.ofs) {
         of << "int_timings = [\n";
@@ -358,12 +201,14 @@ int main()
     TEST(int, int, 8u << 7);
     TEST(int, int, 8u << 8);
     TEST(int, int, 8u << 9);
+#if 0
     TEST(int, int, 8u << 10);
     TEST(int, int, 8u << 11);
     TEST(int, int, 8u << 12);
     TEST(int, int, 8u << 13);
     TEST(int, int, 8u << 14);
     TEST(int, int, 8u << 15);
+#endif
 #else
     TEST(int, int, 10u);
     TEST(int, int, 100u);
@@ -388,12 +233,14 @@ int main()
     TEST(std::string, std::string, 8u << 7);
     TEST(std::string, std::string, 8u << 8);
     TEST(std::string, std::string, 8u << 9);
+#if 0
     TEST(std::string, std::string, 8u << 10);
     TEST(std::string, std::string, 8u << 11);
     TEST(std::string, std::string, 8u << 12);
     TEST(std::string, std::string, 8u << 13);
     TEST(std::string, std::string, 8u << 14);
     TEST(std::string, std::string, 8u << 15);
+#endif
 #else
     TEST(std::string, std::string, 10u);
     TEST(std::string, std::string, 100u);

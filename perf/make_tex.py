@@ -11,10 +11,13 @@ compiler_data_paths = {
 }
 pretty_compiler_names = {'msvc': 'Windows/MSVC 2015', 'clang': 'Linux/Clang 3.8', 'gcc': 'Linux/GCC 4.8.4'}
 
-variant_names = ['boost_flat_map', 'std_map', 'unordered_map', 'vector', 'vector_custom_pair']
-variant_colors = {'boost_flat_map': 'blue', 'std_map': 'red', 'unordered_map': 'brown', 'vector': 'green', 'vector_custom_pair': 'black'}
+#variant_names = ['boost_flat_map', 'std_map', 'unordered_map', 'vector', 'vector_custom_pair']
+variant_names = ['boost_flat_map', 'std_map']
+#variant_colors = {'boost_flat_map': 'blue', 'std_map': 'red', 'unordered_map': 'brown', 'vector': 'green', 'vector_custom_pair': 'black'}
+variant_colors = {'boost_flat_map': 'blue', 'std_map': 'red'}
 
-pretty_variant_names = {'boost_flat_map': 'Boost.FlatMap', 'std_map': 'std::map', 'unordered_map': 'std::unordered\\_map', 'vector': 'std::vector', 'vector_custom_pair': 'std::vector (custom pair)'}
+#pretty_variant_names = {'boost_flat_map': 'Boost.FlatMap', 'std_map': 'std::map', 'unordered_map': 'std::unordered\\_map', 'vector': 'std::vector', 'vector_custom_pair': 'std::vector (custom pair)'}
+pretty_variant_names = {'boost_flat_map': 'Boost.FlatMap', 'std_map': 'std::map'}
 
 compiler_data = {}
 for c in compiler_names:
@@ -255,12 +258,12 @@ def operation_graphs(operation, *element_types):
 
 contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
-contents = contents.replace('%%% insert, int, string %%%', operation_graphs('insert', 'int', 'string'))
-contents = contents.replace('%%% iterate, int, string %%%', operation_graphs('iterate', 'int', 'string'))
+#contents = contents.replace('%%% insert, int, string %%%', operation_graphs('insert', 'int', 'string'))
+#contents = contents.replace('%%% iterate, int, string %%%', operation_graphs('iterate', 'int', 'string'))
 contents = contents.replace('%%% find, int, string %%%', operation_graphs('find', 'int', 'string'))
-contents = contents.replace('%%% erase, int, string %%%', operation_graphs('erase', 'int', 'string'))
+#contents = contents.replace('%%% erase, int, string %%%', operation_graphs('erase', 'int', 'string'))
 
-contents = contents.replace('%%% insert/iterate, int, string %%%', operation_graphs('insert/iterate', 'int', 'string'))
-contents = contents.replace('%%% insert/find, int, string %%%', operation_graphs('insert/find', 'int', 'string'))
+#contents = contents.replace('%%% insert/iterate, int, string %%%', operation_graphs('insert/iterate', 'int', 'string'))
+#contents = contents.replace('%%% insert/find, int, string %%%', operation_graphs('insert/find', 'int', 'string'))
 
 open('../../paper/motivation_and_scope.tex', 'w').write(contents)

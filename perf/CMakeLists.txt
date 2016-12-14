@@ -11,7 +11,6 @@ endif ()
 
 add_executable(perf_test ${CMAKE_SOURCE_DIR}/map_insertion_perf_tests.cpp)
 
-#set_property(TARGET perf_test PROPERTY CXX_STANDARD 14)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_libraries(perf_test c++)
 endif ()
@@ -21,9 +20,6 @@ find_package(PythonInterp)
 set(perf_test_output
     boost_flat_map.py
     std_map.py
-    unordered_map.py
-    vector.py
-    vector_custom_pair.py
 )
 
 add_custom_command(
