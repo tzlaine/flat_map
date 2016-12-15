@@ -258,8 +258,8 @@ def operation_graphs(operation, *element_types):
 
 contents = open('../../paper/motivation_and_scope.in.tex', 'r').read()
 
-#contents = contents.replace('%%% insert, int, string %%%', operation_graphs('insert', 'int', 'string'))
-#contents = contents.replace('%%% iterate, int, string %%%', operation_graphs('iterate', 'int', 'string'))
+contents = contents.replace('%%% insert, int, string %%%', operation_graphs('insert', 'int', 'string'))
+contents = contents.replace('%%% iterate, int, string %%%', operation_graphs('iterate', 'int', 'string'))
 contents = contents.replace('%%% find, int, string %%%', operation_graphs('find', 'int', 'string'))
 #contents = contents.replace('%%% erase, int, string %%%', operation_graphs('erase', 'int', 'string'))
 

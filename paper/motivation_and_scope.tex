@@ -35,7 +35,208 @@ all N elements, by the keys used in the original insertions.\\
 
 \subsection{Insert}
 
-%%% insert, int, string %%%
+\begin{tikzpicture}
+    \begin{groupplot}[group style={group size=2 by 3, group name=myplot}, width=3.25in]
+
+
+    \nextgroupplot[
+        title={<int, int> Elements},
+        xlabel=\empty,
+        ylabel={Windows/MSVC 2015},
+        xmin=0, xmax=32768,
+        ymin=0, ymax=600.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0107282)(16,0.0154056)(32,0.0201132)(64,0.0430354)(128,0.116275)(256,0.261726)(512,0.515411)(1024,0.939133)(2048,2.26373)(4096,14.9472)(8192,62.1031)(16384,202.501)(32768,556.732)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.011273)(16,0.0142758)(32,0.0248198)(64,0.0643384)(128,0.229556)(256,0.435233)(512,0.590542)(1024,1.31068)(2048,2.06831)(4096,3.35778)(8192,7.14801)(16384,13.3121)(32768,30.8303)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.010253)(16,0.0151146)(32,0.0219452)(64,0.0431486)(128,0.0852888)(256,0.170372)(512,0.342062)(1024,0.684861)(2048,6.7155)(4096,9.94744)(8192,22.0898)(16384,27.2314)(32768,328.261)};
+        \label{plots:plot2}
+
+    \coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+
+
+    \nextgroupplot[
+        title={<string, string> Elements},
+        xlabel=\empty,
+        ylabel=\empty,
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7000.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1000.0,2000.0,3000.0,4000.0,5000.0,6000.0,7000.0,8000.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0070268)(16,0.0167056)(32,0.0353396)(64,0.0963944)(128,0.254107)(256,0.902222)(512,3.52088)(1024,12.2972)(2048,39.8929)(4096,133.61)(8192,482.887)(16384,1812.6)(32768,6600.27)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0066768)(16,0.0139818)(32,0.0333436)(64,0.0682806)(128,0.152224)(256,0.329686)(512,0.714662)(1024,1.57226)(2048,3.41602)(4096,7.61822)(8192,17.4112)(16384,39.308)(32768,92.2018)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.007138)(16,0.0161472)(32,0.0344466)(64,0.0896054)(128,0.24183)(256,0.854771)(512,3.38741)(1024,12.016)(2048,39.6661)(4096,133.414)(8192,484.712)(16384,1814.42)(32768,6355.59)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel=\empty,
+        ylabel={Linux/Clang 3.8},
+        xmin=0, xmax=32768,
+        ymin=0, ymax=600.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0107282)(16,0.0154056)(32,0.0201132)(64,0.0430354)(128,0.116275)(256,0.261726)(512,0.515411)(1024,0.939133)(2048,2.26373)(4096,14.9472)(8192,62.1031)(16384,202.501)(32768,556.732)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.011273)(16,0.0142758)(32,0.0248198)(64,0.0643384)(128,0.229556)(256,0.435233)(512,0.590542)(1024,1.31068)(2048,2.06831)(4096,3.35778)(8192,7.14801)(16384,13.3121)(32768,30.8303)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.010253)(16,0.0151146)(32,0.0219452)(64,0.0431486)(128,0.0852888)(256,0.170372)(512,0.342062)(1024,0.684861)(2048,6.7155)(4096,9.94744)(8192,22.0898)(16384,27.2314)(32768,328.261)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel=\empty,
+        ylabel=\empty,
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7000.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1000.0,2000.0,3000.0,4000.0,5000.0,6000.0,7000.0,8000.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0070268)(16,0.0167056)(32,0.0353396)(64,0.0963944)(128,0.254107)(256,0.902222)(512,3.52088)(1024,12.2972)(2048,39.8929)(4096,133.61)(8192,482.887)(16384,1812.6)(32768,6600.27)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0066768)(16,0.0139818)(32,0.0333436)(64,0.0682806)(128,0.152224)(256,0.329686)(512,0.714662)(1024,1.57226)(2048,3.41602)(4096,7.61822)(8192,17.4112)(16384,39.308)(32768,92.2018)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.007138)(16,0.0161472)(32,0.0344466)(64,0.0896054)(128,0.24183)(256,0.854771)(512,3.38741)(1024,12.016)(2048,39.6661)(4096,133.414)(8192,484.712)(16384,1814.42)(32768,6355.59)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel={N},
+        ylabel={Linux/GCC 4.8.4},
+        xmin=0, xmax=32768,
+        ymin=0, ymax=600.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,100.0,200.0,300.0,400.0,500.0,600.0,700.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0107282)(16,0.0154056)(32,0.0201132)(64,0.0430354)(128,0.116275)(256,0.261726)(512,0.515411)(1024,0.939133)(2048,2.26373)(4096,14.9472)(8192,62.1031)(16384,202.501)(32768,556.732)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.011273)(16,0.0142758)(32,0.0248198)(64,0.0643384)(128,0.229556)(256,0.435233)(512,0.590542)(1024,1.31068)(2048,2.06831)(4096,3.35778)(8192,7.14801)(16384,13.3121)(32768,30.8303)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.010253)(16,0.0151146)(32,0.0219452)(64,0.0431486)(128,0.0852888)(256,0.170372)(512,0.342062)(1024,0.684861)(2048,6.7155)(4096,9.94744)(8192,22.0898)(16384,27.2314)(32768,328.261)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel={N},
+        ylabel=\empty,
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7000.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1000.0,2000.0,3000.0,4000.0,5000.0,6000.0,7000.0,8000.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0070268)(16,0.0167056)(32,0.0353396)(64,0.0963944)(128,0.254107)(256,0.902222)(512,3.52088)(1024,12.2972)(2048,39.8929)(4096,133.61)(8192,482.887)(16384,1812.6)(32768,6600.27)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0066768)(16,0.0139818)(32,0.0333436)(64,0.0682806)(128,0.152224)(256,0.329686)(512,0.714662)(1024,1.57226)(2048,3.41602)(4096,7.61822)(8192,17.4112)(16384,39.308)(32768,92.2018)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.007138)(16,0.0161472)(32,0.0344466)(64,0.0896054)(128,0.24183)(256,0.854771)(512,3.38741)(1024,12.016)(2048,39.6661)(4096,133.414)(8192,484.712)(16384,1814.42)(32768,6355.59)};
+        \label{plots:plot2}
+
+    \coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+
+    \end{groupplot}
+
+    \path (myplot c1r1.outer north west)% plot in column 1 row 1
+          -- node[anchor=south,rotate=90] {Time [milliseconds]}% label midway
+          (myplot c1r3.outer south west);% plot in column 1 row 3
+
+    % legend
+    \path (myplot c1r3.south west|-current bounding box.south)--
+      coordinate(legendpos)
+      (myplot c2r3.south east|-current bounding box.south);
+    \matrix[
+        matrix of nodes,
+        anchor=south,
+        draw,
+        inner sep=0.2em,
+        draw
+      ]at([yshift=-5ex]legendpos)
+      {
+        \ref{plots:plot0}& Boost.FlatMap&[5pt]
+        \ref{plots:plot1}& std::map&[5pt]
+        \ref{plots:plot2}& split\_map\_t&[5pt]\\
+      };
+
+\end{tikzpicture}
+\\
+\\
+
 
 Unsurprisingly, insertion takes longer in contiguous-storage implementations.
 Boost.FlatMap and a sorted \code{vector<pair<int, int>>} have the steepest
@@ -46,7 +247,208 @@ runs.  Note that the custom-pair vector does about the same as the
 
 \subsection{Iterate}
 
-%%% iterate, int, string %%%
+\begin{tikzpicture}
+    \begin{groupplot}[group style={group size=2 by 3, group name=myplot}, width=3.25in]
+
+
+    \nextgroupplot[
+        title={<int, int> Elements},
+        xlabel=\empty,
+        ylabel={Windows/MSVC 2015},
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0007264)(16,0.0006286)(32,0.0005728)(64,0.000629)(128,0.0009778)(256,0.0007126)(512,0.0013968)(1024,0.0012432)(2048,0.002375)(4096,0.0116216)(8192,0.020296)(16384,0.0196672)(32768,0.0613906)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0009918)(16,0.0010616)(32,0.0012712)(64,0.0023468)(128,0.0053362)(256,0.016608)(512,0.0323784)(1024,0.0667962)(2048,0.18818)(4096,0.656871)(8192,1.39372)(16384,1.92889)(32768,6.09258)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.0006006)(16,0.0007122)(32,0.0006288)(64,0.0005864)(128,0.0006282)(256,0.0005868)(512,0.0006708)(1024,0.0007684)(2048,0.0016062)(4096,0.003003)(8192,0.009778)(16384,0.01327)(32768,0.0331886)};
+        \label{plots:plot2}
+
+    \coordinate (top) at (rel axis cs:0,1);% coordinate at top of the first plot
+
+
+    \nextgroupplot[
+        title={<string, string> Elements},
+        xlabel=\empty,
+        ylabel=\empty,
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0009638)(16,0.0010338)(32,0.0013686)(64,0.0021234)(128,0.00352)(256,0.009624)(512,0.0205336)(1024,0.0309118)(2048,0.0533726)(4096,0.098574)(8192,0.188683)(16384,0.372659)(32768,0.735876)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0011314)(16,0.0016062)(32,0.0025422)(64,0.0049308)(128,0.017069)(256,0.0303252)(512,0.0741714)(1024,0.166362)(2048,0.381543)(4096,0.794682)(8192,1.64244)(16384,3.38516)(32768,6.9833)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.0008522)(16,0.0010058)(32,0.001341)(64,0.0021372)(128,0.0035062)(256,0.0151694)(512,0.0194438)(1024,0.0318056)(2048,0.0542948)(4096,0.099468)(8192,0.189437)(16384,0.370508)(32768,0.74631)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel=\empty,
+        ylabel={Linux/Clang 3.8},
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0007264)(16,0.0006286)(32,0.0005728)(64,0.000629)(128,0.0009778)(256,0.0007126)(512,0.0013968)(1024,0.0012432)(2048,0.002375)(4096,0.0116216)(8192,0.020296)(16384,0.0196672)(32768,0.0613906)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0009918)(16,0.0010616)(32,0.0012712)(64,0.0023468)(128,0.0053362)(256,0.016608)(512,0.0323784)(1024,0.0667962)(2048,0.18818)(4096,0.656871)(8192,1.39372)(16384,1.92889)(32768,6.09258)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.0006006)(16,0.0007122)(32,0.0006288)(64,0.0005864)(128,0.0006282)(256,0.0005868)(512,0.0006708)(1024,0.0007684)(2048,0.0016062)(4096,0.003003)(8192,0.009778)(16384,0.01327)(32768,0.0331886)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel=\empty,
+        ylabel=\empty,
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0009638)(16,0.0010338)(32,0.0013686)(64,0.0021234)(128,0.00352)(256,0.009624)(512,0.0205336)(1024,0.0309118)(2048,0.0533726)(4096,0.098574)(8192,0.188683)(16384,0.372659)(32768,0.735876)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0011314)(16,0.0016062)(32,0.0025422)(64,0.0049308)(128,0.017069)(256,0.0303252)(512,0.0741714)(1024,0.166362)(2048,0.381543)(4096,0.794682)(8192,1.64244)(16384,3.38516)(32768,6.9833)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.0008522)(16,0.0010058)(32,0.001341)(64,0.0021372)(128,0.0035062)(256,0.0151694)(512,0.0194438)(1024,0.0318056)(2048,0.0542948)(4096,0.099468)(8192,0.189437)(16384,0.370508)(32768,0.74631)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel={N},
+        ylabel={Linux/GCC 4.8.4},
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0007264)(16,0.0006286)(32,0.0005728)(64,0.000629)(128,0.0009778)(256,0.0007126)(512,0.0013968)(1024,0.0012432)(2048,0.002375)(4096,0.0116216)(8192,0.020296)(16384,0.0196672)(32768,0.0613906)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0009918)(16,0.0010616)(32,0.0012712)(64,0.0023468)(128,0.0053362)(256,0.016608)(512,0.0323784)(1024,0.0667962)(2048,0.18818)(4096,0.656871)(8192,1.39372)(16384,1.92889)(32768,6.09258)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.0006006)(16,0.0007122)(32,0.0006288)(64,0.0005864)(128,0.0006282)(256,0.0005868)(512,0.0006708)(1024,0.0007684)(2048,0.0016062)(4096,0.003003)(8192,0.009778)(16384,0.01327)(32768,0.0331886)};
+        \label{plots:plot2}
+
+
+    \nextgroupplot[
+        title=\empty,
+        xlabel={N},
+        ylabel=\empty,
+        xmin=0, xmax=32768,
+        ymin=0, ymax=7.0,
+        xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
+        xticklabels={8,,,,,,,,2k,4k,8k,16k,32k,64k},
+        ytick={0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0},
+        ymajorgrids=true,
+        grid style=dashed,
+        scaled x ticks=false,
+        scaled y ticks=true,
+        ]
+
+    \addplot[color=blue,mark=|,no markers,]
+        coordinates {(8,0.0009638)(16,0.0010338)(32,0.0013686)(64,0.0021234)(128,0.00352)(256,0.009624)(512,0.0205336)(1024,0.0309118)(2048,0.0533726)(4096,0.098574)(8192,0.188683)(16384,0.372659)(32768,0.735876)};
+        \label{plots:plot0}
+
+    \addplot[color=red,mark=|,no markers,]
+        coordinates {(8,0.0011314)(16,0.0016062)(32,0.0025422)(64,0.0049308)(128,0.017069)(256,0.0303252)(512,0.0741714)(1024,0.166362)(2048,0.381543)(4096,0.794682)(8192,1.64244)(16384,3.38516)(32768,6.9833)};
+        \label{plots:plot1}
+
+    \addplot[color=green,mark=|,no markers,]
+        coordinates {(8,0.0008522)(16,0.0010058)(32,0.001341)(64,0.0021372)(128,0.0035062)(256,0.0151694)(512,0.0194438)(1024,0.0318056)(2048,0.0542948)(4096,0.099468)(8192,0.189437)(16384,0.370508)(32768,0.74631)};
+        \label{plots:plot2}
+
+    \coordinate (bot) at (rel axis cs:1,0);% coordinate at bottom of the last plot
+
+    \end{groupplot}
+
+    \path (myplot c1r1.outer north west)% plot in column 1 row 1
+          -- node[anchor=south,rotate=90] {Time [milliseconds]}% label midway
+          (myplot c1r3.outer south west);% plot in column 1 row 3
+
+    % legend
+    \path (myplot c1r3.south west|-current bounding box.south)--
+      coordinate(legendpos)
+      (myplot c2r3.south east|-current bounding box.south);
+    \matrix[
+        matrix of nodes,
+        anchor=south,
+        draw,
+        inner sep=0.2em,
+        draw
+      ]at([yshift=-5ex]legendpos)
+      {
+        \ref{plots:plot0}& Boost.FlatMap&[5pt]
+        \ref{plots:plot1}& std::map&[5pt]
+        \ref{plots:plot2}& split\_map\_t&[5pt]\\
+      };
+
+\end{tikzpicture}
+\\
+\\
+
 
 For all variants but \code{map} and \code{unordered_map}, iteration is
 relatively similar, and much faster than \code{map}'s.
