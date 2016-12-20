@@ -98,13 +98,10 @@ public:
     const_reverse_iterator   crbegin() const noexcept;
     const_reverse_iterator   crend() const noexcept;
 
-    // capacity:
+    // size:
     bool      empty() const noexcept;
     size_type size() const noexcept;
     size_type max_size() const noexcept;
-    size_type capacity() const noexcept;
-    void reserve(size_type x);
-    void shrink_to_fit();
 
     // element access:
     T& operator[](const key_type& x);

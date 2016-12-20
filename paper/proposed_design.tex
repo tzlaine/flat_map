@@ -3,7 +3,7 @@
 \subsection{Design Goals}
 
 Overall, \code{flat_map} is meant to be a drop-in replacement for \code{map},
-jsut with better time- and space-efficiency.  Functionally it is not meant to
+just with better time- and space-efficiency.  Functionally it is not meant to
 do anything other than what we do with \code{map} now.\\
 
 The Boost.Container documentation gives a nice summary of the tradeoffs
@@ -65,7 +65,7 @@ opportunities.
 
 \code{flat_map} is an adapter for an underlying storage type.  This storage
 type is configurable via the template parameter \code{Container}.
-\code{Container} must be a \textit{contiguous container} (\S23.2.1/13).
+\code{Container} must be a \textit{sequence container} (\S23.2.3).
 \code{vector} is a great candidate for this, but limiting \code{flat_map} only
 to use \code{vector} for its storage would be a mistake.  Many other suitable
 replacements exist, each suited to a certain use.  A user may have a
@@ -80,8 +80,7 @@ There are certain optimization opportunities that are lost to the user of a
 non-adapter \code{flat_map}.  For instance, if one does not care about the
 strong or weak exception guarantees in the code that uses \code{flat_map}, one
 can use a \code{Container} that blindly uses \code{move} all the time, even if
-exceptions may occur.  This allows performance curves more like the
-\code{<int, int>} custom-pair sorted \code{vector} in the graphs above.\\
+exceptions may occur.\\
 
 While this may not be a use case for a majority of users, there are numerous
 such niche use cases, and these niches are not well served by a fixed
@@ -90,10 +89,6 @@ underlying storage implementation.
 \subsubsection{Interface Differences From \code{map}}
 
 \begin{itemize}
-  \item Members \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()}
-    have been added, with the same semantics as the corresponding members of
-    \code{vector}.
-
   \item Several new constructors have been added that take objects of the
     \code{Container} type.  These members must only be used if the given
     container is already sorted.
@@ -147,15 +142,11 @@ differences are outlined in ``Member Semantics'' below.
 
 \subsubsection{\code{Container} Requirements}
 
-Any contiguous container supporting operations \code{capacity()},
-\code{reserve()}, and \code{shrik_to_fit()} can be used for the
+Any sequence container with random access iterator can be used for the
 \code{Container} template parameter.  \code{Container} must have a
 \code{value_type} of \code{pair<Key, T>}.
 
 \subsubsection{Member Semantics}
-
-Members \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()} have
-the same semantics as the corresponding members of \code{vector}.
 
 Each member taking a \code{Container} reference or taking a parameter of type
 \code{ordered_unique_sequence_tag} has the precondition that the given
@@ -180,4 +171,7 @@ Thanks to Ion Gazta\~{n}aga for writing Boost.FlatMap.\\
 Thanks to David Sankel, for reviews of early drafts of this paper.\\
 
 Thanks to Bloomberg, for sharing performance data they used for internal
-decisionmaking on their use of flat maps.
+decisionmaking on their use of flat maps.\\
+
+Thanks to Sean Middleditch for suggesting the use of split containers for keys
+and values, and for suggestions on improving the benchmarking code.

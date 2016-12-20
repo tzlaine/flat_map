@@ -9,7 +9,7 @@ compiler_data_paths = {
     'clang': os.path.join('..', 'linux_clang_data'),
     'gcc': os.path.join('..', 'linux_gcc_data')
 }
-pretty_compiler_names = {'msvc': 'Windows/MSVC 2015', 'clang': 'Linux/Clang 3.8', 'gcc': 'Linux/GCC 4.8.4'}
+pretty_compiler_names = {'msvc': 'Windows/MSVC 2015', 'clang': 'Mac OSX/Clang 4.0', 'gcc': 'Linux/GCC 4.8.4'}
 
 #variant_names = ['boost_flat_map', 'std_map', 'unordered_map', 'vector', 'vector_custom_pair']
 variant_names = ['boost_flat_map', 'std_map', 'split_map']
