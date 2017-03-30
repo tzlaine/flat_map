@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+cmake_policy(SET CMP0054 NEW)
 
 find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS})
