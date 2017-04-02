@@ -18,7 +18,7 @@ Boost.FlatMap, \code{map}, and an implementation of a flat map with separate
 use either \code{<int, int>} or \code{<std::string, std::string>}
 for the value type.\\
 
-All data in the graphs below were produced on Windows with MSVC 2017 TODO, on
+All data in the graphs below were produced on Windows with MSVC 2017, on
 Mac OSX with Clang 4.0 and libc++, or on Linux with g++ 6.2 TODO and libstdc++.\\
 
 Each set of six graphs shows the performance of a single operation on all
@@ -656,9 +656,10 @@ much faster than \code{map}'s.
 
 
 \code{find()} performance is where things get interesting.  The different
-platforms produce strikingly different results.\\
+platforms produce somewhat similar results.\\
 
-TODO
+Though the curves look different for GCC, in all cases \code{find()} is
+markedly slower for \code{map} than for the flat implementations.
 
 
 \subsection{Implications}

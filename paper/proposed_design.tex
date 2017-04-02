@@ -163,6 +163,19 @@ Other member semantics are the same as for \code{map}.
 
 \lstinputlisting[language=C++]{map_synopsis.hpp}
 
+\subsubsection{\code{split_flat_map} Synopsis}
+
+\lstinputlisting[language=C++]{split_map_synopsis.hpp}
+
+
+\section{Future Work}
+
+Though splitting the key and value storage in a flat map has significant
+insertion performance benefits for small types, I've not proposed a
+\code{split_flat_map} type here.  This would definitely be a useful type to
+standardize, but its iterator would be a proxy iterator, something for we as a
+community have not yet settled on a best practice.
+
 
 \section{Acknowledgements}
 
