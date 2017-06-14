@@ -19,7 +19,7 @@ use either \code{<int, int>} or \code{<std::string, std::string>}
 for the value type.\\
 
 All data in the graphs below were produced on Windows with MSVC 2017, on
-Mac OSX with Clang 4.0 and libc++, or on Linux with g++ 6.2 TODO and libstdc++.\\
+Mac OSX with Clang 4.0 and libc++, or on Linux with g++ 6.2 and libstdc++.\\
 
 Each set of six graphs shows the performance of a single operation on all
 map-variants.  The left column shows the \code{<int, int>} runs, and the right
@@ -155,7 +155,7 @@ once for each key used in the original insertionss.\\
     \nextgroupplot[
         title=\empty,
         xlabel={N},
-        ylabel={Linux/GCC 4.8.4},
+        ylabel={Linux/GCC 6.2},
         xmin=0, xmax=32768,
         ymin=0, ymax=800.0,
         xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
@@ -365,7 +365,7 @@ Boost.FlatMap for \code{<int, int>} runs.
     \nextgroupplot[
         title=\empty,
         xlabel={N},
-        ylabel={Linux/GCC 4.8.4},
+        ylabel={Linux/GCC 6.2},
         xmin=0, xmax=32768,
         ymin=0, ymax=7.0,
         xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
@@ -573,7 +573,7 @@ much faster than \code{map}'s.
     \nextgroupplot[
         title=\empty,
         xlabel={N},
-        ylabel={Linux/GCC 4.8.4},
+        ylabel={Linux/GCC 6.2},
         xmin=0, xmax=32768,
         ymin=0, ymax=30.0,
         xtick={8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536},
