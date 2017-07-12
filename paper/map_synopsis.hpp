@@ -172,7 +172,7 @@ public:
     const_iterator find(const key_type& x) const;
     template <class K> iterator find(const K& x);
     template <class K> const_iterator find(const K& x) const;
-      size_type count(const key_type& x) const;
+    size_type count(const key_type& x) const;
     template <class K> size_type count(const K& x) const;
     iterator lower_bound(const key_type& x);
     const_iterator lower_bound(const key_type& x) const;
