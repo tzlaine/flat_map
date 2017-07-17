@@ -2,14 +2,13 @@ namespace std {
 
 struct ordered_unique_sequence_tag { };
 
-template <class Key, class T, class Compare = default_order_t<Key>,
-          class Container = vector<pair<Key, T>>>
-class flat_map {
+template <class Container, class Compare = default_order_t<Key>>
+class basic_flat_map {
 public:
     // types:
-    using key_type                 = Key;
-    using mapped_type              = T;
-    using value_type               = pair<const Key, T>;
+    using key_type                 = typename Container::value_type::first_type;
+    using mapped_type              = typename Container::value_type::second_type;
+    using value_type               = pair<const key_type, mapped_type>;
     using key_compare              = Compare;
     using allocator_type           = typename Container::allocator_type;
     using pointer                  = value_type*;
@@ -155,13 +154,13 @@ public:
     void clear() noexcept;
 
     template<class C2>
-      void merge(flat_map<Key, T, C2, Container>& source);
+      void merge(flat_map<key_type, mapped_type, C2, Container>& source);
     template<class C2>
-      void merge(flat_map<Key, T, C2, Container>&& source);
+      void merge(flat_map<key_type, mapped_type, C2, Container>&& source);
     template<class C2>
-      void merge(flat_multimap<Key, T, C2, Container>& source);
+      void merge(flat_multimap<key_type, mapped_type, C2, Container>& source);
     template<class C2>
-      void merge(flat_multimap<Key, T, C2, Container>&& source);
+      void merge(flat_multimap<key_type, mapped_type, C2, Container>&& source);
 
     // observers:
     key_compare key_comp() const;
@@ -190,29 +189,32 @@ public:
       pair<const_iterator, const_iterator> equal_range(const K& x) const;
 };
 
-template <class Key, class T, class Compare, class Container>
-  bool operator==(const flat_map<Key, T, Compare, Container>& x,
-                  const flat_map<Key, T, Compare, Container>& y);
-template <class Key, class T, class Compare, class Container>
-  bool operator< (const flat_map<Key, T, Compare, Container>& x,
-                  const flat_map<Key, T, Compare, Container>& y);
-template <class Key, class T, class Compare, class Container>
-  bool operator!=(const flat_map<Key, T, Compare, Container>& x,
-                  const flat_map<Key, T, Compare, Container>& y);
-template <class Key, class T, class Compare, class Container>
-  bool operator> (const flat_map<Key, T, Compare, Container>& x,
-                  const flat_map<Key, T, Compare, Container>& y);
-template <class Key, class T, class Compare, class Container>
-  bool operator>=(const flat_map<Key, T, Compare, Container>& x,
-                  const flat_map<Key, T, Compare, Container>& y);
-template <class Key, class T, class Compare, class Container>
-  bool operator<=(const flat_map<Key, T, Compare, Container>& x,
-                  const flat_map<Key, T, Compare, Container>& y);
+template <class Container, class Compare>
+  bool operator==(const basic_flat_map<Container, Compare>& x,
+                  const basic_flat_map<Container, Compare>& y);
+template <class Container, class Compare>
+  bool operator< (const basic_flat_map<Container, Compare>& x,
+                  const basic_flat_map<Container, Compare>& y);
+template <class Container, class Compare>
+  bool operator!=(const basic_flat_map<Container, Compare>& x,
+                  const basic_flat_map<Container, Compare>& y);
+template <class Container, class Compare>
+  bool operator> (const basic_flat_map<Container, Compare>& x,
+                  const basic_flat_map<Container, Compare>& y);
+template <class Container, class Compare>
+  bool operator>=(const basic_flat_map<Container, Compare>& x,
+                  const basic_flat_map<Container, Compare>& y);
+template <class Container, class Compare>
+  bool operator<=(const basic_flat_map<Container, Compare>& x,
+                  const basic_flat_map<Container, Compare>& y);
 
 // specialized algorithms:
-template <class Key, class T, class Compare, class Container>
-  void swap(flat_map<Key, T, Compare, Container>& x,
-            flat_map<Key, T, Compare, Container>& y)
+template <class Container, class Compare>
+  void swap(basic_flat_map<Container, Compare>& x,
+            basic_flat_map<Container, Compare>& y)
     noexcept(noexcept(x.swap(y)));
+
+template <class Key, class T, class Compare = default_order_t<Key>>
+using flat_map = basic_flat_map<std::vector<std::pair<Key, T>>, Compare>;
 
 }
