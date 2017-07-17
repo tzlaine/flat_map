@@ -125,7 +125,7 @@ public:
       void insert(ordered_unique_sequence_tag, InputIterator first, InputIterator last);
     void insert(initializer_list<value_type>);
 
-    Container extract();
+    Container extract() &&;
     void replace(Container&&);
 
     template <class... Args>
