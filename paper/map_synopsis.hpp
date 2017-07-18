@@ -2,7 +2,7 @@ namespace std {
 
 struct ordered_unique_sequence_tag { };
 
-template <class Key, class T, class Compare = default_order_t<Key>,
+template <class Key, class T, class Compare = less<Key>,
           class Container = vector<pair<Key, T>>>
 class flat_map {
 public:
@@ -89,10 +89,12 @@ public:
     const_iterator           begin() const noexcept;
     iterator                 end() noexcept;
     const_iterator           end() const noexcept;
+
     reverse_iterator         rbegin() noexcept;
     const_reverse_iterator   rbegin() const noexcept;
     reverse_iterator         rend() noexcept;
     const_reverse_iterator   rend() const noexcept;
+
     const_iterator           cbegin() const noexcept;
     const_iterator           cend() const noexcept;
     const_reverse_iterator   crbegin() const noexcept;
@@ -172,16 +174,20 @@ public:
     const_iterator find(const key_type& x) const;
     template <class K> iterator find(const K& x);
     template <class K> const_iterator find(const K& x) const;
+
     size_type count(const key_type& x) const;
     template <class K> size_type count(const K& x) const;
+
     iterator lower_bound(const key_type& x);
     const_iterator lower_bound(const key_type& x) const;
     template <class K> iterator lower_bound(const K& x);
     template <class K> const_iterator lower_bound(const K& x) const;
+
     iterator upper_bound(const key_type& x);
     const_iterator upper_bound(const key_type& x) const;
     template <class K> iterator upper_bound(const K& x);
     template <class K> const_iterator upper_bound(const K& x) const;
+
     pair<iterator, iterator> equal_range(const key_type& x);
     pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
     template <class K>
