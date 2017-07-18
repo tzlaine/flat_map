@@ -119,8 +119,8 @@ underlying storage implementation.
 
 \subsubsection{\code{flat_map} Requirements}
 
-Since the underlying container is contiguous and elements may be moved or
-copied during inserts and erases, the element type of \code{Container} must be
+Since the elements of the underlying container may be moved or copied during
+inserts and erases, the element type of \code{Container} must be
 \code{pair<Key, T>}, not \code{pair<const Key, T>}.  Even so, the element type
 of \code{flat_map} should still be \code{pair<const Key, T>}, for drop-in
 compatibility with \code{map} (\S23.2.4/5).  This requires \code{flat_map} to
