@@ -146,6 +146,10 @@ Any sequence container with random access iterator can be used for the
 \code{Container} template parameter.  \code{Container} must have a
 \code{value_type} of \code{pair<Key, T>}.
 
+TODO: Can this be relaxed, using structured bindings to take the underlying
+sequence's value type and use it to form the
+\code{pair<key_type const &, mapped_type &>} proxy?
+
 \subsubsection{Member Semantics}
 
 Each member taking a \code{Container} reference or taking a parameter of type
