@@ -9,13 +9,11 @@ public:
     // types:
     using key_type                 = Key;
     using mapped_type              = T;
-    using value_type               = pair<const Key, T>;
+    using value_type               = pair<const Key&, T&>;
     using key_compare              = Compare;
     using allocator_type           = typename Container::allocator_type;
-    using pointer                  = value_type*;
-    using const_pointer            = const value_type*;
-    using reference                = value_type&;
-    using const_reference          = const value_type&;
+    using reference                = value_type;
+    using const_reference          = pair<const Key&, const T&>;
     using size_type                = typename Container::size_type;
     using iterator                 = implementation-defined;
     using const_iterator           = implementation-defined;
