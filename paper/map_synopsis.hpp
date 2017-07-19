@@ -47,6 +47,7 @@ public:
       flat_map(const Compare& comp, const Alloc&);
     template <class Alloc>
       explicit flat_map(const Alloc&);
+
     template <class InputIterator>
       flat_map(InputIterator first, InputIterator last,
                const Compare& comp = Compare());
@@ -196,6 +197,77 @@ public:
       pair<const_iterator, const_iterator> equal_range(const K& x) const;
 };
 
+template <class Container>
+  using cont_key_t = typename Container::value_type::first_type; // exposition only
+template <class Container>
+  using cont_val_t = typename Container::value_type::first_type; // exposition only
+
+template <class Container>
+  flat_map(Container)
+    -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                less<cont_key_t<Container>>, Container>;
+
+template <class Container, class Alloc>
+ flat_map(Container, Alloc)
+    -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                less<cont_key_t<Container>>, Container>;
+
+template<class Alloc, class Compare = less<alloc_key_t<Alloc>>>
+  flat_map(Compare, Alloc)
+    -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>, Compare, Alloc>; 
+
+template<class Alloc>
+  flat_map(Alloc)
+    -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>,
+                less<alloc_key_t<Alloc>>, Alloc>;
+
+template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+  flat_map(InputIterator, InputIterator, Compare = Compare())
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+
+template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
+         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
+  flat_map(InputIterator, InputIterator, Compare, Alloc)
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+
+template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
+         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
+  flat_map(InputIterator, InputIterator, Alloc)
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+
+template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator, Compare = Compare())
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+
+template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
+         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
+  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator, Compare, Alloc)
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+
+template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
+         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
+  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator, Alloc)
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+
+template<class Key, class T, class Compare = less<Key>>
+  flat_map(initializer_list<pair<const Key, T>>, Compare = Compare())
+    -> flat_map<Key, T, Compare, vector<pair<Key, T>>>;
+
+template<class Key, class T, class Alloc, class Compare = less<Key>>
+  flat_map(initializer_list<pair<const Key, T>>, Compare, Alloc)
+    -> flat_map<Key, T, Compare, vector<pair<Key, T>>>;
+
+template<class Key, class T, class Alloc>
+  flat_map(initializer_list<pair<const Key, T>>, Alloc)
+    -> flat_map<Key, T, less<Key>, vector<pair<Key, T>>>;
+
+// the comparisons below are for exposition only
 template <class Key, class T, class Compare, class Container>
   bool operator==(const flat_map<Key, T, Compare, Container>& x,
                   const flat_map<Key, T, Compare, Container>& y);
