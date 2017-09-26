@@ -1,19 +1,32 @@
 #include <utility>
 #include <functional>
 #include <vector>
+#include <type_traits>
 
 namespace std {
 
-#if __cplusplus <= 201402L
-    template<class T>
-    using default_order_t = std::less<T>;
-#endif
-
 // TODO: Remove this once there is a multimap_synopsis.hpp.
-template <class Key, class T, class Compare = default_order_t<Key>,
+template <class Key, class T, class Compare = less<Key>,
           class Container = vector<pair<Key, T>>>
 class flat_multimap
 {};
+
+template <class Alloc>
+using alloc_key_t = typename Alloc::value_type::type; // exposition only
+
+template <class Alloc>
+using alloc_val_t = typename Alloc::value_type::type; // exposition only
+
+template<class InputIterator>
+using iter_key_t = remove_const_t<
+    typename iterator_traits<InputIterator>::value_type::first_type>; // exposition only
+
+template<class InputIterator>
+using iter_val_t = typename iterator_traits<InputIterator>::value_type::second_type; // exposition only
+
+template<class InputIterator>
+using iter_to_alloc_t = pair<add_const_t<typename iterator_traits<InputIterator>::value_type::first_type>,
+                             typename iterator_traits<InputIterator>::value_type::second_type>; // exposition only
 
 }
 
@@ -50,25 +63,6 @@ namespace std {
         return c.max_size();
     }
 
-    template <class Key, class T, class Compare, class Container>
-    typename flat_map<Key, T, Compare, Container>::size_type
-    flat_map<Key, T, Compare, Container>::capacity() const noexcept
-    {
-        return c.capacity();
-    }
-
-    template <class Key, class T, class Compare, class Container>
-    void flat_map<Key, T, Compare, Container>::reserve(size_type x)
-    {
-        c.reserve(x);
-    }
-
-    template <class Key, class T, class Compare, class Container>
-    void flat_map<Key, T, Compare, Container>::shrink_to_fit()
-    {
-        c.shrink_to_fit();
-    }
-
 }
 #endif
 
@@ -77,7 +71,7 @@ int main()
 {
 #if USE_BOOST_STATIC_VECTOR
     using container_t = boost::container::static_vector<std::pair<char const *, double>, 10u>;
-    using fm_t = std::flat_map<char const *, double, std::default_order_t<char const *>, container_t>;
+    using fm_t = std::flat_map<char const *, double, std::less<char const *>, container_t>;
 #else
     using container_t = std::vector<std::pair<char const *, double> >;
     using fm_t = std::flat_map<char const *, double>;
@@ -137,16 +131,12 @@ int main()
         fm_from_initializer = { {"foo", 1.0}, {"bar", 42.0} };
     }
 
-    // capacity:
+#if 0 // Does not appear yet to work with Clang-trunk's libc++'s pair.
+    // deduction:
     {
-        fm_t fm;
-        fm.empty();
-        fm.size();
-        fm.max_size();
-        fm.capacity();
-        fm.reserve(5);
-        fm.shrink_to_fit();
+        std::flat_map fm = { {"foo", 1.0}, {"bar", 42.0} };
     }
+#endif
 
     // modifiers:
     {

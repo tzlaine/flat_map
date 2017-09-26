@@ -72,16 +72,16 @@ public:
     template <class Alloc>
       flat_map(flat_map&&, const Alloc&);
 
-    flat_map(initializer_list<value_type>,
+    flat_map(initializer_list<pair<const Key, T>>,
              const Compare& = Compare());
      template <class Alloc>
-      flat_map(initializer_list<value_type>,
+      flat_map(initializer_list<pair<const Key, T>>,
                const Compare&,
                const Alloc&);
     template <class Alloc>
-      flat_map(initializer_list<value_type> il, const Alloc& a)
+      flat_map(initializer_list<pair<const Key, T>> il, const Alloc& a)
         : flat_map(il, Compare(), a) { }
-    flat_map& operator=(initializer_list<value_type>);
+    flat_map& operator=(initializer_list<pair<const Key, T>>);
 
     // iterators:
     iterator                 begin() noexcept;
@@ -124,7 +124,7 @@ public:
       void insert(InputIterator first, InputIterator last);
     template <class InputIterator>
       void insert(ordered_unique_sequence_tag, InputIterator first, InputIterator last);
-    void insert(initializer_list<value_type>);
+    void insert(initializer_list<pair<const Key, T>>);
 
     Container extract() &&;
     void replace(Container&&);
@@ -257,7 +257,7 @@ template<class Key, class T, class Compare = less<Key>>
   flat_map(initializer_list<pair<const Key, T>>, Compare = Compare())
     -> flat_map<Key, T, Compare, vector<pair<Key, T>>>;
 
-template<class Key, class T, class Alloc, class Compare = less<Key>>
+template<class Key, class T, class Compare, class Alloc>
   flat_map(initializer_list<pair<const Key, T>>, Compare, Alloc)
     -> flat_map<Key, T, Compare, vector<pair<Key, T>>>;
 
