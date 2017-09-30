@@ -7,7 +7,8 @@ namespace std {
 
 // TODO: Remove this once there is a multimap_synopsis.hpp.
 template <class Key, class T, class Compare = less<Key>,
-          class Container = vector<pair<Key, T>>>
+          class KeyContainer = vector<Key>,
+          class MappedContainer = vector<T>>
 class flat_multimap
 {};
 
@@ -29,8 +30,6 @@ using iter_to_alloc_t = pair<add_const_t<typename iterator_traits<InputIterator>
                              typename iterator_traits<InputIterator>::value_type::second_type>; // exposition only
 
 }
-
-using implementation_defined = int *;
 
 #include "map_synopsis.hpp"
 
@@ -77,8 +76,6 @@ int main()
     using fm_t = std::flat_map<char const *, double>;
 #endif
 
-    static_assert(std::is_same<container_t, fm_t::container_type>::value, "");
-
     fm_t other_fm;
     container_t container;
     auto const & alloc = container.get_allocator();
@@ -97,16 +94,16 @@ int main()
         fm_from_move = std::move(other_fm);
 
         fm_t fm_from_container_copy(container);
-        fm_t fm_from_container_copy_and_alloc(container, alloc);
+        fm_t fm_from_container_copy_and_alloc(container, alloc, std::key_allocator_tag());
         fm_t fm_from_container_move(std::move(container));
-        fm_t fm_from_container_move_and_alloc(std::move(container), alloc);
+        fm_t fm_from_container_move_and_alloc(std::move(container), alloc, std::mapped_allocator_tag());
 
         fm_t fm_from_comp(comp);
         fm_t fm_from_comp_and_alloc(comp, alloc);
         fm_t fm_from_range(container.begin(), container.end());
         fm_t fm_from_range_and_comp(container.begin(), container.end(), comp);
-        fm_t fm_from_range_and_comp_and_alloc(container.begin(), container.end(), comp, alloc);
-        fm_t fm_from_range_and_alloc(container.begin(), container.end(), alloc);
+        fm_t fm_from_range_and_comp_and_alloc(container.begin(), container.end(), comp, alloc, std::key_allocator_tag());
+        fm_t fm_from_range_and_alloc(container.begin(), container.end(), alloc, std::mapped_allocator_tag());
 
         fm_t fm_from_ordered_range(
             std::ordered_unique_sequence_tag{},
@@ -116,27 +113,26 @@ int main()
             container.begin(), container.end(), comp);
         fm_t fm_from_ordered_range_and_comp_and_alloc(
             std::ordered_unique_sequence_tag{},
-            container.begin(), container.end(), comp, alloc);
+            container.begin(), container.end(), comp, alloc, std::mapped_allocator_tag());
         fm_t fm_from_ordered_range_and_alloc(
             std::ordered_unique_sequence_tag{},
-            container.begin(), container.end(), alloc);
+            container.begin(), container.end(), alloc, std::key_allocator_tag());
 
         fm_t fm_from_other_fm_copy_and_alloc(other_fm, alloc);
         fm_t fm_from_other_fm_move_and_alloc(std::move(other_fm), alloc);
 
         fm_t fm_from_initializer({ {"foo", 1.0}, {"bar", 42.0} });
         fm_t fm_from_initializer_and_comp({ {"foo", 1.0}, {"bar", 42.0} }, comp);
-        fm_t fm_from_initializer_and_comp_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, comp, alloc);
-        fm_t fm_from_initializer_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, alloc);
+        fm_t fm_from_initializer_and_comp_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, comp, alloc, std::key_allocator_tag());
+        fm_t fm_from_initializer_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, alloc, std::mapped_allocator_tag());
         fm_from_initializer = { {"foo", 1.0}, {"bar", 42.0} };
     }
 
-#if 0 // Does not appear yet to work with Clang-trunk's libc++'s pair.
     // deduction:
     {
-        std::flat_map fm = { {"foo", 1.0}, {"bar", 42.0} };
+        auto p = std::pair{"foo", 1.0};
+        std::flat_map m = { std::pair{"foo", 1.0}, std::pair{"bar", 42.0} };
     }
-#endif
 
     // modifiers:
     {
