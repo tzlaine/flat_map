@@ -1,8 +1,6 @@
 namespace std {
 
 struct ordered_unique_sequence_tag { };
-struct key_allocator_tag {};
-struct mapped_allocator_tag {};
 
 template <class Key, class T, class Compare = less<Key>,
           class KeyContainer = vector<Key>,
@@ -39,104 +37,24 @@ public:
 
     // construct/copy/destroy:
     flat_map();
-    flat_map(const KeyContainer&, const MappedContainer&);
-    template <class Alloc>
-      flat_map(const KeyContainer&, const MappedContainer&,
-               const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const KeyContainer&, const MappedContainer&,
-               const Alloc&, mapped_allocator_tag);
-    template <class KeyAlloc, class MappedAlloc>
-      flat_map(const KeyContainer&, const MappedContainer&,
-               const KeyAlloc&, const MappedAlloc&);
-    flat_map(KeyContainer&&, const MappedContainer&);
-    template <class Alloc>
-      flat_map(const KeyContainer&&, const MappedContainer&,
-               const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const KeyContainer&&, const MappedContainer&,
-               const Alloc&, mapped_allocator_tag);
-    template <class KeyAlloc, class MappedAlloc>
-      flat_map(const KeyContainer&&, const MappedContainer&,
-               const KeyAlloc&, const MappedAlloc&);
-    flat_map(const KeyContainer&, MappedContainer&&);
-    template <class Alloc>
-      flat_map(const KeyContainer&, const MappedContainer&&,
-               const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const KeyContainer&, const MappedContainer&&,
-               const Alloc&, mapped_allocator_tag);
-    template <class KeyAlloc, class MappedAlloc>
-      flat_map(const KeyContainer&, const MappedContainer&&,
-               const KeyAlloc&, const MappedAlloc&);
-    flat_map(KeyContainer&&, MappedContainer&&);
-    template <class Alloc>
-      flat_map(const KeyContainer&&, const MappedContainer&&,
-               const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const KeyContainer&&, const MappedContainer&&,
-               const Alloc&, mapped_allocator_tag);
-    template <class KeyAlloc, class MappedAlloc>
-      flat_map(const KeyContainer&&, const MappedContainer&&,
-               const KeyAlloc&, const MappedAlloc&);
-
+    flat_map(KeyContainer, MappedContainer);
     template <class Container>
-      flat_map(const Container&);
-    template <class Container, class Alloc>
-      flat_map(const Container&,
-               const Alloc&, key_allocator_tag);
-    template <class Container, class Alloc>
-      flat_map(const Container&,
-               const Alloc&, mapped_allocator_tag);
+      explicit flat_map(Container);
     template <class Container, class KeyAlloc, class MappedAlloc>
-      flat_map(const Container&,
-               const KeyAlloc&, const MappedAlloc&);
-    template <class Container>
-      flat_map(Container&&);
-    template <class Container, class Alloc>
-      flat_map(const Container&&,
-               const Alloc&, key_allocator_tag);
-    template <class Container, class Alloc>
-      flat_map(const Container&&,
-               const Alloc&, mapped_allocator_tag);
-    template <class Container, class KeyAlloc, class MappedAlloc>
-      flat_map(const Container&&,
-               const KeyAlloc&, const MappedAlloc&);
+      flat_map(Container, const KeyAlloc&, const MappedAlloc&);
 
     explicit flat_map(const Compare& comp);
-    template <class Alloc>
-      flat_map(const Compare& comp, const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const Compare& comp, const Alloc&, mapped_allocator_tag);
     template <class KeyAlloc, class MappedAlloc>
       flat_map(const Compare& comp, const KeyAlloc&, const MappedAlloc&);
-    template <class Alloc>
-      flat_map(const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const Alloc&, mapped_allocator_tag);
     template <class KeyAlloc, class MappedAlloc>
       flat_map(const KeyAlloc&, const MappedAlloc&);
 
     template <class InputIterator>
       flat_map(InputIterator first, InputIterator last,
                const Compare& comp = Compare());
-    template <class InputIterator, class Alloc>
-      flat_map(InputIterator first, InputIterator last,
-               const Compare& comp, const Alloc&, key_allocator_tag);
-    template <class InputIterator, class Alloc>
-      flat_map(InputIterator first, InputIterator last,
-               const Compare& comp, const Alloc&, mapped_allocator_tag);
     template <class InputIterator, class KeyAlloc, class MappedAlloc>
       flat_map(InputIterator first, InputIterator last,
                const Compare& comp, const KeyAlloc&, const MappedAlloc&);
-    template <class InputIterator, class Alloc>
-      flat_map(InputIterator first, InputIterator last,
-               const Alloc& a, key_allocator_tag t)
-        : flat_map(first, last, Compare(), a, t) { }
-    template <class InputIterator, class Alloc>
-      flat_map(InputIterator first, InputIterator last,
-               const Alloc& a, mapped_allocator_tag t)
-        : flat_map(first, last, Compare(), a, t) { }
     template <class InputIterator, class KeyAlloc, class MappedAlloc>
       flat_map(InputIterator first, InputIterator last,
                const KeyAlloc& ka, const MappedAlloc& ma)
@@ -145,64 +63,25 @@ public:
     template <class InputIterator>
       flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
                const Compare& comp = Compare());
-    template <class InputIterator, class Alloc>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
-               const Compare& comp, const Alloc&, key_allocator_tag);
-    template <class InputIterator, class Alloc>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
-               const Compare& comp, const Alloc&, mapped_allocator_tag);
     template <class InputIterator, class KeyAlloc, class MappedAlloc>
       flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
                const Compare& comp, const KeyAlloc&, const MappedAlloc&);
-    template <class InputIterator, class Alloc>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
-               const Alloc& a, key_allocator_tag t)
-        : flat_map(first, last, Compare(), a, t) { }
-    template <class InputIterator, class Alloc>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
-               const Alloc& a, mapped_allocator_tag t)
-        : flat_map(first, last, Compare(), a, t) { }
     template <class InputIterator, class KeyAlloc, class MappedAlloc>
       flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
                const KeyAlloc& ka, const MappedAlloc& ma)
         : flat_map(first, last, Compare(), ka, ma) { }
 
-    template <class Alloc>
-      flat_map(const flat_map&, const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(const flat_map&, const Alloc&, mapped_allocator_tag);
     template <class KeyAlloc, class MappedAlloc>
       flat_map(const flat_map&, const KeyAlloc&, const MappedAlloc&);
-
-    template <class Alloc>
-      flat_map(flat_map&&, const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(flat_map&&, const Alloc&, mapped_allocator_tag);
     template <class KeyAlloc, class MappedAlloc>
       flat_map(flat_map&&, const KeyAlloc&, const MappedAlloc&);
 
     flat_map(initializer_list<pair<Key, T>>,
              const Compare& = Compare());
-    template <class Alloc>
-      flat_map(initializer_list<pair<Key, T>>,
-               const Compare&,
-               const Alloc&, key_allocator_tag);
-    template <class Alloc>
-      flat_map(initializer_list<pair<Key, T>>,
-               const Compare&,
-               const Alloc&, mapped_allocator_tag);
     template <class KeyAlloc, class MappedAlloc>
       flat_map(initializer_list<pair<Key, T>>,
                const Compare&,
                const KeyAlloc&, const MappedAlloc&);
-    template <class Alloc>
-      flat_map(initializer_list<pair<Key, T>> il,
-               const Alloc& a, key_allocator_tag t)
-        : flat_map(il, Compare(), a, t) { }
-    template <class Alloc>
-      flat_map(initializer_list<pair<Key, T>> il,
-               const Alloc& a, mapped_allocator_tag t)
-        : flat_map(il, Compare(), a, t) { }
     template <class KeyAlloc, class MappedAlloc>
       flat_map(initializer_list<pair<Key, T>> il,
                const KeyAlloc& ka, const MappedAlloc& ma)

@@ -94,16 +94,16 @@ int main()
         fm_from_move = std::move(other_fm);
 
         fm_t fm_from_container_copy(container);
-        fm_t fm_from_container_copy_and_alloc(container, alloc, std::key_allocator_tag());
+        fm_t fm_from_container_copy_and_alloc(container, alloc, alloc);
         fm_t fm_from_container_move(std::move(container));
-        fm_t fm_from_container_move_and_alloc(std::move(container), alloc, std::mapped_allocator_tag());
+        fm_t fm_from_container_move_and_alloc(std::move(container), alloc, alloc);
 
         fm_t fm_from_comp(comp);
         fm_t fm_from_comp_and_alloc(comp, alloc);
         fm_t fm_from_range(container.begin(), container.end());
         fm_t fm_from_range_and_comp(container.begin(), container.end(), comp);
-        fm_t fm_from_range_and_comp_and_alloc(container.begin(), container.end(), comp, alloc, std::key_allocator_tag());
-        fm_t fm_from_range_and_alloc(container.begin(), container.end(), alloc, std::mapped_allocator_tag());
+        fm_t fm_from_range_and_comp_and_alloc(container.begin(), container.end(), comp, alloc, alloc);
+        fm_t fm_from_range_and_alloc(container.begin(), container.end(), alloc, alloc);
 
         fm_t fm_from_ordered_range(
             std::ordered_unique_sequence_tag{},
@@ -113,18 +113,18 @@ int main()
             container.begin(), container.end(), comp);
         fm_t fm_from_ordered_range_and_comp_and_alloc(
             std::ordered_unique_sequence_tag{},
-            container.begin(), container.end(), comp, alloc, std::mapped_allocator_tag());
+            container.begin(), container.end(), comp, alloc, alloc);
         fm_t fm_from_ordered_range_and_alloc(
             std::ordered_unique_sequence_tag{},
-            container.begin(), container.end(), alloc, std::key_allocator_tag());
+            container.begin(), container.end(), alloc, alloc);
 
         fm_t fm_from_other_fm_copy_and_alloc(other_fm, alloc);
         fm_t fm_from_other_fm_move_and_alloc(std::move(other_fm), alloc);
 
         fm_t fm_from_initializer({ {"foo", 1.0}, {"bar", 42.0} });
         fm_t fm_from_initializer_and_comp({ {"foo", 1.0}, {"bar", 42.0} }, comp);
-        fm_t fm_from_initializer_and_comp_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, comp, alloc, std::key_allocator_tag());
-        fm_t fm_from_initializer_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, alloc, std::mapped_allocator_tag());
+        fm_t fm_from_initializer_and_comp_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, comp, alloc, alloc);
+        fm_t fm_from_initializer_and_alloc({ {"foo", 1.0}, {"bar", 42.0} }, alloc, alloc);
         fm_from_initializer = { {"foo", 1.0}, {"bar", 42.0} };
     }
 
