@@ -211,67 +211,101 @@ template <class Container>
 template <class Container>
   flat_map(Container)
     -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
-                less<cont_key_t<Container>>, Container>;
+                less<cont_key_t<Container>>,
+                std::vector<cont_key_t<Container>>,
+                std::vector<cont_val_t<Container>>>;
 
-template <class Container, class Alloc>
- flat_map(Container, Alloc)
+template <class KeyContainer, class MappedContainer>
+  flat_map(KeyContainer, MappedContainer)
+    -> flat_map<typename KeyContainer::value_type,
+                typename MappedContainer::value_type,
+                less<typename KeyContainer::value_type>,
+                KeyContainer, MappedContainer>;
+
+template <class Container, class KeyAlloc, class MappedAlloc>
+  flat_map(Container, KeyAlloc, MappedAlloc)
     -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
-                less<cont_key_t<Container>>, Container>;
+                less<cont_key_t<Container>>,
+                std::vector<cont_key_t<Container>>,
+                std::vector<cont_val_t<Container>>>;
 
-template<class Alloc, class Compare = less<alloc_key_t<Alloc>>>
-  flat_map(Compare, Alloc)
-    -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>, Compare, Alloc>; 
+template <class KeyContainer, class MappedContainer,
+          class KeyAlloc, class MappedAlloc>
+  flat_map(KeyContainer, MappedContainer, KeyAlloc, MappedAlloc)
+    -> flat_map<typename KeyContainer::value_type,
+                typename MappedContainer::value_type,
+                less<typename KeyContainer::value_type>,
+                KeyContainer, MappedContainer>;
 
-template<class Alloc>
-  flat_map(Alloc)
-    -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>,
-                less<alloc_key_t<Alloc>>, Alloc>;
+template<class Compare, class KeyAlloc, class MappedAlloc>
+  flat_map(Compare, KeyAlloc, MappedAlloc)
+    -> flat_map<alloc_key_t<KeyAlloc>, alloc_val_t<MappedAlloc>, Compare,
+                std::vector<alloc_key_t<KeyAlloc>>,
+                std::vector<alloc_val_t<MappedAlloc>>>;
 
-template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+template<class KeyAlloc, class MappedAlloc>
+  flat_map(KeyAlloc, MappedAlloc)
+    -> flat_map<alloc_key_t<KeyAlloc>, alloc_val_t<MappedAlloc>,
+                less<alloc_key_t<KeyAlloc>>,
+                std::vector<alloc_key_t<KeyAlloc>>,
+                std::vector<alloc_val_t<MappedAlloc>>>;
+
+template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
   flat_map(InputIterator, InputIterator, Compare = Compare())
-    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
-                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                less<iter_key_t<InputIterator>>,
+                std::vector<iter_key_t<InputIterator>>,
+                std::vector<iter_val_t<InputIterator>>>;
 
-template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
-         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
-  flat_map(InputIterator, InputIterator, Compare, Alloc)
+template<class InputIterator, class Compare,
+         class KeyAlloc, class MappedAlloc>
+  flat_map(InputIterator, InputIterator, Compare, KeyAlloc, MappedAlloc)
     -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
-                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+                std::vector<iter_key_t<InputIterator>>,
+                std::vector<iter_val_t<InputIterator>>>;
 
-template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
-         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
-  flat_map(InputIterator, InputIterator, Alloc)
-    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
-                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+template<class InputIterator, class KeyAlloc, class MappedAlloc>
+  flat_map(InputIterator, InputIterator, KeyAlloc, MappedAlloc)
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                less<iter_key_t<InputIterator>>,
+                std::vector<iter_key_t<InputIterator>>,
+                std::vector<iter_val_t<InputIterator>>>;
 
-template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
-  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator, Compare = Compare())
-    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
-                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator,
+           Compare = Compare())
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                less<iter_key_t<InputIterator>>,
+                std::vector<iter_key_t<InputIterator>>,
+                std::vector<iter_val_t<InputIterator>>>;
 
-template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
-         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
-  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator, Compare, Alloc)
+template<class InputIterator, class Compare,
+         class KeyAlloc, class MappedAlloc>
+  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator,
+           Compare, KeyAlloc, MappedAlloc)
     -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
-                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+                std::vector<iter_key_t<InputIterator>>,
+                std::vector<iter_val_t<InputIterator>>>;
 
-template<class InputIterator, class Compare = less<iter_key_t<InputIterator>>,
-         class Alloc = allocator<iter_to_alloc_t<InputIterator>>>
-  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator, Alloc)
-    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
-                std::vector<std::pair<iter_key_t<InputIterator>, iter_val_t<InputIterator>>>>;
+template<class InputIterator, class KeyAlloc, class MappedAlloc>
+  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator,
+           KeyAlloc, MappedAlloc)
+    -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                less<iter_key_t<InputIterator>>,
+                std::vector<iter_key_t<InputIterator>>,
+                std::vector<iter_val_t<InputIterator>>>;
 
 template<class Key, class T, class Compare = less<Key>>
   flat_map(initializer_list<pair<Key, T>>, Compare = Compare())
-    -> flat_map<Key, T, Compare, vector<pair<Key, T>>>;
+    -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
 
-template<class Key, class T, class Compare, class Alloc>
-  flat_map(initializer_list<pair<Key, T>>, Compare, Alloc)
-    -> flat_map<Key, T, Compare, vector<pair<Key, T>>>;
+template<class Key, class T, class Compare, class KeyAlloc, class MappedAlloc>
+  flat_map(initializer_list<pair<Key, T>>, Compare, KeyAlloc, MappedAlloc)
+    -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
 
-template<class Key, class T, class Alloc>
-  flat_map(initializer_list<pair<Key, T>>, Alloc)
-    -> flat_map<Key, T, less<Key>, vector<pair<Key, T>>>;
+template<class Key, class T, class KeyAlloc, class MappedAlloc>
+  flat_map(initializer_list<pair<Key, T>>, KeyAlloc, MappedAlloc)
+    -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
 
 // the comparisons below are for exposition only
 template <class Key, class T, class Compare, class Container>
