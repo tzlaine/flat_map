@@ -28,7 +28,7 @@
 \date{}
 {\let\newpage\relax\maketitle}
 
-\noindent\textbf{Document Number:} P0429R1\\
+\noindent\textbf{Document Number:} P0429R2\\
 \textbf{Date:} 2016-08-31\\
 \textbf{Reply to:} Zach Laine whatwasthataddress@gmail.com\\
 \textbf{Audience:} LWG/LEWG
@@ -36,6 +36,15 @@
 \section{Revisions}
 
 \label{sec:revisions}
+
+\subsection{Changes from R1}
+
+\begin{itemize}
+  \item Add deduction guides.
+  \item Change \code{value_type} and reference types to be proxies, and remove
+    \code{\{const_\},pointer}.
+  \item Split storage of keys and values.
+\end{itemize}
 
 \subsection{Changes from R0}
 
