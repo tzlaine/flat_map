@@ -41,10 +41,11 @@ for customization by users.
 
 \subsection{Design}
 
-\subsubsection{\code{flat_map} Is Based On Boost.FlatMap}
+\subsubsection{\code{flat_map} Is Based Primarily On Boost.FlatMap}
 
 This proposal represents existing practice in widespread use -- Boost.FlatMap
-has been available since 2011 (Boost 1.48).
+has been available since 2011 (Boost 1.48).  As of Boost 1.65, the Boost
+implementation will optionally act as an adapter.
 
 \subsubsection{\code{flat_map} Is Nearly API-Compatible With \code{map}}
 
@@ -61,43 +62,59 @@ changes are optional:
 Both of these interface changes were added to increase optimization
 opportunities.
 
-\subsubsection{\code{flat_map} Is a Container Adapter}
+\subsubsection{\code{flat_map} Is a Container Adapter That Uses Proxy Iterators}
 
-\code{flat_map} is an adapter for an underlying storage type.  This storage
-type is configurable via the template parameter \code{Container}.
-\code{Container} must be a \textit{sequence container} (\S23.2.3).
-\code{vector} is a great candidate for this, but limiting \code{flat_map} only
-to use \code{vector} for its storage would be a mistake.  Many other suitable
-replacements exist, each suited to a certain use.  A user may have a
-small-buffer implementation of \code{vector}, like LLVM's \code{SmallVector},
-or \code{boost::container::small_vector}.  The user may also want to avoid
-allocations altogether, if the maximum number of elements N is known \textit{a
-  priori}.  If so, \code{boost::container::static_vector} could be used.  The
-user's specific performance requirements will dictate which of these is most
-appropriate.\\
+\code{flat_map} is an adapter for two underlying storage types.  These storage
+types are configurable via the template parameters \code{KeyContainer} and
+\code{MappedContainer}.  Each must be a \textit{sequence container}
+(\S26.2.3).\\
 
-There are certain optimization opportunities that are lost to the user of a
-non-adapter \code{flat_map}.  For instance, if one does not care about the
-strong or weak exception guarantees in the code that uses \code{flat_map}, one
-can use a \code{Container} that blindly uses \code{move} all the time, even if
-exceptions may occur.\\
+The previous revision of this paper suggested such a split storage scheme as a
+possibility for future work, but this is now the proposed approach for all
+flat maps.\\
 
-While this may not be a use case for a majority of users, there are numerous
-such niche use cases, and these niches are not well served by a fixed
-underlying storage implementation.
+This change was made for several reasons.\\
+
+First, LEWG was strongly against a flat map \code{value_type} with a
+non-\code{const} key.  LEWG was also strongly against presenting values from
+the underlying storage container (which must have non-\code{const} keys) as if
+they were key-\code{const}.  It was feared that this would not be
+implementable without relying on undefined or implementation-defined behavior.
+Because of this, \code{value_type} is \code{pair<const Key &, T &>}, and both
+\code{iterator} and \code{const_iterator} must be proxy iterators.  Note that
+this implies that this proposal depends on the Ranges TS.\\
+
+Second, there are dramatic performance gains to \code{insert()} and
+\code{erase()} when using split storage for small key and value types.  There
+do not appear to be any performance losses from using the split storage scheme.\\
+
+Third, having separate \code{flat_map} and \code{split_flat_map} would be
+possible, but it would be very easy to use the less-optimal one, especially
+under maintenance.  Consider the case in which a \code{flat_map<std::string,
+  int>} is changed to \code{flat_map<int, int>} once hashing is introduced on
+the keys.  The user would then have to remember that a change to
+\code{split_flat_map} would be more optimal -- a chancy proposition.\\
+
+The only significant disadvantage of split storage that I know of is that
+extracting and/or replacing the underlying storage is no longer very useful.
+For instance, the result of \code{extract()} is no longer something that you
+can pass to most standard algorithms, since it is split into two containers.
+Note that the Ranges TS versions of the non-mutating standard algorithms will
+still work on the unextracted elements of a flat map.
 
 \subsubsection{Interface Differences From \code{map}}
 
 \begin{itemize}
   \item Several new constructors have been added that take objects of the
-    \code{Container} type.  These members must only be used if the given
-    container is already sorted.
+    \code{KeyContainer} and \code{MappedContainer} types.  These members must
+    only be used if the given containers are already sorted.
 
-  \item The \code{extract()} overloads from \code{map} are replaced with
-    \code{Container extract()}, that moves out the entire storage of the
-    \code{flat_map}.  Similarly, the \code{insert()} members taking a node
-    have been replaced with a member \code{void replace(Container&&)}, that
-    moves in the entire storage.
+  \item The \code{extract()} overloads from \code{map} are replaced with a
+    version that produces the underlying storage containers, moving out the
+    entire storage of the \code{flat_map}.  Similarly, the \code{insert()}
+    members taking a node have been replaced with a member \code{void
+      replace(KeyContainer&&, MappedContainer&&)}, that moves in the entire
+    storage.
 
     Many users have noted that M insertions of elements into a map of size N
     is O(M$\cdot$log(N+M)), and when M is known it should be possible instead
@@ -120,46 +137,42 @@ underlying storage implementation.
 \subsubsection{\code{flat_map} Requirements}
 
 Since the elements of the underlying container may be moved or copied during
-inserts and erases, the element type of \code{Container} must be
-\code{pair<Key, T>}, not \code{pair<const Key, T>}.  Even so, the element type
-of \code{flat_map} should still be \code{pair<const Key, T>}, for drop-in
-compatibility with \code{map} (\S23.2.4/5).  This requires \code{flat_map} to
-have an iterator that adapts the underlying \code{Container} iterator.
+inserts and erases, the element type of \code{KeyContainer} must be
+\code{Key}, and \code{MappedContainer}'s element type must be not \code{T}.
+This requires \code{flat_map} to have an iterator that adapts the underlying
+container iterators.
 
-Only the underlying container is allocator-aware.  \S23.2.4/7 regarding
+Only the underlying containers are allocator-aware.  \S26.2.4/7 regarding
 allocator awareness does not apply to \code{flat_map}.
 
 Validity of iterators is not preserved when mutating the underlying container
-(i.e. \S23.2.4/9 does not apply).
+(i.e. \S26.2.4/9 does not apply).
 
-The exception safety guarantees for associative containers (\S23.2.4.1) do not
+The exception safety guarantees for associative containers (\S26.2.4.1) do not
 apply.
 
-The rest of the requirements follow the ones in (\S23.2.4 Associative
-containers), except \S23.2.4/10 (which applies to members not in
-\code{flat_map}) and some portions of the table in \S23.2.4/8; these table
+The rest of the requirements follow the ones in (\S26.2.4 Associative
+containers), except \S26.2.4/10 (which applies to members not in
+\code{flat_map}) and some portions of the table in \S26.2.4/8; these table
 differences are outlined in ``Member Semantics'' below.
 
-\subsubsection{\code{Container} Requirements}
+\subsubsection{Container Requirements}
 
 Any sequence container with random access iterator can be used for the
-\code{Container} template parameter.  \code{Container} must have a
-\code{value_type} of \code{pair<Key, T>}.
-
-TODO: Can this be relaxed, using structured bindings to take the underlying
-sequence's value type and use it to form the
-\code{pair<key_type const &, mapped_type &>} proxy?
+container template parameters.
 
 \subsubsection{Member Semantics}
 
-Each member taking a \code{Container} reference or taking a parameter of type
+Each member taking a container reference or taking a parameter of type
 \code{ordered_unique_sequence_tag} has the precondition that the given
 elements are already sorted by \code{Compare}, and that the elements are
 unique.
 
-Each member taking an \code{Alloc} template parameter only participates in
-overload resolution if \code{uses_allocator_v<Container, Alloc>} is
-\code{true}.
+Each member taking a allocator template parameters only participates in
+overload resolution if
+
+\code{uses_allocator_v<KeyContainer, KeyAlloc>} and
+\code{uses_allocator_v<MappedContainer, MappedAlloc>} are both \code{true}.
 
 Other member semantics are the same as for \code{map}.
 
@@ -168,23 +181,9 @@ Other member semantics are the same as for \code{map}.
 \lstinputlisting[language=C++]{map_synopsis.hpp}
 
 
-\section{Future Work}
-
-Though splitting the key and value storage in a flat map has significant
-insertion performance benefits for small types, I've not proposed a
-\code{split_flat_map} type here.  This would definitely be a useful type to
-standardize, but its iterator would be a proxy iterator, something for which
-we as a community have not yet settled on a best practice.
-
-
 \section{Acknowledgements}
 
 Thanks to Ion Gazta\~{n}aga for writing Boost.FlatMap.\\
 
-Thanks to David Sankel, for reviews of early drafts of this paper.\\
-
-Thanks to Bloomberg, for sharing performance data they used for internal
-decisionmaking on their use of flat maps.\\
-
 Thanks to Sean Middleditch for suggesting the use of split containers for keys
-and values, and for suggestions on improving the benchmarking code.
+and values.

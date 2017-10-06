@@ -11,67 +11,7 @@ numerous articles and talks, and an implementation in Boost,
 Virtually everyone who makes games, embedded, or system software in C++ uses
 the Boost implementation or one that they rolled themselves.\\
 
-Here are some numbers that show why.  The graphs that follow show runtimes for
-different \code{map}-like associative containers.  The containers used are
-Boost.FlatMap, \code{map}, and an implementation of a flat map with separate
-\code{vector} storage for keys and values (``split storage'').  All containers
-use either \code{<int, int>} or \code{<std::string, std::string>}
-for the value type.\\
-
-All data in the graphs below were produced on Windows with MSVC 2017, on
-Mac OSX with Clang 4.0 and libc++, or on Linux with g++ 6.2 and libstdc++.\\
-
-Each set of six graphs shows the performance of a single operation on all
-map-variants.  The left column shows the \code{<int, int>} runs, and the right
-column shows the \code{<std::string, std::string>} ones.  Each row shows one
-platform/compiler configuration. \\
-
-These three sets of graphs cover the most commonly-used operations (erasure is
-left out, since it is nearly identical to insertion).  The first set shows
-insertion of N elements with random keys; the second shows full iteration
-across all N elements; and the third shows \code{map.find()} called
-once for each key used in the original insertionss.\\
-
-\subsection{Insert}
-
-%%% insert, int, string %%%
-
-Unsurprisingly, insertion takes longer in contiguous-storage implementations.
-Boost.FlatMap has the steepest growth curves by far.  Interestingly, the split
-storage implementation is roughly halfway in between \code{map} and
-Boost.FlatMap for \code{<int, int>} runs.
-
-\subsection{Iterate}
-
-%%% iterate, int, string %%%
-
-For the variants other than \code{map}, iteration is relatively similar, and
-much faster than \code{map}'s.
-
-\subsection{Find}
-
-%%% find, int, string %%%
-
-\code{find()} performance is where things get interesting.  The different
-platforms produce somewhat similar results.\\
-
-Though the curves look different for GCC, in all cases \code{find()} is
-markedly slower for \code{map} than for the flat implementations.
-
-
-\subsection{Implications}
-
-Iteration is vastly cheaper for contiguous-storage variants.  Any node-based
-associative container will always be slower than a flattened one for
-iteration.  For use cases where there is a lot of iteration, this can be the
-deciding runtime performance consideration.\\
-
-Find operations are also cheaper for congituous-storage variants, though not
-as clearly as so as iteration operations.\\
-
-Use cases in which iteration and lookup are much more frequent than insertion
-and deletion suggest the use of a flat implementation.\\
-
-Use cases in which the runtime performance of a flat map would be no better
-than \code{map} or \code{unordered_map}, the user may still decide to use a
-flat implementation for the storage savings.
+Previous revisions of this paper produced benchmark numbers that show why.
+Note that the results revealed that roughly half of the linear runtime cost of
+inserting an element into a flat map was refunded when the keys and values
+were stored in separate containers (though only for small key and value types).\\
