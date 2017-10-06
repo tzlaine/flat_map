@@ -1,0 +1,15 @@
+We want separate split_flat_map and flat_map.
+SF  F  N  A  SA
+
+If there is only a single flat map, call it split_flat_map.
+SF  F  N  A  SA
+
+Add capacity() and shrink_to_fit() back in, with sfinae guards.
+SF  F  N  A  SA
+
+The current by-value sink parameters are acceptable.
+SF  F  N  A  SA
+
+Replace other overloads taking sink parameters with a single pass-by-value version.
+SF  F  N  A  SA
+
