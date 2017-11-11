@@ -2,6 +2,8 @@ struct uniquely_sorted_t { unspecified };
 inline constexpr uniquely_sorted_t uniquely_sorted{ unspecified };
 using value_type = pair<Key, T>;
 
+Fix sequence container mistake in wording.
+
 Poll: We want 1 allocator (not 2). 7/4/2/0/0
 Poll: We are OK with sink-by-value. 3/4/2/1/1
 Poll: We want separate split_flat_map and flat_map. 0/0/2/1/9

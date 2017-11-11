@@ -11,7 +11,7 @@ public:
     // types:
     using key_type                 = Key;
     using mapped_type              = T;
-    using value_type               = pair<Key, T>;
+    using value_type               = pair<const Key, T>;
     using key_compare              = Compare;
     using key_allocator_type       = typename KeyContainer::allocator_type;
     using mapped_allocator_type    = typename MappedContainer::allocator_type;
