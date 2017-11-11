@@ -73,9 +73,7 @@ public:
         : flat_map(first, last, Compare(), a) { }
 
     template <class Alloc>
-      flat_map(const flat_map&, const Alloc&);
-    template <class Alloc>
-      flat_map(flat_map&&, const Alloc&);
+      flat_map(flat_map, const Alloc&);
 
     flat_map(initializer_list<pair<Key, T>>,
              const Compare& = Compare());
@@ -164,7 +162,7 @@ public:
     void clear() noexcept;
 
     template<class C2>
-    void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>& source);
+      void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>& source);
     template<class C2>
       void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>&& source);
     template<class C2>
@@ -206,7 +204,7 @@ public:
 template <class Container>
   using cont_key_t = typename Container::value_type::first_type; // exposition only
 template <class Container>
-  using cont_val_t = typename Container::value_type::first_type; // exposition only
+  using cont_val_t = typename Container::value_type::second_type; // exposition only
 
 template <class Container>
   flat_map(Container)
