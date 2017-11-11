@@ -1,6 +1,7 @@
 namespace std {
 
-struct ordered_unique_sequence_tag { };
+struct sorted_unique_t { unspecified };
+inline constexpr sorted_unique_t sorted_unique { unspecified };
 
 template <class Key, class T, class Compare = less<Key>,
           class KeyContainer = vector<Key>,
@@ -61,13 +62,13 @@ public:
         : flat_map(first, last, Compare(), ka, ma) { }
 
     template <class InputIterator>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
+      flat_map(sorted_unique_t, InputIterator first, InputIterator last,
                const Compare& comp = Compare());
     template <class InputIterator, class KeyAlloc, class MappedAlloc>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
+      flat_map(sorted_unique_t, InputIterator first, InputIterator last,
                const Compare& comp, const KeyAlloc&, const MappedAlloc&);
     template <class InputIterator, class KeyAlloc, class MappedAlloc>
-      flat_map(ordered_unique_sequence_tag, InputIterator first, InputIterator last,
+      flat_map(sorted_unique_t, InputIterator first, InputIterator last,
                const KeyAlloc& ka, const MappedAlloc& ma)
         : flat_map(first, last, Compare(), ka, ma) { }
 
@@ -128,7 +129,7 @@ public:
     template <class InputIterator>
       void insert(InputIterator first, InputIterator last);
     template <class InputIterator>
-      void insert(ordered_unique_sequence_tag, InputIterator first, InputIterator last);
+      void insert(sorted_unique_t, InputIterator first, InputIterator last);
     void insert(initializer_list<pair<Key, T>>);
 
     std::pair<KeyContainer, MappedContainer> extract() &&;
@@ -272,7 +273,7 @@ template<class InputIterator, class KeyAlloc, class MappedAlloc>
                 std::vector<iter_val_t<InputIterator>>>;
 
 template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
-  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator,
+  flat_map(sorted_unique_t, InputIterator, InputIterator,
            Compare = Compare())
     -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
                 less<iter_key_t<InputIterator>>,
@@ -281,14 +282,14 @@ template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
 
 template<class InputIterator, class Compare,
          class KeyAlloc, class MappedAlloc>
-  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator,
+  flat_map(sorted_unique_t, InputIterator, InputIterator,
            Compare, KeyAlloc, MappedAlloc)
     -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
                 std::vector<iter_key_t<InputIterator>>,
                 std::vector<iter_val_t<InputIterator>>>;
 
 template<class InputIterator, class KeyAlloc, class MappedAlloc>
-  flat_map(ordered_unique_sequence_tag, InputIterator, InputIterator,
+  flat_map(sorted_unique_t, InputIterator, InputIterator,
            KeyAlloc, MappedAlloc)
     -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
                 less<iter_key_t<InputIterator>>,
