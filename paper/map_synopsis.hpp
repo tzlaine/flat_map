@@ -181,6 +181,9 @@ public:
     value_compare value_comp() const;
 
     // map operations:
+    bool contains(const key_type& x) const;
+    template <class K> bool contains(const K& x) const;
+
     iterator find(const key_type& x);
     const_iterator find(const key_type& x) const;
     template <class K> iterator find(const K& x);
