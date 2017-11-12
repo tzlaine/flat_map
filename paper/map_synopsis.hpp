@@ -129,7 +129,13 @@ public:
       void insert(sorted_unique_t, InputIterator first, InputIterator last);
     void insert(initializer_list<pair<Key, T>>);
 
-    std::pair<KeyContainer, MappedContainer> extract() &&;
+    struct containers
+    {
+        KeyContainer keys;
+        MappedContainer values;
+    };
+
+    containers extract() &&;
     void replace(KeyContainer&&, MappedContainer&&);
 
     template <class... Args>
