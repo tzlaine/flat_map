@@ -28,7 +28,7 @@
 \date{}
 {\let\newpage\relax\maketitle}
 
-\noindent\textbf{Document Number:} P0429R2\\
+\noindent\textbf{Document Number:} D0429R3\\
 \textbf{Date:} 2016-08-31\\
 \textbf{Reply to:} Zach Laine whatwasthataddress@gmail.com\\
 \textbf{Audience:} LWG/LEWG
@@ -36,6 +36,18 @@
 \section{Revisions}
 
 \label{sec:revisions}
+
+\subsection{Changes from R2}
+
+\begin{itemize}
+  \item \code{value_type} is now \code{pair<const Key, T>}.
+  \item \code{ordered_unique_sequence_tag} is now \code{sorted_unique_t}, and
+    is applied uniformly such that those overloads that have it are assumed to
+    receive sorted input, and those that do not have it are not.
+  \item The overloads taking two allocators now take only one.
+  \item \code{extract()} now returns a custom type instead of a \code{pair}.
+  \item Add \code{contains()} (tracking \code{map}).
+\end{itemize}
 
 \subsection{Changes from R1}
 
