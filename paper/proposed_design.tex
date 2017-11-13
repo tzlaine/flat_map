@@ -54,7 +54,7 @@ differences are required (more on this later), but a couple of interface
 changes are optional:
 
 \begin{itemize}
-  \item The overloads that take sorted containers or sequences.
+  \item The overloads that take sorted containers or iterator pairs.
 
   \item Making \code{flat_map} a container adapter.
 \end{itemize}
@@ -66,8 +66,8 @@ opportunities.
 
 \code{flat_map} is an adapter for two underlying storage types.  These storage
 types are configurable via the template parameters \code{KeyContainer} and
-\code{MappedContainer}.  Each must be a \textit{sequence container}
-(\S26.2.3).\\
+\code{MappedContainer}.  Each must be a \textit{sequence container} with
+random access iterator (\S26.2.3).\\
 
 The previous revision of this paper suggested such a split storage scheme as a
 possibility for future work, but this is now the proposed approach for all
@@ -80,9 +80,8 @@ non-\code{const} key.  LEWG was also strongly against presenting values from
 the underlying storage container (which must have non-\code{const} keys) as if
 they were key-\code{const}.  It was feared that this would not be
 implementable without relying on undefined or implementation-defined behavior.
-Because of this, \code{value_type} is \code{pair<const Key &, T &>}, and both
-\code{iterator} and \code{const_iterator} must be proxy iterators.  Note that
-this implies that this proposal depends on the Ranges TS.\\
+Because of this, both \code{iterator} and \code{const_iterator} must be proxy
+iterators.  Note that this implies that this proposal depends on the Ranges TS.\\
 
 Second, there are dramatic performance gains to \code{insert()} and
 \code{erase()} when using split storage for small key and value types.  There
@@ -93,21 +92,13 @@ possible, but it would be very easy to use the less-optimal one, especially
 under maintenance.  Consider the case in which a \code{flat_map<std::string,
   int>} is changed to \code{flat_map<int, int>} once hashing is introduced on
 the keys.  The user would then have to remember that a change to
-\code{split_flat_map} would be more optimal -- a chancy proposition.\\
-
-The only significant disadvantage of split storage that I know of is that
-extracting and/or replacing the underlying storage is no longer very useful.
-For instance, the result of \code{extract()} is no longer something that you
-can pass to most standard algorithms, since it is split into two containers.
-Note that the Ranges TS versions of the non-mutating standard algorithms will
-still work on the unextracted elements of a flat map.
+\code{split_flat_map} would be more optimal -- a chancy proposition.
 
 \subsubsection{Interface Differences From \code{map}}
 
 \begin{itemize}
   \item Several new constructors have been added that take objects of the
-    \code{KeyContainer} and \code{MappedContainer} types.  These members must
-    only be used if the given containers are already sorted.
+    \code{KeyContainer} and \code{MappedContainer} types.
 
   \item The \code{extract()} overloads from \code{map} are replaced with a
     version that produces the underlying storage containers, moving out the
@@ -129,9 +120,9 @@ still work on the unextracted elements of a flat map.
     without violating the class invariants.
 
   \item Several new constructors and an \code{insert()} overload use a new tag
-    type, \code{ordered_unique_sequence_tag}.  These members must only be used
-    if the given sequence is already sorted.  This can allow much more
-    efficient construction and insertion.
+    type, \code{sorted_unique_t}.  These members must only be used if the
+    given values are already sorted.  This can allow much more efficient
+    construction and insertion.
 \end{itemize}
 
 \subsubsection{\code{flat_map} Requirements}
@@ -164,14 +155,12 @@ container template parameters.
 \subsubsection{Member Semantics}
 
 Each member taking a container reference or taking a parameter of type
-\code{ordered_unique_sequence_tag} has the precondition that the given
+\code{sorted_unique_t} has the precondition that the given
 elements are already sorted by \code{Compare}, and that the elements are
 unique.
 
 Each member taking a allocator template parameters only participates in
-overload resolution if
-
-\code{uses_allocator_v<KeyContainer, KeyAlloc>} and
+overload resolution if \code{uses_allocator_v<KeyContainer, KeyAlloc>} and
 \code{uses_allocator_v<MappedContainer, MappedAlloc>} are both \code{true}.
 
 Other member semantics are the same as for \code{map}.
