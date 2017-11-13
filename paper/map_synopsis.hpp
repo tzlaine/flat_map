@@ -9,21 +9,21 @@ template <class Key, class T, class Compare = less<Key>,
 class flat_map {
 public:
     // types:
-    using key_type                 = Key;
-    using mapped_type              = T;
-    using value_type               = pair<const Key, T>;
-    using key_compare              = Compare;
-    using key_allocator_type       = typename KeyContainer::allocator_type;
-    using mapped_allocator_type    = typename MappedContainer::allocator_type;
-    using reference                = pair<const Key&, T&>;
-    using const_reference          = pair<const Key&, const T&>;
-    using size_type                = typename KeyContainer::size_type;
-    using iterator                 = implementation-defined;
-    using const_iterator           = implementation-defined;
-    using reverse_iterator         = implementation-defined;
-    using const_reverse_iterator   = implementation-defined;
-    using key_container_type       = KeyContainer;
-    using mapped_container_type    = MappedContainer;
+    using key_type                  = Key;
+    using mapped_type               = T;
+    using value_type                = pair<const Key, T>;
+    using key_compare               = Compare;
+    using key_allocator_type        = typename KeyContainer::allocator_type;
+    using mapped_allocator_type     = typename MappedContainer::allocator_type;
+    using reference                 = pair<const Key&, T&>;
+    using const_reference           = pair<const Key&, const T&>;
+    using size_type                 = typename KeyContainer::size_type;
+    using iterator                  = implementation-defined;
+    using const_iterator            = implementation-defined;
+    using reverse_iterator          = implementation-defined;
+    using const_reverse_iterator    = implementation-defined;
+    using key_container_type        = KeyContainer;
+    using mapped_container_type     = MappedContainer;
 
     class value_compare {
       friend class flat_map;
@@ -103,20 +103,20 @@ public:
     flat_map& operator=(initializer_list<pair<Key, T>>);
 
     // iterators:
-    iterator                 begin() noexcept;
-    const_iterator           begin() const noexcept;
-    iterator                 end() noexcept;
-    const_iterator           end() const noexcept;
+    iterator                begin() noexcept;
+    const_iterator          begin() const noexcept;
+    iterator                end() noexcept;
+    const_iterator          end() const noexcept;
 
-    reverse_iterator         rbegin() noexcept;
-    const_reverse_iterator   rbegin() const noexcept;
-    reverse_iterator         rend() noexcept;
-    const_reverse_iterator   rend() const noexcept;
+    reverse_iterator        rbegin() noexcept;
+    const_reverse_iterator  rbegin() const noexcept;
+    reverse_iterator        rend() noexcept;
+    const_reverse_iterator  rend() const noexcept;
 
-    const_iterator           cbegin() const noexcept;
-    const_iterator           cend() const noexcept;
-    const_reverse_iterator   crbegin() const noexcept;
-    const_reverse_iterator   crend() const noexcept;
+    const_iterator          cbegin() const noexcept;
+    const_iterator          cend() const noexcept;
+    const_reverse_iterator  crbegin() const noexcept;
+    const_reverse_iterator  crend() const noexcept;
 
     // size:
     bool      empty() const noexcept;
@@ -161,7 +161,8 @@ public:
     template <class... Args>
       pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
     template <class... Args>
-      iterator try_emplace(const_iterator hint, const key_type& k, Args&&... args);
+      iterator try_emplace(const_iterator hint, const key_type& k,
+                           Args&&... args);
     template <class... Args>
       iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
     template <class M>
@@ -169,7 +170,8 @@ public:
     template <class M>
       pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
     template <class M>
-      iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
+      iterator insert_or_assign(const_iterator hint, const key_type& k,
+                                M&& obj);
     template <class M>
       iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
 
@@ -190,9 +192,11 @@ public:
     template<class C2>
       void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>&& source);
     template<class C2>
-      void merge(flat_multimap<Key, T, C2, KeyContainer, MappedContainer>& source);
+      void merge(
+        flat_multimap<Key, T, C2, KeyContainer, MappedContainer>& source);
     template<class C2>
-      void merge(flat_multimap<Key, T, C2, KeyContainer, MappedContainer>&& source);
+      void merge(
+        flat_multimap<Key, T, C2, KeyContainer, MappedContainer>&& source);
 
     // observers:
     key_compare key_comp() const;
