@@ -38,11 +38,18 @@ public:
 
     // construct/copy/destroy:
     flat_map();
+
     flat_map(KeyContainer, MappedContainer);
     template <class Container>
       explicit flat_map(Container);
     template <class Container, class Alloc>
       flat_map(Container, const Alloc&);
+
+    flat_map(sorted_unique_t, KeyContainer, MappedContainer);
+    template <class Container>
+      flat_map(sorted_unique_t, Container);
+    template <class Container, class Alloc>
+      flat_map(sorted_unique_t, Container, const Alloc&);
 
     explicit flat_map(const Compare& comp);
     template <class Alloc>
@@ -68,22 +75,31 @@ public:
       flat_map(sorted_unique_t, InputIterator first, InputIterator last,
                const Compare& comp, const Alloc&);
     template <class InputIterator, class Alloc>
-      flat_map(sorted_unique_t, InputIterator first, InputIterator last,
+      flat_map(sorted_unique_t t, InputIterator first, InputIterator last,
                const Alloc& a)
-        : flat_map(first, last, Compare(), a) { }
+        : flat_map(t, first, last, Compare(), a) { }
 
     template <class Alloc>
       flat_map(flat_map, const Alloc&);
 
-    flat_map(initializer_list<pair<Key, T>>,
-             const Compare& = Compare());
+    flat_map(initializer_list<pair<Key, T>>, const Compare& = Compare());
     template <class Alloc>
       flat_map(initializer_list<pair<Key, T>>,
                const Compare&, const Alloc&);
     template <class Alloc>
-      flat_map(initializer_list<pair<Key, T>> il,
-               const Alloc& a)
+      flat_map(initializer_list<pair<Key, T>> il, const Alloc& a)
         : flat_map(il, Compare(), a) { }
+
+    flat_map(sorted_unique_t, initializer_list<pair<Key, T>>,
+             const Compare& = Compare());
+    template <class Alloc>
+      flat_map(sorted_unique_t, initializer_list<pair<Key, T>>,
+               const Compare&, const Alloc&);
+    template <class Alloc>
+      flat_map(sorted_unique_t t, initializer_list<pair<Key, T>> il,
+               const Alloc& a)
+        : flat_map(t, il, Compare(), a) { }
+
     flat_map& operator=(initializer_list<pair<Key, T>>);
 
     // iterators:
@@ -115,7 +131,8 @@ public:
 
     // modifiers:
     template <class... Args> pair<iterator, bool> emplace(Args&&... args);
-    template <class... Args> iterator emplace_hint(const_iterator position, Args&&... args);
+    template <class... Args>
+      iterator emplace_hint(const_iterator position, Args&&... args);
     pair<iterator, bool> insert(const value_type& x);
     pair<iterator, bool> insert(value_type&& x);
     template <class P> pair<iterator, bool> insert(P&& x);
@@ -128,11 +145,12 @@ public:
     template <class InputIterator>
       void insert(sorted_unique_t, InputIterator first, InputIterator last);
     void insert(initializer_list<pair<Key, T>>);
+    void insert(sorted_unique_t, initializer_list<pair<Key, T>>);
 
     struct containers
     {
-        KeyContainer keys;
-        MappedContainer values;
+      KeyContainer keys;
+      MappedContainer values;
     };
 
     containers extract() &&;
@@ -161,10 +179,10 @@ public:
     iterator erase(const_iterator first, const_iterator last);
 
     void swap(flat_map& fm)
-        noexcept(
-            noexcept(declval<KeyContainer>().swap(declval<KeyContainer&>())) &&
-            noexcept(declval<MappedContainer>().swap(declval<MappedContainer&>()))
-        );
+      noexcept(
+        noexcept(declval<KeyContainer>().swap(declval<KeyContainer&>())) &&
+        noexcept(declval<MappedContainer>().swap(declval<MappedContainer&>()))
+      );
     void clear() noexcept;
 
     template<class C2>
@@ -243,6 +261,34 @@ template <class KeyContainer, class MappedContainer, class Alloc>
                 less<typename KeyContainer::value_type>,
                 KeyContainer, MappedContainer>;
 
+template <class Container>
+  flat_map(sorted_unique_t, Container)
+    -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                less<cont_key_t<Container>>,
+                std::vector<cont_key_t<Container>>,
+                std::vector<cont_val_t<Container>>>;
+
+template <class KeyContainer, class MappedContainer>
+  flat_map(sorted_unique_t, KeyContainer, MappedContainer)
+    -> flat_map<typename KeyContainer::value_type,
+                typename MappedContainer::value_type,
+                less<typename KeyContainer::value_type>,
+                KeyContainer, MappedContainer>;
+
+template <class Container, class Alloc>
+  flat_map(sorted_unique_t, Container, Alloc)
+    -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                less<cont_key_t<Container>>,
+                std::vector<cont_key_t<Container>>,
+                std::vector<cont_val_t<Container>>>;
+
+template <class KeyContainer, class MappedContainer, class Alloc>
+  flat_map(sorted_unique_t, KeyContainer, MappedContainer, Alloc)
+    -> flat_map<typename KeyContainer::value_type,
+                typename MappedContainer::value_type,
+                less<typename KeyContainer::value_type>,
+                KeyContainer, MappedContainer>;
+
 template<class Compare, class Alloc>
   flat_map(Compare, Alloc)
     -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>, Compare,
@@ -306,6 +352,18 @@ template<class Key, class T, class Compare, class Alloc>
 
 template<class Key, class T, class Alloc>
   flat_map(initializer_list<pair<Key, T>>, Alloc)
+    -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
+
+template<class Key, class T, class Compare = less<Key>>
+flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Compare = Compare())
+    -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+
+template<class Key, class T, class Compare, class Alloc>
+  flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Compare, Alloc)
+    -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+
+template<class Key, class T, class Alloc>
+  flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Alloc)
     -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
 
 // the comparisons below are for exposition only
