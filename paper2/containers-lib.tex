@@ -1,0 +1,2037 @@
+%!TEX root = std.tex
+\setcounter{chapter}{25}
+\rSec0[containers]{Containers library}
+
+\rSec1[containers.general]{General}
+
+\pnum
+This Clause describes components that \Cpp{} programs may use to
+organize collections of information.
+
+\pnum
+The following subclauses describe
+container requirements,
+and components for
+sequence containers and
+associative containers,
+as summarized in Table 76.
+
+\begin{libsumtab}{Containers library summary}{tab:containers.lib.summary}
+26.2 & Requirements                     &                           \\ \rowsep
+26.3              & Sequence containers              & \tcode{<array>}         \\
+                             &                                  & \tcode{<deque>}         \\
+                             &                                  & \tcode{<forward_list>}  \\
+                             &                                  & \tcode{<list>}          \\
+                             &                                  & \tcode{<vector>}        \\ \rowsep
+26.4            & Associative containers           & \tcode{<map>}           \\
+                             &                                  & \tcode{<set>}           \\ \rowsep
+26.5                  & Unordered associative containers & \tcode{<unordered_map>} \\
+                             &                                  & \tcode{<unordered_set>} \\ \rowsep
+26.6     & Container adaptors               & \tcode{<queue>}         \\
+                             &                                  & \tcode{<stack>}         \\
+                             &                                  & \added{\tcode{<flat_map>}}      \\
+                             &                                  & \added{\tcode{<flat_multimap>}} \\ \rowsep
+26.7                  & Views                            & \tcode{<span>}          \\ \rowsep
+\end{libsumtab}
+
+
+\setcounter{section}{2}
+\setcounter{subsection}{2}
+\rSec2[sequence.reqmts]{Sequence containers}
+
+\pnum
+A sequence container organizes a finite set of objects, all of the same type, into a strictly
+linear arrangement. The library provides four basic kinds of sequence containers:
+\tcode{vector}, \tcode{forward_list}, \tcode{list}, and \tcode{deque}. In addition,
+\tcode{array} is provided as a sequence container which provides limited sequence operations
+because it has a fixed number of elements. The library also provides container
+adaptors that make it easy to construct abstract data types, such
+as \tcode{stack}s, \tcode{queue}s, \added{\tcode{flat_map}s,
+or \tcode{flat_multimap}s, }out of the basic sequence container kinds (or out
+of other kinds of sequence containers that the user might define).
+
+\setcounter{subsection}{5}
+\rSec2[associative.reqmts]{Associative containers}
+
+\pnum
+Associative containers provide fast retrieval of data based on keys.
+The library provides four basic kinds of associative containers:
+\tcode{set},
+\tcode{multiset},
+\tcode{map}
+and
+\tcode{multimap}.\added{  The library also provides container adaptors that
+make it easy to construct abstract data types, such as \tcode{flat_map}s
+or \tcode{flat_multimap}s, out of the basic sequence container kinds (or out
+of other program-defined sequence containers that the user might define).}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\setcounter{Paras}{5}
+\pnum
+\tcode{iterator}
+of an associative container \changed{is of}{meets} the bidirectional iterator \changed{category}{requirements}.
+For associative containers where the value type is the same as the key type, both
+\tcode{iterator}
+and
+\tcode{const_iterator}
+are constant iterators. It is unspecified whether or not
+\tcode{iterator}
+and
+\tcode{const_iterator}
+are the same type.
+\begin{note} \tcode{iterator} and \tcode{const_iterator} have identical semantics in this case, and \tcode{iterator} is convertible to \tcode{const_iterator}. Users can avoid violating the one-definition rule by always using \tcode{const_iterator} in their function parameter lists. \end{note}
+
+\setcounter{chapter}{26}
+\setcounter{section}{5}
+\rSec1[container.adaptors]{Container adaptors}
+
+\rSec2[container.adaptors.general]{In general}
+
+\pnum
+The headers \tcode{<queue>}\changed{ and}{,} \tcode{<stack>}\changed{ define the container adaptors
+\tcode{queue},}{, and \tcode{<flat_map>} define
+the container adaptors} \tcode{queue}, \tcode{priority_queue}\changed{,}{ and} \tcode{stack}\added{,
+\tcode{flat_map}, and \tcode{flat_multimap}}.
+
+\pnum
+\changed{The}{Each} container adaptor\changed{s each take a}{ except \tcode{flat_map} and} \changed{\tcode{Container} template parameter, and each constructor}{\tcode{flat_multimap}} takes
+a \tcode{Container} \changed{reference argument. This}{template parameter, and each} \changed{container is copied into the \tcode{Container} member
+of each adaptor. If the container takes an allocator, then a compatible allocator may be passed in
+to the adaptor's constructor. Otherwise, normal copy or move construction is used for the container
+argument.
+The first template parameter \tcode{T} of the container adaptors
+shall denote the same type as \tcode{Container::value_type}}{constructor takes
+a \tcode{Container} reference argument. This container is copied into
+the \tcode{Container} member of each of these adaptors. If the container takes
+an allocator, then a compatible allocator may be passed in to the adaptor's
+constructor. Otherwise, normal copy or move construction is used for the
+container argument.  The first template parameter \tcode{T} of each of these
+container adaptors shall denote the same type
+as \tcode{Container::value_type}}.
+
+\pnum
+\changed{For container adaptors, no \tcode{swap} function throws an exception unless that
+exception is thrown by the swap of the adaptor's \tcode{Container} or}{The container adaptors \tcode{flat_map}, and \tcode{flat_multimap} each take
+\tcode{KeyContainer} and \tcode{MappedContainer} template parameters.  Many constructors take
+\tcode{KeyContainer} and \tcode{MappedContainer} reference arguments. These containers are copied into
+the \tcode{KeyContainer} and \tcode{MappedContainer} members of each of these
+adaptors. If one or more of the containers takes an allocator, then a
+compatible allocator may be passed in to the adaptor's constructor. Otherwise,
+normal copy or move construction is used for the container argument.  The
+first template parameters \tcode{Key} and \tcode{T} of each of these
+container adaptors shall denote the same type
+as \tcode{KeyContainer::value_type} and \tcode{MappedContainer::value_type},
+respectively}\tcode{Compare} object (if any).
+
+\begin{addedblock}
+\pnum
+For container adaptors, no \tcode{swap} function throws an exception unless
+that exception is thrown by the swap of the
+adaptor's \tcode{Container}, \tcode{KeyContainer}, \tcode{MappedContainer}, or
+\tcode{Compare} object (if any).
+\end{addedblock}
+
+\pnum
+A deduction guide for a container adaptor shall not participate in overload resolution if any of the following are true:
+\begin{itemize}
+\item It has an \tcode{InputIterator} template parameter and a type that does not qualify as an input iterator is deduced for that parameter.
+\item It has a \tcode{Compare} template parameter and a type that qualifies as an allocator is deduced for that parameter.
+\item It has a \tcode{Container}\added{, \tcode{KeyContainer}, or \tcode{MappedContainer}} template parameter and a type that qualifies as an allocator is deduced for that parameter.
+\item It has an \tcode{Allocator} template parameter and a type that does not qualify as an allocator is deduced for that parameter.
+\item It has both \tcode{Container} and \tcode{Allocator} template parameters, and \tcode{uses_allocator_v<Container, Allocator>} is \tcode{false}.
+\item \added{It has both \tcode{KeyContainer} and \tcode{Allocator} template parameters, and \tcode{uses_allocator_v<KeyContainer, Allocator>} is \tcode{false}.}
+\item \added{It has both \tcode{MappedContainer} and \tcode{Allocator} template parameters, and \tcode{uses_allocator_v<MappedContainer, Allocator>} is \tcode{false}.}
+\end{itemize}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\setcounter{subsection}{3}
+\begin{addedblock}
+\rSec2[flatmap.syn]{Header \tcode{<flat_map>} synopsis}%
+\indexhdr{flatmap}%
+
+\begin{codeblock}
+#include <initializer_list>
+
+namespace std {
+  // \ref{flatmap}, class template \tcode{flatmap}
+  template<class Key, class T, class Compare = less<Key>,
+           class KeyContainer = vector<Key>, class MappedContainer = vector<T>>
+    class flat_map;
+
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator==(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator!=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator< (const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator> (const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator<=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator>=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    void swap(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+              flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y)
+      noexcept(noexcept(x.swap(y)));
+
+  struct sorted_unique_t { explicit sorted_unique_t() = default; };
+  inline constexpr sorted_unique_t sorted_unique {};
+
+  // \ref{flatmultimap}, class template \tcode{flat_multimap}
+  template<class Key, class T, class Compare = less<Key>,
+           class KeyContainer = vector<Key>, class MappedContainer = vector<T>>
+    class flat_multimap;
+
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator==(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator!=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator< (const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator> (const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator<=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator>=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    void swap(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+              flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y)
+      noexcept(noexcept(x.swap(y)));
+
+  struct sorted_equivalent_t { explicit sorted_equivalent_t() = default; };
+  inline constexpr sorted_equivalent_t sorted_equivalent {};
+}
+\end{codeblock}
+\end{addedblock}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\setcounter{subsection}{7}
+\begin{addedblock}
+\rSec2[flatmap]{Class template \tcode{flat_map}}
+
+\pnum
+\indexlibrary{\idxcode{flatmap}}%
+A \tcode{flat_map} is an associative container adaptor that
+supports unique keys (contains at most one of each key value) and
+provides for fast retrieval of values of another type \tcode{T} based
+on the keys. The \tcode{flat_map} class supports random access iterators.
+
+\pnum
+A \tcode{flat_map} satisfies all of the requirements of a container, of a
+reversible container (26.2), and of an associative
+container (26.2.6), except for the requirements related to
+node handles (26.2.4).  A \tcode{flat_map} does not meet the
+additional requirements of an allocator-aware container, as described in
+Table 80.
+
+\pnum
+A \tcode{flat_map} also provides most operations described
+in 26.2.6 for unique keys.  This means that a
+\tcode{flat_map} supports the \tcode{a_uniq} operations
+in 26.2.6 but not the \tcode{a_eq} operations.  For
+a \tcode{flat_map<Key,T>} the \tcode{key_type} is \tcode{Key} and the
+\tcode{value_type} is \tcode{pair<const Key,T>}.
+
+\pnum
+Descriptions are provided here only for operations on \tcode{flat_map}
+that are not described in one of those tables or for operations where
+there is additional semantic information.
+
+\pnum
+Any sequence container supporting random access iteration and operations
+\tcode{insert()} and \tcode{erase()} can be used to instantiate
+\tcode{flat_map}. In particular, \tcode{vector} (26.3.11) and
+\tcode{deque} (26.3.8) can be used.
+
+\rSec3[flatmap.defn]{Definition}
+
+\begin{codeblock}
+namespace std {
+  template <class Key, class T, class Compare = less<Key>,
+            class KeyContainer = vector<Key>,
+            class MappedContainer = vector<T>>
+  class flat_map {
+  public:
+      // types:
+      using key_type                  = Key;
+      using mapped_type               = T;
+      using value_type                = pair<const Key, T>;
+      using key_compare               = Compare;
+      using key_allocator_type        = typename KeyContainer::allocator_type;
+      using mapped_allocator_type     = typename MappedContainer::allocator_type;
+      using reference                 = pair<const Key&, T&>;
+      using const_reference           = pair<const Key&, const T&>;
+      using size_type                 = @\impdef@; // see 26.2
+      using difference_type           = @\impdef@; // see 26.2
+      using iterator                  = @\impdefx{type of \tcode{flat_map::iterator}}@; // see 26.2
+      using const_iterator            = @\impdefx{type of \tcode{flat_map::const_iterator}}@; // see 26.2
+      using reverse_iterator          = std::reverse_iterator<iterator>;
+      using const_reverse_iterator    = std::reverse_iterator<const_iterator>;
+      using key_container_type        = KeyContainer;
+      using mapped_container_type     = MappedContainer;
+
+      class value_compare {
+        friend class flat_map;
+      protected:
+        Compare comp;
+        value_compare(Compare c) : comp(c) { }
+      public:
+        bool operator()(const value_type& x, const value_type& y) const {
+          return comp(x.first, y.first);
+        }
+      };
+
+      struct containers
+      {
+        KeyContainer keys;
+        MappedContainer values;
+      };
+
+      // \ref{flatmap.cons}, construct/copy/destroy
+      flat_map();
+
+      flat_map(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+      template <class Container>
+        explicit flat_map(const Container& cont)
+          : flat_map(cont.begin(), cont.end(), Compare()) { }
+      template <class Container, class Alloc>
+        flat_map(const Container& cont, const Alloc& a)
+          : flat_map(cont.begin(), cont.end(), Compare(), a) { }
+
+      flat_map(sorted_unique_t,
+               KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+      template <class Container>
+        flat_map(sorted_unique_t s, const Container& cont)
+          : flat_map(s, cont.begin(), cont.end(), Compare()) { }
+      template <class Container, class Alloc>
+        flat_map(sorted_unique_t s, const Container& cont, const Alloc& a)
+          : flat_map(s, cont.begin(), cont.end(), Compare(), a) { }
+
+      explicit flat_map(const Compare& comp);
+      template <class Alloc>
+        flat_map(const Compare& comp, const Alloc& a);
+      template <class Alloc>
+        explicit flat_map(const Alloc& a)
+          : flat_map(Compare(), a) { }
+
+      template <class InputIterator>
+        flat_map(InputIterator first, InputIterator last,
+                 const Compare& comp = Compare());
+      template <class InputIterator, class Alloc>
+        flat_map(InputIterator first, InputIterator last,
+                 const Compare& comp, const Alloc& a);
+      template <class InputIterator, class Alloc>
+        flat_map(InputIterator first, InputIterator last,
+                 const Alloc& a)
+          : flat_map(first, last, Compare(), a) { }
+
+      template <class InputIterator>
+        flat_map(sorted_unique_t, InputIterator first, InputIterator last,
+                 const Compare& comp = Compare());
+      template <class InputIterator, class Alloc>
+        flat_map(sorted_unique_t, InputIterator first, InputIterator last,
+                 const Compare& comp, const Alloc& a);
+      template <class InputIterator, class Alloc>
+        flat_map(sorted_unique_t s, InputIterator first, InputIterator last,
+                 const Alloc& a)
+          : flat_map(s, first, last, Compare(), a) { }
+
+      template <class Alloc>
+        flat_map(const flat_map& m, const Alloc& a)
+          : compare{std::move(m.compare)}
+          , c{{std::move(m.c.keys), a}, {std::move(m.c.values), a}}
+        {}
+      template<class Alloc>
+        flat_map(const flat_map& m, const Alloc& a)
+          : compare{m.compare}
+          , c{{m.c.keys, a}, {m.c.values, a}}
+        {}
+
+      flat_map(initializer_list<pair<Key, T>>&& il,
+               const Compare& comp = Compare())
+          : flat_map(il, comp) { }
+      template <class Alloc>
+        flat_map(initializer_list<pair<Key, T>>&& il,
+                 const Compare& comp, const Alloc& a)
+          : flat_map(il, comp, a) { }
+      template <class Alloc>
+        flat_map(initializer_list<pair<Key, T>>&& il, const Alloc& a)
+          : flat_map(il, Compare(), a) { }
+
+      flat_map(sorted_unique_t s, initializer_list<pair<Key, T>>&& il,
+               const Compare& comp = Compare())
+          : flat_map(s ,il, comp) { }
+      template <class Alloc>
+        flat_map(sorted_unique_t s, initializer_list<pair<Key, T>>&& il,
+                 const Compare& comp, const Alloc& a)
+          : flat_map(s, il, comp, a) { }
+      template <class Alloc>
+        flat_map(sorted_unique_t s, initializer_list<pair<Key, T>>&& il,
+                 const Alloc& a)
+          : flat_map(s, il, Compare(), a) { }
+
+      flat_map& operator=(initializer_list<pair<Key, T>> il);
+
+      // iterators
+      iterator                begin() noexcept;
+      const_iterator          begin() const noexcept;
+      iterator                end() noexcept;
+      const_iterator          end() const noexcept;
+
+      reverse_iterator        rbegin() noexcept;
+      const_reverse_iterator  rbegin() const noexcept;
+      reverse_iterator        rend() noexcept;
+      const_reverse_iterator  rend() const noexcept;
+
+      const_iterator          cbegin() const noexcept;
+      const_iterator          cend() const noexcept;
+      const_reverse_iterator  crbegin() const noexcept;
+      const_reverse_iterator  crend() const noexcept;
+
+      // capacity
+      [[nodiscard]] bool empty() const noexcept;
+      size_type size() const noexcept;
+      size_type max_size() const noexcept;
+
+      // \ref{flatmap.access}, element access
+      T& operator[](const key_type& x);
+      T& operator[](key_type&& x);
+      T& at(const key_type& x);
+      const T& at(const key_type& x) const;
+
+      // \ref{flatmap.modifiers}, modifiers
+      template <class... Args> pair<iterator, bool> emplace(Args&&... args);
+      template <class... Args>
+        iterator emplace_hint(const_iterator position, Args&&... args);
+      pair<iterator, bool> insert(const value_type& x);
+      pair<iterator, bool> insert(value_type&& x);
+      template <class P> pair<iterator, bool> insert(P&& x);
+      iterator insert(const_iterator position, const value_type& x);
+      iterator insert(const_iterator position, value_type&& x);
+      template <class P>
+        iterator insert(const_iterator position, P&&);
+      template <class InputIterator>
+        void insert(InputIterator first, InputIterator last);
+      template <class InputIterator>
+        void insert(sorted_unique_t, InputIterator first, InputIterator last);
+      void insert(initializer_list<pair<Key, T>>);
+      void insert(sorted_unique_t, initializer_list<pair<Key, T>> il);
+
+      containers extract() &&;
+      void replace(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+
+      template <class... Args>
+        pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
+      template <class... Args>
+        pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
+      template <class... Args>
+        iterator try_emplace(const_iterator hint, const key_type& k,
+                             Args&&... args);
+      template <class... Args>
+        iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
+      template <class M>
+        pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
+      template <class M>
+        pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
+      template <class M>
+        iterator insert_or_assign(const_iterator hint, const key_type& k,
+                                  M&& obj);
+      template <class M>
+        iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
+
+      iterator erase(iterator position);
+      iterator erase(const_iterator position);
+      size_type erase(const key_type& x);
+      iterator erase(const_iterator first, const_iterator last);
+
+      void swap(flat_map& fm)
+        noexcept(
+          noexcept(declval<KeyContainer>().swap(declval<KeyContainer&>())) &&
+          noexcept(declval<MappedContainer>().swap(declval<MappedContainer&>()))
+        );
+      void clear() noexcept;
+
+      template<class C2>
+        void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>& source);
+      template<class C2>
+        void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>&& source);
+      template<class C2>
+        void merge(
+          flat_map<Key, T, C2, KeyContainer, MappedContainer>& source);
+      template<class C2>
+        void merge(
+          flat_map<Key, T, C2, KeyContainer, MappedContainer>&& source);
+
+      // observers
+      key_compare key_comp() const;
+      value_compare value_comp() const;
+
+      // map operations
+      bool contains(const key_type& x) const;
+      template <class K> bool contains(const K& x) const;
+
+      iterator find(const key_type& x);
+      const_iterator find(const key_type& x) const;
+      template <class K> iterator find(const K& x);
+      template <class K> const_iterator find(const K& x) const;
+
+      size_type count(const key_type& x) const;
+      template <class K> size_type count(const K& x) const;
+
+      iterator lower_bound(const key_type& x);
+      const_iterator lower_bound(const key_type& x) const;
+      template <class K> iterator lower_bound(const K& x);
+      template <class K> const_iterator lower_bound(const K& x) const;
+
+      iterator upper_bound(const key_type& x);
+      const_iterator upper_bound(const key_type& x) const;
+      template <class K> iterator upper_bound(const K& x);
+      template <class K> const_iterator upper_bound(const K& x) const;
+
+      pair<iterator, iterator> equal_range(const key_type& x);
+      pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
+      template <class K>
+        pair<iterator, iterator> equal_range(const K& x);
+      template <class K>
+        pair<const_iterator, const_iterator> equal_range(const K& x) const;
+
+  private:
+    containers c;    // \expos
+    Compare compare; // \expos
+  };
+
+  template<class Container>
+    using @\placeholder{cont-key-type}@ =
+      typename Container::value_type::first_type;   // \expos
+  template<class Container>
+    using @\placeholder{cont-val-type}@ =
+      typename Container::value_type::second_type;  // \expos
+
+  template <class Container>
+    flat_map(Container)
+      -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                  less<cont_key_t<Container>>,
+                  vector<cont_key_t<Container>>,
+                  vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer>
+    flat_map(KeyContainer, MappedContainer)
+      -> flat_map<typename KeyContainer::value_type,
+                  typename MappedContainer::value_type,
+                  less<typename KeyContainer::value_type>,
+                  KeyContainer, MappedContainer>;
+
+  template <class Container, class Alloc>
+    flat_map(Container, Alloc)
+      -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                  less<cont_key_t<Container>>,
+                  vector<cont_key_t<Container>>,
+                  vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer, class Alloc>
+    flat_map(KeyContainer, MappedContainer, Alloc)
+      -> flat_map<typename KeyContainer::value_type,
+                  typename MappedContainer::value_type,
+                  less<typename KeyContainer::value_type>,
+                  KeyContainer, MappedContainer>;
+
+  template <class Container>
+    flat_map(sorted_unique_t, Container)
+      -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                  less<cont_key_t<Container>>,
+                  vector<cont_key_t<Container>>,
+                  vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer>
+    flat_map(sorted_unique_t, KeyContainer, MappedContainer)
+      -> flat_map<typename KeyContainer::value_type,
+                  typename MappedContainer::value_type,
+                  less<typename KeyContainer::value_type>,
+                  KeyContainer, MappedContainer>;
+
+  template <class Container, class Alloc>
+    flat_map(sorted_unique_t, Container, Alloc)
+      -> flat_map<cont_key_t<Container>, cont_val_t<Container>,
+                  less<cont_key_t<Container>>,
+                  vector<cont_key_t<Container>>,
+                  vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer, class Alloc>
+    flat_map(sorted_unique_t, KeyContainer, MappedContainer, Alloc)
+      -> flat_map<typename KeyContainer::value_type,
+                  typename MappedContainer::value_type,
+                  less<typename KeyContainer::value_type>,
+                  KeyContainer, MappedContainer>;
+
+  template<class Compare, class Alloc>
+    flat_map(Compare, Alloc)
+      -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>, Compare,
+                  vector<alloc_key_t<Alloc>>,
+                  vector<alloc_val_t<Alloc>>>;
+
+  template<class Alloc>
+    flat_map(Alloc)
+      -> flat_map<alloc_key_t<Alloc>, alloc_val_t<Alloc>,
+                  less<alloc_key_t<Alloc>>,
+                  vector<alloc_key_t<Alloc>>,
+                  vector<alloc_val_t<Alloc>>>;
+
+  template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+    flat_map(InputIterator, InputIterator, Compare = Compare())
+      -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                  less<iter_key_t<InputIterator>>,
+                  vector<iter_key_t<InputIterator>>,
+                  vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Compare, class Alloc>
+    flat_map(InputIterator, InputIterator, Compare, Alloc)
+      -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                  vector<iter_key_t<InputIterator>>,
+                  vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Alloc>
+    flat_map(InputIterator, InputIterator, Alloc)
+      -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                  less<iter_key_t<InputIterator>>,
+                  vector<iter_key_t<InputIterator>>,
+                  vector<iter_val_t<InputIterator>>>;
+
+  template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+    flat_map(sorted_unique_t, InputIterator, InputIterator, Compare = Compare())
+      -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                  less<iter_key_t<InputIterator>>,
+                  vector<iter_key_t<InputIterator>>,
+                  vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Compare, class Alloc>
+    flat_map(sorted_unique_t, InputIterator, InputIterator, Compare, Alloc)
+      -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>, Compare,
+                  vector<iter_key_t<InputIterator>>,
+                  vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Alloc>
+    flat_map(sorted_unique_t, InputIterator, InputIterator, Alloc)
+      -> flat_map<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                  less<iter_key_t<InputIterator>>,
+                  vector<iter_key_t<InputIterator>>,
+                  vector<iter_val_t<InputIterator>>>;
+
+  template<class Key, class T, class Compare = less<Key>>
+    flat_map(initializer_list<pair<Key, T>>, Compare = Compare())
+      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare, class Alloc>
+    flat_map(initializer_list<pair<Key, T>>, Compare, Alloc)
+      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Alloc>
+    flat_map(initializer_list<pair<Key, T>>, Alloc)
+      -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare = less<Key>>
+  flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Compare = Compare())
+      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare, class Alloc>
+    flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Compare, Alloc)
+      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Alloc>
+    flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Alloc)
+      -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator==(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator!=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator< (const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator> (const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator<=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator>=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+
+  // specialized algorithms
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    void swap(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+              flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y)
+      noexcept(noexcept(x.swap(y)));
+}
+\end{codeblock}
+
+\rSec3[flatmap.cons]{Constructors}
+
+\pnum
+The effect of calling a constructor that takes both \tcode{KeyContainer}
+and \tcode{MappedContainer} arguments with containers of different sizes is
+undefined.
+
+\pnum
+Constructors in this subclause that take a \tcode{Container}
+argument \tcode{cont} shall participate in overload resolution only if
+both \tcode{std::begin(cont)} and \tcode{std::end(cont)} are well-formed
+expressions.
+
+\pnum
+The effect of calling a constructor that takes a \tcode{sorted_unique_t}
+argument with a range that is not sorted with respect
+to \tcode{compare} is undefined.
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+flat_map(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{c.keys} with
+\tcode{std::forward<KeyContainer>(key_cont)} and \tcode{c.values} with
+\tcode{std::forward<MappedContainer>(mapped_cont)}; sorts the range
+\range{begin()}{end()}.
+
+\pnum
+\complexity
+Linear in $N$ if the container arguments are already sorted as if
+with \tcode{comp} and otherwise $N \log N$, where $N$
+is \tcode{key_cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+flat_map(sorted_unique_t, KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{c.keys} with
+\tcode{std::forward<KeyContainer>(key_cont)} and \tcode{c.values} with
+\tcode{std::forward<MappedContainer>(mapped_cont)}.
+
+\pnum
+\complexity
+Constant.
+\end{itemdescr}
+
+\begin{itemdecl}
+explicit flat_map(const Compare& comp);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}.
+
+\pnum
+\complexity
+Constant.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+template <class InputIterator>
+  flat_map(sorted_unique_t, InputIterator first, InputIterator last,
+           const Compare& comp = Compare());
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with
+\tcode{comp}, and adds elements to \tcode{c.keys} and \tcode{c.values} as if by:
+\begin{codeblock}
+for (; first != last; ++first) {
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
+}
+\end{codeblock}
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\rSec3[flatmap.cons.alloc]{Constructors with allocators}
+
+\pnum
+If \tcode{uses_allocator_v<key_container_type, Alloc> \&\&
+uses_allocator_v<mapped_container_type, Alloc>} is \tcode{false} the
+constructors in this subclause shall not participate in overload resolution.
+
+\pnum
+Constructors in this subclause that take an \tcode{Allocator} argument shall
+participate in overload resolution only if \tcode{Allocator} meets the
+allocator requirements as described in (26.2.1).
+
+\pnum
+Constructors in this subclause that take a \tcode{Container}
+argument \tcode{cont} shall participate in overload resolution only if
+both \tcode{std::begin(cont)} and \tcode{std::end(cont)} are well-formed
+expressions.
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+template <class Alloc>
+  flat_map(const Compare& comp, const Alloc& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, and performs
+uses-allocator construction (23.10.8.2) of both
+\tcode{c.keys} and \tcode{c.values} with \tcode{a}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+template <class InputIterator, class Alloc>
+  flat_map(InputIterator first, InputIterator last,
+           const Compare& comp, const Alloc& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, and performs
+uses-allocator construction (23.10.8.2) of both
+\tcode{c.keys} and \tcode{c.values} with \tcode{a}; adds elements to
+\tcode{c.keys} and \tcode{c.values} as if by:
+\begin{codeblock}
+for (; first != last; ++last) {
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
+}
+\end{codeblock}
+and finally sorts the range \range{begin()}{end()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+template <class InputIterator, class Alloc>
+  flat_map(sorted_unique_t, InputIterator first, InputIterator last,
+           const Compare& comp, const Alloc& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, and performs
+uses-allocator construction (23.10.8.2) of both
+\tcode{c.keys} and \tcode{c.values} with \tcode{a}; adds elements to
+\tcode{c.keys} and \tcode{c.values} as if by:
+\begin{codeblock}
+for (; first != last; ++last) {
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
+}
+\end{codeblock}
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\rSec3[flatmap.access]{Access}
+
+\indexlibrary{\idxcode{operator[]}!\idxcode{flatmap}}%
+\begin{itemdecl}
+T& operator[](const key_type& x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return try_emplace(x).first->second;}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator[]}!\idxcode{flatmap}}%
+\begin{itemdecl}
+T& operator[](key_type&& x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return try_emplace(move(x)).first->second;}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{at}!\idxcode{flatmap}}%
+\begin{itemdecl}
+T&       at(const key_type& x);
+const T& at(const key_type& x) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+A reference to the \tcode{mapped_type} corresponding to \tcode{x} in \tcode{*this}.
+
+\pnum
+\throws
+An exception object of type \tcode{out_of_range} if
+no such element is present.
+
+\pnum
+\complexity Logarithmic.
+\end{itemdescr}
+
+\rSec3[flatmap.modifiers]{Modifiers}
+
+\indexlibrarymember{operator=}{flatmap}%
+\begin{itemdecl}
+flat_map& operator=(initializer_list<pair<Key, T>> il);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+\tcode{key_type} shall be \tcode{CopyInsertable} into \tcode{KeyContainer}, and
+\tcode{mapped_type}  shall be \tcode{EmplaceConstructible} into \tcode{MappedContainer}
+from \tcode{args...}.
+
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+clear();
+insert(il);
+\end{codeblock}
+\end{itemdescr}
+
+\indexlibrarymember{insert}{flatmap}%
+\begin{itemdecl}
+template<class P> pair<iterator, bool> insert(P&& x);
+template<class P> iterator insert(const_iterator position, P&& x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+The first form is equivalent to
+\tcode{return emplace(std::forward<P>(x))}. The second form is
+equivalent to \tcode{return emplace_hint(position, std::forward<P>(x))}.
+
+\pnum
+\remarks
+These signatures shall not participate in overload resolution
+unless \tcode{is_constructible_v<pair<key_type, mapped_type>, P>} is
+\tcode{true}.
+\end{itemdescr}
+
+\indexlibrarymember{try_emplace}{flatmap}%
+\begin{itemdecl}
+template<class... Args>
+  pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
+template<class... Args>
+  iterator try_emplace(const_iterator hint, const key_type& k, Args&&... args);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+\tcode{key_type} shall be \tcode{CopyInsertable} into \tcode{KeyContainer}, and
+\tcode{mapped_type}  shall be \tcode{EmplaceConstructible} into \tcode{MappedContainer}
+from \tcode{args...}.
+
+\pnum
+\effects
+If the map already contains an element
+whose key is equivalent to \tcode{k},
+there is no effect.
+Otherwise equivalent to \tcode{emplace(k, std::forward<Args>(args)...)} or
+\tcode{emplace(hint, k, std::forward<Args>(args)...)} respectively.
+
+\pnum
+\returns
+In the first overload,
+the \tcode{bool} component of the returned pair is \tcode{true}
+if and only if the insertion took place.
+The returned iterator points to the map element
+whose key is equivalent to \tcode{k}.
+
+\pnum
+\complexity
+The same as \tcode{emplace} and \tcode{emplace_hint},
+respectively.
+\end{itemdescr}
+
+\indexlibrarymember{try_emplace}{flatmap}%
+\begin{itemdecl}
+template<class... Args>
+  pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
+template<class... Args>
+  iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+\tcode{key_type} shall be \tcode{MoveInsertable} into \tcode{KeyContainer}, and
+\tcode{mapped_type}  shall be \tcode{EmplaceConstructible} into \tcode{MappedContainer}
+from \tcode{args...}.
+
+\pnum
+\effects
+If the map already contains an element
+whose key is equivalent to \tcode{k},
+there is no effect.
+Otherwise equivalent to \tcode{emplace(std::move(k), std::forward<Args>(args)...)} or
+\tcode{emplace(hint, std::move(k), std::forward<Args>(args)...)} respectively.
+
+\pnum
+\returns
+In the first overload,
+the \tcode{bool} component of the returned pair is \tcode{true}
+if and only if the insertion took place.
+The returned iterator points to the map element
+whose key is equivalent to \tcode{k}.
+
+\pnum
+\complexity
+The same as \tcode{emplace} and \tcode{emplace_hint},
+respectively.
+\end{itemdescr}
+
+\indexlibrarymember{insert_or_assign}{flatmap}%
+\begin{itemdecl}
+template<class M>
+  pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
+template<class M>
+  iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+\tcode{is_assignable_v<mapped_type\&, M} shall be \tcode{true}.
+\tcode{key_type} shall be \tcode{CopyInsertable} into \tcode{KeyContainer}, and
+\tcode{mapped_type}  shall be \tcode{EmplaceConstructible} into \tcode{MappedContainer}
+from \tcode{obj}.
+
+\pnum
+\effects
+If the map already contains an element \tcode{e}
+whose key is equivalent to \tcode{k},
+assigns \tcode{std::for\-ward<M>(obj)} to \tcode{e.second}.
+Otherwise equivalent to \tcode{insert(k, std::forward<M>(obj))} or
+\tcode{emplace(hint, k, std::forward<M>(obj))} respectively.
+
+\pnum
+\returns
+In the first overload,
+the \tcode{bool} component of the returned pair is \tcode{true}
+if and only if the insertion took place.
+The returned iterator points to the map element
+whose key is equivalent to \tcode{k}.
+
+\pnum
+\complexity
+The same as \tcode{emplace} and \tcode{emplace_hint},
+respectively.
+\end{itemdescr}
+
+\indexlibrarymember{insert_or_assign}{flatmap}%
+\begin{itemdecl}
+template<class M>
+  pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
+template<class M>
+  iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+\tcode{is_assignable_v<mapped_type\&, M>} shall be \tcode{true}.
+\tcode{key_type} shall be \tcode{MoveInsertable} into \tcode{KeyContainer}, and
+\tcode{mapped_type}  shall be \tcode{EmplaceConstructible} into \tcode{MappedContainer}
+from \tcode{obj}.
+
+\pnum
+\effects
+If the map already contains an element \tcode{e}
+whose key is equivalent to \tcode{k},
+assigns \tcode{std::for\-ward<M>(obj)} to \tcode{e.second}.
+Otherwise equivalent to \tcode{insert(std::move(k), std::forward<M>(obj))} or
+\tcode{emplace(hint, std::move(k), std::forward<M>(obj))} respectively.
+
+\pnum
+\returns
+In the first overload,
+the \tcode{bool} component of the returned pair is \tcode{true}
+if and only if the insertion took place.
+The returned iterator points to the map element
+whose key is equivalent to \tcode{k}.
+
+\pnum
+\complexity
+The same as \tcode{emplace} and \tcode{emplace_hint},
+respectively.
+\end{itemdescr}
+
+\indexlibrarymember{flatmap}{insert}%
+\begin{itemdecl}
+template <class InputIterator>
+  void insert(sorted_unique_t, InputIterator first, InputIterator last);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \requires The range \range{first}{last} shall be sorted with respect
+to \tcode{compare}.
+
+\pnum \effects Equivalent to: \tcode{insert(first, last)}.
+
+\pnum \complexity Linear.
+\end{itemdescr}
+
+\indexlibrarymember{flatmap}{insert}%
+\begin{itemdecl}
+void insert(sorted_unique_t, initializer_list<pair<Key, T>> il);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum Effects: Equivalent to \tcode{insert(sorted_unique_t{}, il.begin(), il.end())}.
+\end{itemdescr}
+
+\indexlibrarymember{flatmap}{extract}%
+\begin{itemdecl}
+containers extract() &&;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum Effects: Equivalent to \tcode{return std::move(c);}
+\end{itemdescr}
+
+\indexlibrarymember{flatmap}{replace}%
+\begin{itemdecl}
+void replace(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \requires \tcode{key_cont.size() == mapped_cont.size()}, and that
+the elements of \tcode{key_cont} are sorted with respect to \tcode{compare}.
+
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+c.keys = std::move(key_cont);
+c.values = std::move(mapped_cont);
+\end{codeblock}
+\end{itemdescr}
+
+\rSec3[flatmap.ops]{Operators}
+
+\indexlibrary{\idxcode{operator==}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator==(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\tcode{return std::equal(x.begin(), x.end(), y.begin(), y.end());}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator!=}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator!=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{!(x == y)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator<}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator< (const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\tcode{return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator>}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator> (const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{y < x}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator<=}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator<=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{!(y < x)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator>=}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator>=(const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{!(x < y)}.
+\end{itemdescr}
+
+\rSec3[flatmap.special]{Specialized algorithms}
+
+\indexlibrarymember{swap}{flatmap}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  void swap(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& x,
+            flat_map<Key, T, Compare, KeyContainer, MappedContainer>& y)
+    noexcept(noexcept(x.swap(y)));
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\remarks
+This function shall not participate in overload resolution
+unless \tcode{is_swappable_v<KeyContainer> \&\& is_swappable_v<MappedContainer>}
+is \tcode{true}.
+
+\pnum
+\effects Equivalent to: \tcode{x.swap(y)}.
+\end{itemdescr}
+
+\rSec2[flatmultimap]{Class template \tcode{flat_multimap}}
+
+\pnum
+\indexlibrary{\idxcode{flatmultimap}}%
+\pnum
+A \tcode{flat_multimap} is an associative container adaptor that supports
+equivalent keys (possibly containing multiple copies of the same key value)
+and provides for fast retrieval of values of another type \tcode{T} based on
+the keys. The \tcode{flat_multimap} class supports random access iterators.
+
+\pnum
+A \tcode{flat_multimap} satisfies all of the requirements of a container, of a
+reversible container (26.2), and of an associative
+container (26.2.6), except for the requirements related to
+node handles (26.2.4).  A \tcode{flat_multimap} does not meet the
+additional requirements of an allocator-aware container, as described in
+Table 80.
+
+\pnum
+A \tcode{flat_multimap} also provides most operations described
+in 26.2.6 for equal keys.  This means that a
+\tcode{flat_multimap} supports the \tcode{a_eq} operations
+in 26.2.6 but not the \tcode{a_uniq} operations.  For
+a \tcode{flat_multimap<Key,T>} the \tcode{key_type} is \tcode{Key} and the
+\tcode{value_type} is \tcode{pair<const Key,T>}.
+
+\pnum
+Descriptions are provided here only for operations on \tcode{flat_multimap}
+that are not described in one of those tables or for operations where
+there is additional semantic information.
+
+\pnum
+Any sequence container supporting random access iteration and operations
+\tcode{insert()} and \tcode{erase()} can be used to instantiate
+\tcode{flat_multimap}. In particular, \tcode{vector} (26.3.11) and
+\tcode{deque} (26.3.8) can be used.
+
+\rSec3[flatmultimap.defn]{Definition}
+
+\begin{codeblock}
+namespace std {
+  template <class Key, class T, class Compare = less<Key>,
+            class KeyContainer = vector<Key>,
+            class MappedContainer = vector<T>>
+  class flat_multimap {
+  public:
+      // types:
+      using key_type                  = Key;
+      using mapped_type               = T;
+      using value_type                = pair<const Key, T>;
+      using key_compare               = Compare;
+      using key_allocator_type        = typename KeyContainer::allocator_type;
+      using mapped_allocator_type     = typename MappedContainer::allocator_type;
+      using reference                 = pair<const Key&, T&>;
+      using const_reference           = pair<const Key&, const T&>;
+      using size_type                 = @\impdef@; // see 26.2
+      using difference_type           = @\impdef@; // see 26.2
+      using iterator                  = @\impdefx{type of \tcode{flat_multimap::iterator}}@; // see 26.2
+      using const_iterator            = @\impdefx{type of \tcode{flat_multimap::const_iterator}}@; // see 26.2
+      using reverse_iterator          = std::reverse_iterator<iterator>;
+      using const_reverse_iterator    = std::reverse_iterator<const_iterator>;
+      using key_container_type        = KeyContainer;
+      using mapped_container_type     = MappedContainer;
+
+      class value_compare {
+        friend class flat_multimap;
+      protected:
+        Compare comp;
+        value_compare(Compare c) : comp(c) { }
+      public:
+        bool operator()(const value_type& x, const value_type& y) const {
+          return comp(x.first, y.first);
+        }
+      };
+
+      struct containers
+      {
+        KeyContainer keys;
+        MappedContainer values;
+      };
+
+      // \ref{flatmultimap.cons}, construct/copy/destroy
+      flat_multimap();
+
+      flat_multimap(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+      template <class Container>
+        explicit flat_multimap(const Container& cont)
+          : flat_multimap(cont.begin(), cont.end(), Compare()) { }
+      template <class Container, class Alloc>
+        flat_multimap(const Container& cont, const Alloc& a)
+          : flat_multimap(cont.begin(), cont.end(), Compare(), a) { }
+
+      flat_multimap(sorted_equivalent_t,
+                    KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+      template <class Container>
+        flat_multimap(sorted_equivalent_t s, const Container& cont)
+          : flat_multimap(s, cont.begin(), cont.end(), Compare()) { }
+      template <class Container, class Alloc>
+        flat_multimap(sorted_equivalent_t s, const Container& cont, const Alloc& a)
+          : flat_multimap(s, cont.begin(), cont.end(), Compare(), a) { }
+
+      explicit flat_multimap(const Compare& comp);
+      template <class Alloc>
+        flat_multimap(const Compare& comp, const Alloc& a);
+      template <class Alloc>
+        explicit flat_multimap(const Alloc& a)
+          : flat_multimap(Compare(), a) { }
+
+      template <class InputIterator>
+        flat_multimap(InputIterator first, InputIterator last,
+                      const Compare& comp = Compare());
+      template <class InputIterator, class Alloc>
+        flat_multimap(InputIterator first, InputIterator last,
+                     const Compare& comp, const Alloc& a);
+      template <class InputIterator, class Alloc>
+        flat_multimap(InputIterator first, InputIterator last,
+                      const Alloc& a)
+          : flat_multimap(first, last, Compare(), a) { }
+
+      template <class InputIterator>
+        flat_multimap(sorted_equivalent_t, InputIterator first, InputIterator last,
+                      const Compare& comp = Compare());
+      template <class InputIterator, class Alloc>
+        flat_multimap(sorted_equivalent_t, InputIterator first, InputIterator last,
+                      const Compare& comp, const Alloc& a);
+      template <class InputIterator, class Alloc>
+        flat_multimap(sorted_equivalent_t s, InputIterator first, InputIterator last,
+                      const Alloc& a)
+          : flat_multimap(s, first, last, Compare(), a) { }
+
+      template <class Alloc>
+        flat_multimap(const flat_multimap& m, const Alloc& a)
+          : compare{std::move(m.compare)}
+          , c{{std::move(m.c.keys), a}, {std::move(m.c.values), a}}
+        {}
+      template<class Alloc>
+        flat_multimap(const flat_multimap& m, const Alloc& a)
+          : compare{m.compare}
+          , c{{m.c.keys, a}, {m.c.values, a}}
+        {}
+
+      flat_multimap(initializer_list<pair<Key, T>>&& il,
+                    const Compare& comp = Compare())
+          : flat_multimap(il, comp) { }
+      template <class Alloc>
+        flat_multimap(initializer_list<pair<Key, T>>&& il,
+                      const Compare& comp, const Alloc& a)
+          : flat_multimap(il, comp, a) { }
+      template <class Alloc>
+        flat_multimap(initializer_list<pair<Key, T>>&& il, const Alloc& a)
+          : flat_multimap(il, Compare(), a) { }
+
+      flat_multimap(sorted_equivalent_t s, initializer_list<pair<Key, T>>&& il,
+                    const Compare& comp = Compare())
+          : flat_multimap(s, il, comp) { }
+      template <class Alloc>
+        flat_multimap(sorted_equivalent_t s, initializer_list<pair<Key, T>>&& il,
+                      const Compare& comp, const Alloc& a)
+          : flat_multimap(s, il, comp, a) { }
+      template <class Alloc>
+        flat_multimap(sorted_equivalent_t s, initializer_list<pair<Key, T>>&& il,
+                      const Alloc& a)
+          : flat_multimap(s, il, Compare(), a) { }
+
+      flat_multimap& operator=(initializer_list<pair<Key, T>> il);
+
+      // iterators
+      iterator                begin() noexcept;
+      const_iterator          begin() const noexcept;
+      iterator                end() noexcept;
+      const_iterator          end() const noexcept;
+
+      reverse_iterator        rbegin() noexcept;
+      const_reverse_iterator  rbegin() const noexcept;
+      reverse_iterator        rend() noexcept;
+      const_reverse_iterator  rend() const noexcept;
+
+      const_iterator          cbegin() const noexcept;
+      const_iterator          cend() const noexcept;
+      const_reverse_iterator  crbegin() const noexcept;
+      const_reverse_iterator  crend() const noexcept;
+
+      // capacity
+      [[nodiscard]] bool empty() const noexcept;
+      size_type size() const noexcept;
+      size_type max_size() const noexcept;
+
+      // \ref{flatmultimap.modifiers}, modifiers
+      template <class... Args> pair<iterator, bool> emplace(Args&&... args);
+      template <class... Args>
+        iterator emplace_hint(const_iterator position, Args&&... args);
+      pair<iterator, bool> insert(const value_type& x);
+      pair<iterator, bool> insert(value_type&& x);
+      template <class P> pair<iterator, bool> insert(P&& x);
+      iterator insert(const_iterator position, const value_type& x);
+      iterator insert(const_iterator position, value_type&& x);
+      template <class P>
+        iterator insert(const_iterator position, P&&);
+      template <class InputIterator>
+        void insert(InputIterator first, InputIterator last);
+      template <class InputIterator>
+        void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
+      void insert(initializer_list<pair<Key, T>>);
+      void insert(sorted_equivalent_t, initializer_list<pair<Key, T>> il);
+
+      containers extract() &&;
+      void replace(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+
+      iterator erase(iterator position);
+      iterator erase(const_iterator position);
+      size_type erase(const key_type& x);
+      iterator erase(const_iterator first, const_iterator last);
+
+      void swap(flat_multimap& fm)
+        noexcept(
+          noexcept(declval<KeyContainer>().swap(declval<KeyContainer&>())) &&
+          noexcept(declval<MappedContainer>().swap(declval<MappedContainer&>()))
+        );
+      void clear() noexcept;
+
+      template<class C2>
+        void merge(flat_multimap<Key, T, C2, KeyContainer, MappedContainer>& source);
+      template<class C2>
+        void merge(flat_multimap<Key, T, C2, KeyContainer, MappedContainer>&& source);
+      template<class C2>
+        void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>& source);
+      template<class C2>
+        void merge(flat_map<Key, T, C2, KeyContainer, MappedContainer>&& source);
+
+      // observers
+      key_compare key_comp() const;
+      value_compare value_comp() const;
+
+      // map operations
+      bool contains(const key_type& x) const;
+      template <class K> bool contains(const K& x) const;
+
+      iterator find(const key_type& x);
+      const_iterator find(const key_type& x) const;
+      template <class K> iterator find(const K& x);
+      template <class K> const_iterator find(const K& x) const;
+
+      size_type count(const key_type& x) const;
+      template <class K> size_type count(const K& x) const;
+
+      iterator lower_bound(const key_type& x);
+      const_iterator lower_bound(const key_type& x) const;
+      template <class K> iterator lower_bound(const K& x);
+      template <class K> const_iterator lower_bound(const K& x) const;
+
+      iterator upper_bound(const key_type& x);
+      const_iterator upper_bound(const key_type& x) const;
+      template <class K> iterator upper_bound(const K& x);
+      template <class K> const_iterator upper_bound(const K& x) const;
+
+      pair<iterator, iterator> equal_range(const key_type& x);
+      pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
+      template <class K>
+        pair<iterator, iterator> equal_range(const K& x);
+      template <class K>
+        pair<const_iterator, const_iterator> equal_range(const K& x) const;
+
+  private:
+    containers c;    // \expos
+    Compare compare; // \expos
+  };
+
+  template<class Container>
+    using @\placeholder{cont-key-type}@ =
+      typename Container::value_type::first_type;   // \expos
+  template<class Container>
+    using @\placeholder{cont-val-type}@ =
+      typename Container::value_type::second_type;  // \expos
+
+  template <class Container>
+    flat_multimap(Container)
+      -> flat_multimap<cont_key_t<Container>, cont_val_t<Container>,
+                       less<cont_key_t<Container>>,
+                       vector<cont_key_t<Container>>,
+                       vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer>
+    flat_multimap(KeyContainer, MappedContainer)
+      -> flat_multimap<typename KeyContainer::value_type,
+                       typename MappedContainer::value_type,
+                       less<typename KeyContainer::value_type>,
+                       KeyContainer, MappedContainer>;
+
+  template <class Container, class Alloc>
+    flat_multimap(Container, Alloc)
+      -> flat_multimap<cont_key_t<Container>, cont_val_t<Container>,
+                       less<cont_key_t<Container>>,
+                       vector<cont_key_t<Container>>,
+                       vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer, class Alloc>
+    flat_multimap(KeyContainer, MappedContainer, Alloc)
+      -> flat_multimap<typename KeyContainer::value_type,
+                       typename MappedContainer::value_type,
+                       less<typename KeyContainer::value_type>,
+                       KeyContainer, MappedContainer>;
+
+  template <class Container>
+    flat_multimap(sorted_equivalent_t, Container)
+      -> flat_multimap<cont_key_t<Container>, cont_val_t<Container>,
+                       less<cont_key_t<Container>>,
+                       vector<cont_key_t<Container>>,
+                       vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer>
+    flat_multimap(sorted_equivalent_t, KeyContainer, MappedContainer)
+      -> flat_multimap<typename KeyContainer::value_type,
+                       typename MappedContainer::value_type,
+                       less<typename KeyContainer::value_type>,
+                       KeyContainer, MappedContainer>;
+
+  template <class Container, class Alloc>
+    flat_multimap(sorted_equivalent_t, Container, Alloc)
+      -> flat_multimap<cont_key_t<Container>, cont_val_t<Container>,
+                       less<cont_key_t<Container>>,
+                       vector<cont_key_t<Container>>,
+                       vector<cont_val_t<Container>>>;
+
+  template <class KeyContainer, class MappedContainer, class Alloc>
+    flat_multimap(sorted_equivalent_t, KeyContainer, MappedContainer, Alloc)
+      -> flat_multimap<typename KeyContainer::value_type,
+                       typename MappedContainer::value_type,
+                       less<typename KeyContainer::value_type>,
+                       KeyContainer, MappedContainer>;
+
+  template<class Compare, class Alloc>
+    flat_multimap(Compare, Alloc)
+      -> flat_multimap<alloc_key_t<Alloc>, alloc_val_t<Alloc>, Compare,
+                       vector<alloc_key_t<Alloc>>,
+                       vector<alloc_val_t<Alloc>>>;
+
+  template<class Alloc>
+    flat_multimap(Alloc)
+      -> flat_multimap<alloc_key_t<Alloc>, alloc_val_t<Alloc>,
+                       less<alloc_key_t<Alloc>>,
+                       vector<alloc_key_t<Alloc>>,
+                       vector<alloc_val_t<Alloc>>>;
+
+  template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+    flat_multimap(InputIterator, InputIterator, Compare = Compare())
+      -> flat_multimap<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                       less<iter_key_t<InputIterator>>,
+                       vector<iter_key_t<InputIterator>>,
+                       vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Compare, class Alloc>
+    flat_multimap(InputIterator, InputIterator, Compare, Alloc)
+      -> flat_multimap<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                       Compare, vector<iter_key_t<InputIterator>>,
+                       vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Alloc>
+    flat_multimap(InputIterator, InputIterator, Alloc)
+      -> flat_multimap<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                       less<iter_key_t<InputIterator>>,
+                       vector<iter_key_t<InputIterator>>,
+                       vector<iter_val_t<InputIterator>>>;
+
+  template <class InputIterator, class Compare = less<iter_key_t<InputIterator>>>
+    flat_multimap(sorted_equivalent_t, InputIterator, InputIterator,
+                  Compare = Compare())
+      -> flat_multimap<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                       less<iter_key_t<InputIterator>>,
+                       vector<iter_key_t<InputIterator>>,
+                       vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Compare, class Alloc>
+    flat_multimap(sorted_equivalent_t, InputIterator, InputIterator, Compare, Alloc)
+      -> flat_multimap<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                       Compare, vector<iter_key_t<InputIterator>>,
+                       vector<iter_val_t<InputIterator>>>;
+
+  template<class InputIterator, class Alloc>
+    flat_multimap(sorted_equivalent_t, InputIterator, InputIterator, Alloc)
+      -> flat_multimap<iter_key_t<InputIterator>, iter_val_t<InputIterator>,
+                       less<iter_key_t<InputIterator>>,
+                       vector<iter_key_t<InputIterator>>,
+                       vector<iter_val_t<InputIterator>>>;
+
+  template<class Key, class T, class Compare = less<Key>>
+    flat_multimap(initializer_list<pair<Key, T>>, Compare = Compare())
+      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare, class Alloc>
+    flat_multimap(initializer_list<pair<Key, T>>, Compare, Alloc)
+      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Alloc>
+    flat_multimap(initializer_list<pair<Key, T>>, Alloc)
+      -> flat_multimap<Key, T, less<Key>, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare = less<Key>>
+  flat_multimap(sorted_equivalent_t, initializer_list<pair<Key, T>>,
+                Compare = Compare())
+      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare, class Alloc>
+    flat_multimap(sorted_equivalent_t, initializer_list<pair<Key, T>>, Compare, Alloc)
+      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Alloc>
+    flat_multimap(sorted_equivalent_t, initializer_list<pair<Key, T>>, Alloc)
+      -> flat_multimap<Key, T, less<Key>, vector<Key>, vector<T>>;
+
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator==(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator!=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator< (const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator> (const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator<=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    bool operator>=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                    const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+
+  // specialized algorithms:
+  template<class Key, class T, class Compare,
+           class KeyContainer, class MappedContainer>
+    void swap(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+              flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y)
+      noexcept(noexcept(x.swap(y)));
+}
+\end{codeblock}
+
+\rSec3[flatmultimap.cons]{Constructors}
+
+\pnum
+The effect of calling a constructor that takes both \tcode{KeyContainer}
+and \tcode{MappedContainer} arguments with containers of different sizes is
+undefined.
+
+\pnum
+Constructors in this subclause that take a \tcode{Container}
+argument \tcode{cont} shall participate in overload resolution only if
+both \tcode{std::begin(cont)} and \tcode{std::end(cont)} are well-formed
+expressions.
+
+\pnum
+The effect of calling a constructor that takes a \tcode{sorted_equivalent_t}
+argument with a container or containers that are not sorted with respect
+to \tcode{Compare} is undefined.
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+flat_multimap(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{c.keys} with
+\tcode{std::forward<KeyContainer>(key_cont)} and \tcode{c.values} with
+\tcode{std::forward<MappedContainer>(mapped_cont)}; sorts the range
++\range{begin()}{end()}.
+
+\pnum
+\complexity
+Linear in $N$ if the container arguments are already sorted as if
+with \tcode{comp} and otherwise $N \log N$, where $N$
+is \tcode{key_cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+flat_multimap(sorted_equivalent_t, KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{c.keys} with
+\tcode{std::forward<KeyContainer>(key_cont)} and \tcode{c.values} with
+\tcode{std::forward<MappedContainer>(mapped_cont)}.
+
+\pnum
+\complexity
+Constant.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+template <class InputIterator>
+  flat_multimap(sorted_equivalent_t, InputIterator first, InputIterator last,
+                const Compare& comp = Compare());
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with
+\tcode{comp}, and adds elements to \tcode{c.keys} and \tcode{c.values} as if by:
+\begin{codeblock}
+for (; first != last; ++first) {
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
+}
+\end{codeblock}
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\rSec3[flatmultimap.cons.alloc]{Constructors with allocators}
+
+\pnum
+If \tcode{uses_allocator_v<key_container_type, Alloc> \&\&
+uses_allocator_v<mapped_container_type, Alloc>} is \tcode{false} the
+constructors in this subclause shall not participate in overload resolution.
+
+\pnum
+Constructors in this subclause that take an \tcode{Allocator} argument shall
+participate in overload resolution only if \tcode{Allocator} meets the
+allocator requirements as described in (26.2.1).
+
+\pnum
+Constructors in this subclause that take a \tcode{Container}
+argument \tcode{cont} shall participate in overload resolution only if
+both \tcode{std::begin(cont)} and \tcode{std::end(cont)} are well-formed
+expressions.
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+template <class Alloc>
+  flat_multimap(const Compare& comp, const Alloc& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, and performs
+uses-allocator construction (23.10.8.2) of both
+\tcode{c.keys} and \tcode{c.values} with \tcode{a}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+template <class InputIterator, class Alloc>
+  flat_multimap(InputIterator first, InputIterator last,
+                const Compare& comp, const Alloc& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, and performs
+uses-allocator construction (23.10.8.2) of both
+\tcode{c.keys} and \tcode{c.values} with \tcode{a}; adds elements to
+\tcode{c.keys} and \tcode{c.values} as if by:
+\begin{codeblock}
+for (; first != last; ++last) {
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
+}
+\end{codeblock}
+and finally sorts the range \range{begin()}{end()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+template <class InputIterator, class Alloc>
+  flat_multimap(sorted_equivalent_t, InputIterator first, InputIterator last,
+                const Compare& comp, const Alloc& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, and performs
+uses-allocator construction (23.10.8.2) of both
+\tcode{c.keys} and \tcode{c.values} with \tcode{a}; adds elements to
+\tcode{c.keys} and \tcode{c.values} as if by:
+\begin{codeblock}
+for (; first != last; ++last) {
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
+}
+\end{codeblock}
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\rSec3[flatmultimap.modifiers]{Modifiers}
+
+\indexlibrarymember{operator=}{flatmap}%
+\begin{itemdecl}
+flat_map& operator=(initializer_list<pair<Key, T>> il);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+\tcode{key_type} shall be \tcode{CopyInsertable} into \tcode{KeyContainer}, and
+\tcode{mapped_type}  shall be \tcode{EmplaceConstructible} into \tcode{MappedContainer}
+from \tcode{args...}.
+
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+clear();
+insert(il);
+\end{codeblock}
+\end{itemdescr}
+
+\indexlibrarymember{insert}{flatmultimap}%
+\begin{itemdecl}
+template<class P> iterator insert(P&& x);
+template<class P> iterator insert(const_iterator position, P&& x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+The first form is equivalent to
+\tcode{return emplace(std::forward<P>(x))}. The second form is
+equivalent to \tcode{return emplace_hint(position, std::forward<P>(x))}.
+
+\pnum
+\remarks
+These signatures shall not participate in overload resolution
+unless \tcode{is_constructible_v<pair<key_type, mapped_type>, P>} is
+\tcode{true}.
+\end{itemdescr}
+
+\indexlibrarymember{flatmultimap}{insert}%
+\begin{itemdecl}
+template <class InputIterator>
+  void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \requires The range \range{first}{last} shall be sorted with respect
+to \tcode{compare}.
+
+\pnum \effects Equivalent to: \tcode{insert(first, last)}.
+
+\pnum \complexity Linear.
+\end{itemdescr}
+
+\indexlibrarymember{flatmultimap}{insert}%
+\begin{itemdecl}
+void insert(sorted_unique_t, initializer_list<pair<Key, T>> il);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum Effects: Equivalent to \tcode{insert(sorted_unique_t{}, il.begin(), il.end())}.
+\end{itemdescr}
+
+\indexlibrarymember{flatmultimap}{extract}%
+\begin{itemdecl}
+containers extract() &&;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum Effects: Equivalent to \tcode{return std::move(c);}
+\end{itemdescr}
+
+\indexlibrarymember{flatmultimap}{replace}%
+\begin{itemdecl}
+void replace(KeyContainer&& key_cont, MappedContainer&& mapped_cont);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \requires \tcode{key_cont.size() == mapped_cont.size()}, and that
+the elements of \tcode{key_cont} are sorted with respect to \tcode{compare}.
+
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+c.keys = std::move(key_cont);
+c.values = std::move(mapped_cont);
+\end{codeblock}
+\end{itemdescr}
+
+\rSec3[flatmultimap.ops]{Operators}
+
+\indexlibrary{\idxcode{operator==}!\idxcode{flatmultimap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator==(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\tcode{return std::equal(x.begin(), x.end(), y.begin(), y.end());}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator!=}!\idxcode{flatmultimap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator!=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{!(x == y)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator<}!\idxcode{flatmultimap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator< (const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\tcode{return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator>}!\idxcode{flatmultimap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator> (const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{y < x}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator<=}!\idxcode{flatmultimap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator<=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{!(y < x)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator>=}!\idxcode{flatmultimap}}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  bool operator>=(const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+                  const flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum \returns \tcode{!(x < y)}.
+\end{itemdescr}
+
+\rSec3[flatmultimap.special]{Specialized algorithms}
+
+\indexlibrarymember{swap}{flatmultimap}%
+\begin{itemdecl}
+template<class Key, class T, class Compare, class KeyContainer, class MappedContainer>
+  void swap(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& x,
+            flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& y)
+    noexcept(noexcept(x.swap(y)));
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\remarks
+This function shall not participate in overload resolution
+unless \tcode{is_swappable_v<KeyContainer> \&\& is_swappable_v<MappedContainer>}
+is \tcode{true}.
+
+\pnum
+\effects Equivalent to: \tcode{x.swap(y)}.
+\end{itemdescr}
+\end{addedblock}

@@ -15,7 +15,7 @@ FIGURES = $(patsubst %.dot,%.pdf,$(wildcard *.dot))
 
 TSPDF = pdflatex -jobname=$(TARGET) $(TARGET).tex | grep -v "^Overfull"
 
-TARGET = D0896
+TARGET = paper
 
 export TOOLS=../../tools
 
@@ -29,7 +29,6 @@ refresh:
 
 rebuild:
 	$(TSPDF)
-	bibtex $(TARGET)
 	$(TSPDF)
 	$(TSPDF)
 

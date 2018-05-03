@@ -1,6 +1,3 @@
-%% main file for the Ranges TS.
-%%
-
 %%--------------------------------------------------
 %% basics
 % \documentclass[letterpaper,oneside,openany]{memoir}
@@ -33,9 +30,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[pdftex, final]{graphicx}
 \usepackage[pdftex,
-            pdftitle={Range Adaptors and Utilities},
-            pdfsubject={Range Adaptors and Utilities},
-            pdfcreator={Eric Niebler},
+            pdftitle={A Standard flat_map},
+            pdfsubject={A Standard flat_map},
+            pdfcreator={Zach Laine},
             bookmarks=true,
             bookmarksnumbered=true,
             pdfpagelabels=true,
@@ -54,11 +51,6 @@
 \input{tables}
 \input{cxx}
 
-\makeindex[generalindex]
-\makeindex[libraryindex]
-\makeindex[grammarindex]
-\makeindex[impldefindex]
-
 %%--------------------------------------------------
 %% fix interaction between hyperref and other
 %% commands
@@ -74,7 +66,6 @@
 \begin{document}
 \chapterstyle{cppstd}
 \pagestyle{cpppage}
-\bibliographystyle{plain}
 
 %%--------------------------------------------------
 %% configuration
@@ -90,31 +81,14 @@
 \mainmatter
 \setglobalstyles
 
-\include{intro}
-\setcounter{chapter}{20}
-\rSec0[std2]{Standard Library, Version 2}
-\setcounter{SectionDepthBase}{1}
-\input{lib-intro}
-\input{utilities}
-\input{iterators}
-\input{ranges-lib}
-\input{algorithms}
-\input{numerics}
-\setcounter{SectionDepthBase}{0}
+\include{revisions}
+\newcommand{\indexhdr}[1]{}
+\newcommand{\indexlibrarymember}[2]{
+}
+\input{containers-lib}
 
 %%--------------------------------------------------
-%% appendices
-\appendix
 \include{acknowledgements}
-
-%%--------------------------------------------------
-%% bibliography
-\bibliography{D0896}
-
-%%--------------------------------------------------
-%% back matter
-\backmatter
-\include{back}
 
 %%--------------------------------------------------
 %% End of document
