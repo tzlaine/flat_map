@@ -1,86 +1,95 @@
-\documentclass{article}
+%%--------------------------------------------------
+%% basics
+% \documentclass[letterpaper,oneside,openany]{memoir}
+\documentclass[ebook,10pt,oneside,openany,final]{memoir}
+% \includeonly{declarations}
+
+\usepackage[american]
+           {babel}        % needed for iso dates
+\usepackage[iso,american]
+           {isodate}      % use iso format for dates
+\usepackage[final]
+           {listings}     % code listings
+\usepackage{longtable}    % auto-breaking tables
+\usepackage{ltcaption}    % fix captions for long tables
+\usepackage{booktabs}     % fancy tables
+\usepackage{relsize}      % provide relative font size changes
+\usepackage{underscore}   % remove special status of '_' in ordinary text
+\usepackage{verbatim}     % improved verbatim environment
+\usepackage{parskip}      % handle non-indented paragraphs "properly"
+\usepackage{array}        % new column definitions for tables
+\usepackage[normalem]{ulem}
+\usepackage{color}        % define colors for strikeouts and underlines
+\usepackage{amsmath}      % additional math symbols
+\usepackage{mathrsfs}     % mathscr font
+\usepackage{multicol}
+\usepackage{xspace}
+\usepackage{fixme}
+\usepackage{lmodern}
+\usepackage{textcomp}     % provide \text{l,r}angle
 \usepackage[T1]{fontenc}
-\usepackage{color}
-\usepackage{cite}
-\usepackage[pdftex, bookmarks=true]{hyperref}
-\usepackage{amsmath}
-\usepackage{listings}
-\usepackage{tikz}
-\usetikzlibrary{matrix}
-\usepackage{pgfplots}
-\usepgfplotslibrary{groupplots}
-\usepackage[margin=0.75in]{geometry}
+\usepackage[pdftex, final]{graphicx}
+\usepackage[pdftex,
+            pdftitle={A Standard flat_map},
+            pdfsubject={A Standard flat_map},
+            pdfcreator={Zach Laine},
+            bookmarks=true,
+            bookmarksnumbered=true,
+            pdfpagelabels=true,
+            pdfpagemode=UseOutlines,
+            pdfstartview=FitH,
+            linktocpage=true,
+            colorlinks=true,
+            linkcolor=blue,
+            plainpages=false
+           ]{hyperref}
+\usepackage{memhfixc}     % fix interactions between hyperref and memoir
 
-% Make a draft watermark.
-% \usepackage{draftwatermark}
-% \SetWatermarkFontSize{40pt}
-% \SetWatermarkScale{4.0}
+\input{layout}
+\input{styles}
+\input{macros}
+\input{tables}
+\input{cxx}
 
-% TODO: Use bibtex or some better bibliography management
-% tool.
+%%--------------------------------------------------
+%% fix interaction between hyperref and other
+%% commands
+\pdfstringdefDisableCommands{\def\smaller#1{#1}}
+\pdfstringdefDisableCommands{\def\textbf#1{#1}}
+\pdfstringdefDisableCommands{\def\raisebox#1{}}
+\pdfstringdefDisableCommands{\def\hspace#1{}}
 
-\input{style.tex}
-\input{macros.tex}
+%%--------------------------------------------------
+%% add special hyphenation rules
+\hyphenation{tem-plate ex-am-ple in-put-it-er-a-tor name-space name-spaces}
 
 \begin{document}
+\chapterstyle{cppstd}
+\pagestyle{cpppage}
 
-\title{\textbf{\Large A Standard \code{flat_map}}}
-\date{}
-{\let\newpage\relax\maketitle}
+%%--------------------------------------------------
+%% configuration
+\input{config}
 
-\noindent\textbf{Document Number:} D0429R4\\
-\textbf{Date:} 2016-08-31\\
-\textbf{Reply to:} Zach Laine whatwasthataddress@gmail.com\\
-\textbf{Audience:} LWG
+%%--------------------------------------------------
+%% front matter
+\frontmatter
+\include{front}
 
-\section{Revisions}
+%%--------------------------------------------------
+%% main body of the document
+\mainmatter
+\setglobalstyles
 
-\label{sec:revisions}
+\include{revisions}
+\newcommand{\indexhdr}[1]{}
+\newcommand{\indexlibrarymember}[2]{
+}
+\input{containers-lib}
 
-\subsection{Changes from R3}
+%%--------------------------------------------------
+\include{acknowledgements}
 
-\begin{itemize}
-  \item Remove previous sections.
-  \item Retarget to LWG exclusively.
-  \item Wording.
-\end{itemize}
-
-\subsection{Changes from R2}
-
-\begin{itemize}
-  \item \code{value_type} is now \code{pair<const Key, T>}.
-  \item \code{ordered_unique_sequence_tag} is now \code{sorted_unique_t}, and
-    is applied uniformly such that those overloads that have it are assumed to
-    receive sorted input, and those that do not have it are not.
-  \item The overloads taking two allocators now take only one.
-  \item \code{extract()} now returns a custom type instead of a \code{pair}.
-  \item Add \code{contains()} (tracking \code{map}).
-\end{itemize}
-
-\subsection{Changes from R1}
-
-\begin{itemize}
-  \item Add deduction guides.
-  \item Change \code{value_type} and reference types to be proxies, and remove
-    \code{\{const_\},pointer}.
-  \item Split storage of keys and values.
-  \item Pass several constructor parameters by value to reduce the number of overloads.
-  \item Remove the benchmark charts.
-\end{itemize}
-
-\subsection{Changes from R0}
-
-\begin{itemize}
-  \item Drop the requirement on container contiguity; sequence container will
-    do.
-  \item Remove \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()}
-    from container requirements and from \code{flat_map} API.
-  \item Drop redundant implementation variants from charts.
-  \item Drop erase operation charts.
-  \item Use more recent compilers for comparisons.
-  \item Add analysis of separated key and value storage.
-\end{itemize}
-
-\input{proposed_design}
-
+%%--------------------------------------------------
+%% End of document
 \end{document}
