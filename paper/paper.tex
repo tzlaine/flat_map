@@ -24,64 +24,21 @@
 
 \begin{document}
 
-\title{\textbf{\Large A Standard \code{flat_map}}}
+\title{\textbf{\Large A Standard \code{flat_set}}}
 \date{}
 {\let\newpage\relax\maketitle}
 
-\noindent\textbf{Document Number:} D0429R3\\
-\textbf{Date:} 2016-08-31\\
+\noindent\textbf{Document Number:} D????R0\\
+\textbf{Date:} 2018-10-02\\
 \textbf{Reply to:} Zach Laine whatwasthataddress@gmail.com\\
-\textbf{Audience:} LWG/LEWG
-
-\section{Revisions}
-
-\label{sec:revisions}
-
-\subsection{Changes from R2}
-
-\begin{itemize}
-  \item \code{value_type} is now \code{pair<const Key, T>}.
-  \item \code{ordered_unique_sequence_tag} is now \code{sorted_unique_t}, and
-    is applied uniformly such that those overloads that have it are assumed to
-    receive sorted input, and those that do not have it are not.
-  \item The overloads taking two allocators now take only one.
-  \item \code{extract()} now returns a custom type instead of a \code{pair}.
-  \item Add \code{contains()} (tracking \code{map}).
-\end{itemize}
-
-\subsection{Changes from R1}
-
-\begin{itemize}
-  \item Add deduction guides.
-  \item Change \code{value_type} and reference types to be proxies, and remove
-    \code{\{const_\},pointer}.
-  \item Split storage of keys and values.
-  \item Pass several constructor parameters by value to reduce the number of overloads.
-  \item Remove the benchmark charts.
-\end{itemize}
-
-\subsection{Changes from R0}
-
-\begin{itemize}
-  \item Drop the requirement on container contiguity; sequence container will
-    do.
-  \item Remove \code{capacity()}, \code{reserve()}, and \code{shrik_to_fit()}
-    from container requirements and from \code{flat_map} API.
-  \item Drop redundant implementation variants from charts.
-  \item Drop erase operation charts.
-  \item Use more recent compilers for comparisons.
-  \item Add analysis of separated key and value storage.
-\end{itemize}
+\textbf{Audience:} LEWG
 
 \section{Introduction}
 
 \label{sec:intro}
 
-This paper outlines what a (mostly) API-compatible, non-node-based \code{map}
-might look like.  Rather than presenting a final design, this paper is
-intended as a starting point for discussion and as a basis for future work.
-Specifically, there is no mention of \code{multimap}, \code{set}, or
-\code{multiset}.  Those will be added in later papers.
+This paper outlines what a (mostly) API-compatible, non-node-based \code{set}
+might look like.
 
 \input{motivation_and_scope}
 \input{proposed_design}

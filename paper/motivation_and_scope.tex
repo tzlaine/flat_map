@@ -1,17 +1,14 @@
 \section{Motivation and Scope}
 
 There has been a strong desire for a more space- and/or runtime-efficient
-representation for \code{map} among C++ users for some time now.  This has
-motivated discussions among the members of SG14 resulting in a
+representation for associative containers among C++ users for some time now.
+This has motivated discussions among the members of SG14 resulting in a
 paper\footnote{See P0038R0,
   \href{http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0038r0.html}{here}.},
 numerous articles and talks, and an implementation in Boost,
-\code{boost::container::flat_map}\footnote{Part of Boost.Container,
+\code{boost::container::flat_set}\footnote{Part of Boost.Container,
   \href{http://www.boost.org/doc/libs/1_61_0/doc/html/container.html}{here}.}.
 Virtually everyone who makes games, embedded, or system software in C++ uses
 the Boost implementation or one that they rolled themselves.\\
 
-Previous revisions of this paper produced benchmark numbers that show why.
-Note that the results revealed that roughly half of the linear runtime cost of
-inserting an element into a flat map was refunded when the keys and values
-were stored in separate containers (at least for small key and value types).\\
+This paper represents follow-on work to P0429, ``A Standard \code{flat_map}''.\\
