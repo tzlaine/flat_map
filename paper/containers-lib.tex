@@ -566,10 +566,7 @@ namespace std {
 
   template <class Container>
     flat_map(Container)
-      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                  less<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_map(KeyContainer, MappedContainer)
@@ -580,10 +577,7 @@ namespace std {
 
   template <class Container, class Alloc>
     flat_map(Container, Alloc)
-      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                  less<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer, class Alloc>
     flat_map(KeyContainer, MappedContainer, Alloc)
@@ -594,10 +588,7 @@ namespace std {
 
   template <class Container>
     flat_map(sorted_unique_t, Container)
-      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                  less<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_map(sorted_unique_t, KeyContainer, MappedContainer)
@@ -608,10 +599,7 @@ namespace std {
 
   template <class Container, class Alloc>
     flat_map(sorted_unique_t, Container, Alloc)
-      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                  less<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-key-type}@<Container>>,
-                  vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer, class Alloc>
     flat_map(sorted_unique_t, KeyContainer, MappedContainer, Alloc)
@@ -622,65 +610,51 @@ namespace std {
 
   template <class InputIterator, class Compare = less<@\placeholder{iter-mapped-type}@<InputIterator>>>
     flat_map(InputIterator, InputIterator, Compare = Compare())
-      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Compare, class Alloc>
     flat_map(InputIterator, InputIterator, Compare, Alloc)
-      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Alloc>
     flat_map(InputIterator, InputIterator, Alloc)
-      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>,
-                  less<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>>;
 
   template <class InputIterator, class Compare = less<@\placeholder{iter-mapped-type}@<InputIterator>>>
     flat_map(sorted_unique_t, InputIterator, InputIterator, Compare = Compare())
-      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Compare, class Alloc>
     flat_map(sorted_unique_t, InputIterator, InputIterator, Compare, Alloc)
-      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Alloc>
     flat_map(sorted_unique_t, InputIterator, InputIterator, Alloc)
-      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>,
-                  less<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>,
-                  vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_map<@\placeholder{iter-mapped-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>>;
 
   template<class Key, class T, class Compare = less<Key>>
     flat_map(initializer_list<pair<const Key, T>>, Compare = Compare())
-      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_map<Key, T, Compare>;
 
   template<class Key, class T, class Compare, class Alloc>
     flat_map(initializer_list<pair<const Key, T>>, Compare, Alloc)
-      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_map<Key, T, Compare>;
 
   template<class Key, class T, class Alloc>
     flat_map(initializer_list<pair<const Key, T>>, Alloc)
-      -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
+      -> flat_map<Key, T>;
 
   template<class Key, class T, class Compare = less<Key>>
   flat_map(sorted_unique_t, initializer_list<pair<const Key, T>>, Compare = Compare())
-      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_map<Key, T, Compare>;
 
   template<class Key, class T, class Compare, class Alloc>
     flat_map(sorted_unique_t, initializer_list<pair<const Key, T>>, Compare, Alloc)
-      -> flat_map<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_map<Key, T, Compare>;
 
   template<class Key, class T, class Alloc>
     flat_map(sorted_unique_t, initializer_list<pair<const Key, T>>, Alloc)
-      -> flat_map<Key, T, less<Key>, vector<Key>, vector<T>>;
+      -> flat_map<Key, T>;
 }
 \end{codeblock}
 
@@ -1594,10 +1568,7 @@ namespace std {
 
   template <class Container>
     flat_multimap(Container)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                       less<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_multimap(KeyContainer, MappedContainer)
@@ -1608,10 +1579,7 @@ namespace std {
 
   template <class Container, class Alloc>
     flat_multimap(Container, Alloc)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                       less<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer, class Alloc>
     flat_multimap(KeyContainer, MappedContainer, Alloc)
@@ -1622,10 +1590,7 @@ namespace std {
 
   template <class Container>
     flat_multimap(sorted_equivalent_t, Container)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                       less<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_multimap(sorted_equivalent_t, KeyContainer, MappedContainer)
@@ -1636,10 +1601,7 @@ namespace std {
 
   template <class Container, class Alloc>
     flat_multimap(sorted_equivalent_t, Container, Alloc)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>,
-                       less<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-key-type}@<Container>>,
-                       vector<@\placeholder{cont-mapped-type}@<Container>>>;
+      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
 
   template <class KeyContainer, class MappedContainer, class Alloc>
     flat_multimap(sorted_equivalent_t, KeyContainer, MappedContainer, Alloc)
@@ -1650,67 +1612,53 @@ namespace std {
 
   template <class InputIterator, class Compare = less<@\placeholder{iter-key-type}@<InputIterator>>>
     flat_multimap(InputIterator, InputIterator, Compare = Compare())
-      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare,
-                       vector<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Compare, class Alloc>
     flat_multimap(InputIterator, InputIterator, Compare, Alloc)
-      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>,
-                       Compare, vector<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Alloc>
     flat_multimap(InputIterator, InputIterator, Alloc)
-      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>,
-                       less<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>>;
 
   template <class InputIterator, class Compare = less<@\placeholder{iter-key-type}@<InputIterator>>>
     flat_multimap(sorted_equivalent_t, InputIterator, InputIterator,
                   Compare = Compare())
-      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare,
-                       vector<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Compare, class Alloc>
     flat_multimap(sorted_equivalent_t, InputIterator, InputIterator, Compare, Alloc)
-      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>,
-                       Compare, vector<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
   template<class InputIterator, class Alloc>
     flat_multimap(sorted_equivalent_t, InputIterator, InputIterator, Alloc)
-      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>,
-                       less<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-key-type}@<InputIterator>>,
-                       vector<@\placeholder{iter-mapped-type}@<InputIterator>>>;
+      -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>>;
 
   template<class Key, class T, class Compare = less<Key>>
     flat_multimap(initializer_list<pair<const Key, T>>, Compare = Compare())
-      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_multimap<Key, T, Compare>;
 
   template<class Key, class T, class Compare, class Alloc>
     flat_multimap(initializer_list<pair<const Key, T>>, Compare, Alloc)
-      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_multimap<Key, T, Compare>;
 
   template<class Key, class T, class Alloc>
     flat_multimap(initializer_list<pair<const Key, T>>, Alloc)
-      -> flat_multimap<Key, T, less<Key>, vector<Key>, vector<T>>;
+      -> flat_multimap<Key, T>;
 
   template<class Key, class T, class Compare = less<Key>>
   flat_multimap(sorted_equivalent_t, initializer_list<pair<const Key, T>>,
                 Compare = Compare())
-      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_multimap<Key, T, Compare>;
 
   template<class Key, class T, class Compare, class Alloc>
     flat_multimap(sorted_equivalent_t, initializer_list<pair<const Key, T>>, Compare, Alloc)
-      -> flat_multimap<Key, T, Compare, vector<Key>, vector<T>>;
+      -> flat_multimap<Key, T, Compare>;
 
   template<class Key, class T, class Alloc>
     flat_multimap(sorted_equivalent_t, initializer_list<pair<const Key, T>>, Alloc)
-      -> flat_multimap<Key, T, less<Key>, vector<Key>, vector<T>>;
+      -> flat_multimap<Key, T>;
 }
 \end{codeblock}
 
