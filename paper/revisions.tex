@@ -1,60 +1,13 @@
 \section{Revisions}
 
-\subsection{Changes from R5}
-
-\begin{itemize}
-  \item Address comments from San Diego meeting LWG small group review.
-  \item Replace \textit{Requires:} elements with new-style elements.
-  \item Remove \tcode{merge()} member functions, based on LEWG guidance.
-  \item Numerous other corrections.
-\end{itemize}
-
-\subsection{Changes from R4}
-
-\begin{itemize}
-  \item Address comments from Batavia meeting review.
-\end{itemize}
-
-\subsection{Changes from R3}
-
-\begin{itemize}
-  \item Remove previous sections.
-  \item Retarget to LWG exclusively.
-  \item Wording.
-\end{itemize}
-
-\subsection{Changes from R2}
-
-\begin{itemize}
-  \item \tcode{value_type} is now \tcode{pair<const Key, T>}.
-  \item \tcode{ordered_unique_sequence_tag} is now \tcode{sorted_unique_t}, and
-    is applied uniformly such that those overloads that have it are assumed to
-    receive sorted input, and those that do not have it are not.
-  \item The overloads taking two allocators now take only one.
-  \item \tcode{extract()} now returns a custom type instead of a \tcode{pair}.
-  \item Add \tcode{contains()} (tracking \tcode{map}).
-\end{itemize}
-
-\subsection{Changes from R1}
-
-\begin{itemize}
-  \item Add deduction guides.
-  \item Change \tcode{value_type} and reference types to be proxies, and remove
-    \tcode{\{const_\},pointer}.
-  \item Split storage of keys and values.
-  \item Pass several constructor parameters by value to reduce the number of overloads.
-  \item Remove the benchmark charts.
-\end{itemize}
-
 \subsection{Changes from R0}
 
 \begin{itemize}
-  \item Drop the requirement on container contiguity; sequence container will
-    do.
-  \item Remove \tcode{capacity()}, \tcode{reserve()}, and \tcode{shrik_to_fit()}
-    from container requirements and from \tcode{flat_map} API.
-  \item Drop redundant implementation variants from charts.
-  \item Drop erase operation charts.
-  \item Use more recent compilers for comparisons.
-  \item Add analysis of separated key and value storage.
+  \item Remove previous sections.
+  \item Wording.
 \end{itemize}
+
+\section{Dependencies}
+
+The wording in this document is expressed as differences against the current
+working draft with P0429 ``A Standard \tcode{flat_map}'' applied.
