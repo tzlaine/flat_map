@@ -1,0 +1,22 @@
+%!TEX root = D0896.tex
+%%--------------------------------------------------
+%% Title page for the C++ Standard
+
+\thispagestyle{empty}
+\begingroup
+\def\hd{\begin{tabular}{lll}
+          \textbf{Document Number:} & {\larger\docno}               \\
+          \textbf{Date:}            & \reldate                      \\
+          \textbf{Reply to:}        & Zach Laine                    \\
+                                    & whatwasthataddress@gmail.com  \\
+          \textbf{Audience:}        & LWG                           \\
+          \end{tabular}
+}
+\newlength{\hdwidth}
+\settowidth{\hdwidth}{\hd}
+\hfill\begin{minipage}{\hdwidth}\hd\end{minipage}
+\endgroup
+
+\title{\textbf{\Huge A Standard \tcode{flat_map}}}
+\date{}
+{\let\newpage\relax\maketitle}
