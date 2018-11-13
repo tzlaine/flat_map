@@ -17,22 +17,22 @@ associative containers,
 as summarized in Table 76.
 
 \begin{libsumtab}{Containers library summary}{tab:containers.lib.summary}
-26.2 & Requirements                     &                           \\ \rowsep
-26.3              & Sequence containers              & \tcode{<array>}         \\
+21.2 & Requirements                     &                           \\ \rowsep
+21.3              & Sequence containers              & \tcode{<array>}         \\
                              &                                  & \tcode{<deque>}         \\
                              &                                  & \tcode{<forward_list>}  \\
                              &                                  & \tcode{<list>}          \\
                              &                                  & \tcode{<vector>}        \\ \rowsep
-26.4            & Associative containers           & \tcode{<map>}           \\
+21.4            & Associative containers           & \tcode{<map>}           \\
                              &                                  & \tcode{<set>}           \\ \rowsep
-26.5                  & Unordered associative containers & \tcode{<unordered_map>} \\
+21.5                  & Unordered associative containers & \tcode{<unordered_map>} \\
                              &                                  & \tcode{<unordered_set>} \\ \rowsep
-26.6     & Container adaptors               & \tcode{<queue>}         \\
+21.6     & Container adaptors               & \tcode{<queue>}         \\
                              &                                  & \tcode{<stack>}         \\
                              &                                  & \tcode{<flat_map>}      \\
                              &                                  & \added{\tcode{<flat_set>}}      \\
  \rowsep
-26.7                  & Views                            & \tcode{<span>}          \\ \rowsep
+21.7                  & Views                            & \tcode{<span>}          \\ \rowsep
 \end{libsumtab}
 
 
@@ -191,8 +191,8 @@ additional semantic information.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
-instantiate \tcode{flat_set}. In particular, \tcode{vector} (26.3.11) and
-\tcode{deque} (26.3.8) can be used.
+instantiate \tcode{flat_set}. In particular, \tcode{vector} (21.3.11) and
+\tcode{deque} (21.3.8) can be used.
 
 \pnum
 The template parameter \tcode{Key} shall denote the same type as
@@ -846,8 +846,8 @@ additional semantic information.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
-instantiate \tcode{flat_multiset}. In particular, \tcode{vector} (26.3.11)
-and \tcode{deque} (26.3.8) can be used.
+instantiate \tcode{flat_multiset}. In particular, \tcode{vector} (21.3.11)
+and \tcode{deque} (21.3.8) can be used.
 
 \pnum
 The template parameter \tcode{Key} shall denote the same type as
