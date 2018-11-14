@@ -1,5 +1,5 @@
 %!TEX root = std.tex
-\setcounter{chapter}{25}
+\setcounter{chapter}{20}
 \rSec0[containers]{Containers library}
 
 \rSec1[containers.general]{General}
@@ -17,26 +17,29 @@ associative containers,
 as summarized in Table 76.
 
 \begin{libsumtab}{Containers library summary}{tab:containers.lib.summary}
-26.2 & Requirements                     &                           \\ \rowsep
-26.3              & Sequence containers              & \tcode{<array>}         \\
+21.2 & Requirements                     &                           \\ \rowsep
+21.3              & Sequence containers              & \tcode{<array>}         \\
                              &                                  & \tcode{<deque>}         \\
                              &                                  & \tcode{<forward_list>}  \\
                              &                                  & \tcode{<list>}          \\
                              &                                  & \tcode{<vector>}        \\ \rowsep
-26.4            & Associative containers           & \tcode{<map>}           \\
+21.4            & Associative containers           & \tcode{<map>}           \\
                              &                                  & \tcode{<set>}           \\ \rowsep
-26.5                  & Unordered associative containers & \tcode{<unordered_map>} \\
+21.5                  & Unordered associative containers & \tcode{<unordered_map>} \\
                              &                                  & \tcode{<unordered_set>} \\ \rowsep
-26.6     & Container adaptors               & \tcode{<queue>}         \\
+21.6     & Container adaptors               & \tcode{<queue>}         \\
                              &                                  & \tcode{<stack>}         \\
                              &                                  & \added{\tcode{<flat_map>}}      \\
  \rowsep
-26.7                  & Views                            & \tcode{<span>}          \\ \rowsep
+21.7                  & Views                            & \tcode{<span>}          \\ \rowsep
 \end{libsumtab}
 
 
 \setcounter{section}{2}
 \setcounter{subsection}{2}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
 \rSec2[sequence.reqmts]{Sequence containers}
 
 \pnum
@@ -51,6 +54,9 @@ or \tcode{flat_multimap}s, }out of the basic sequence container kinds (or out
 of other kinds of sequence containers).
 
 \setcounter{subsection}{5}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
 \rSec2[associative.reqmts]{Associative containers}
 
 \pnum
@@ -83,7 +89,7 @@ and
 are the same type.
 \begin{note} \tcode{iterator} and \tcode{const_iterator} have identical semantics in this case, and \tcode{iterator} is convertible to \tcode{const_iterator}. Users can avoid violating the one-definition rule by always using \tcode{const_iterator} in their function parameter lists. \end{note}
 
-\setcounter{chapter}{26}
+\setcounter{chapter}{21}
 \setcounter{section}{5}
 \rSec1[container.adaptors]{Container adaptors}
 
@@ -231,18 +237,18 @@ iterators.
 
 \pnum
 A \tcode{flat_map} satisfies all of the requirements of a container, of a
-reversible container (26.2), and of an associative
-container (26.2.6), except for the requirements related to
-node handles (26.2.4) and iterator
-invalidation (26.6.1).  A \tcode{flat_map} does not
+reversible container (21.2), and of an associative
+container (21.2.6), except for the requirements related to
+node handles (21.2.4) and iterator
+invalidation (21.6.1).  A \tcode{flat_map} does not
 meet the additional requirements of an allocator-aware container, as described
 in Table 80.
 
 \pnum
 A \tcode{flat_map} also provides most operations described
-in 26.2.6 for unique keys.  This means that a
+in 21.2.6 for unique keys.  This means that a
 \tcode{flat_map} supports the \tcode{a_uniq} operations
-in 26.2.6 but not the \tcode{a_eq} operations.  For
+in 21.2.6 but not the \tcode{a_eq} operations.  For
 a \tcode{flat_map<Key,T>} the \tcode{key_type} is \tcode{Key} and the
 \tcode{value_type} is \tcode{pair<const Key,T>}.
 
@@ -260,8 +266,8 @@ additional semantic information.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
-instantiate \tcode{flat_map}. In particular, \tcode{vector} (26.3.11) and
-\tcode{deque} (26.3.8) can be used.
+instantiate \tcode{flat_map}. In particular, \tcode{vector} (21.3.11) and
+\tcode{deque} (21.3.8) can be used.
 
 \pnum
 The template parameters \tcode{Key} and \tcode{T} of \tcode{flat_map} shall
@@ -1259,18 +1265,18 @@ class supports random access iterators.
 
 \pnum
 A \tcode{flat_multimap} satisfies all of the requirements of a container, of a
-reversible container (26.2), and of an associative
-container (26.2.6), except for the requirements related to
-node handles (26.2.4) and iterator
-invalidation (26.6.1).  A \tcode{flat_multimap} does
+reversible container (21.2), and of an associative
+container (21.2.6), except for the requirements related to
+node handles (21.2.4) and iterator
+invalidation (21.6.1).  A \tcode{flat_multimap} does
 not meet the additional requirements of an allocator-aware container, as
 described in Table 80.
 
 \pnum
 A \tcode{flat_multimap} also provides most operations described
-in 26.2.6 for equal keys.  This means that a
+in 21.2.6 for equal keys.  This means that a
 \tcode{flat_multimap} supports the \tcode{a_eq} operations
-in 26.2.6 but not the \tcode{a_uniq} operations.  For
+in 21.2.6 but not the \tcode{a_uniq} operations.  For
 a \tcode{flat_multimap<Key,T>} the \tcode{key_type} is \tcode{Key} and the
 \tcode{value_type} is \tcode{pair<const Key,T>}.
 
@@ -1288,8 +1294,8 @@ there is additional semantic information.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
-instantiate \tcode{flat_multimap}. In particular, \tcode{vector} (26.3.11)
-and \tcode{deque} (26.3.8) can be used.
+instantiate \tcode{flat_multimap}. In particular, \tcode{vector} (21.3.11)
+and \tcode{deque} (21.3.8) can be used.
 
 \pnum
 The template parameters \tcode{Key} and \tcode{T} of \tcode{flat_multimap}
