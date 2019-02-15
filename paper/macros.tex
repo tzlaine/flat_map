@@ -186,8 +186,10 @@
 \newcommand{\complexity}{\Fundesc{Complexity}}
 \newcommand{\remark}{\Fundesc{Remark}}
 \newcommand{\remarks}{\Fundesc{Remarks}}
-\newcommand{\note}{\remark}
-\newcommand{\notes}{\remarks}
+\newcommand{\noteintro}[1]{[\textit{#1}:\space}
+\newcommand{\noteoutro}[1]{\textit{\,---\,end #1}\kern.5pt]}
+\newenvironment{note}[1][Note]{\noteintro{#1}}{\noteoutro{note}\space}
+\newenvironment{example}[1][Example]{\noteintro{#1}}{\noteoutro{example}\space}
 \newcommand{\realnote}{\Fundesc{Note}}
 \newcommand{\realnotes}{\Fundesc{Notes}}
 \newcommand{\errors}{\Fundesc{Error conditions}}
