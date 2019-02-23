@@ -583,6 +583,15 @@ namespace std {
   private:
     containers c;        // \expos
     key_compare compare; // \expos
+
+    // \expos
+    struct key_equiv {
+      key_equiv(key_compare c) : comp(c) { }
+      bool operator()(const_reference x, const_reference y) const {
+        return comp(x.first, y.first) || comp(y.first, x.first);
+      }
+      key_compare comp;
+    };
   };
 
   template<class Container>
@@ -665,7 +674,7 @@ flat_map(key_container_type key_cont, mapped_container_type mapped_cont);
 \tcode{c.values} with \tcode{std::move(mapped_cont)}; value-initializes
 \tcode{compare}; sorts the range \range{begin()}{end()} with respect to
 \tcode{value_comp()}; and finally erases the range \range{ranges::unique(*this,
-ranges::equal_to(), \&const_reference::first)}{end()};
+key_equiv(compare))}{end()};
 
 \pnum
 \complexity
@@ -708,7 +717,7 @@ for (; first != last; ++first) {
 \end{codeblock}
 sorts the range \range{begin()}{end()} with respect to \tcode{value_comp()}; and
 finally erases the range \range{ranges::unique(*this,
-ranges::equal_to(), \&const_reference::first)}{end()}.
+key_equiv(compare))}{end()}.
 
 \pnum
 \complexity
@@ -789,10 +798,6 @@ template <class Alloc>
 \pnum
 \constraints \tcode{uses_allocator_v<key_container_type, Alloc> \&\&
 uses_allocator_v<mapped_container_type, Alloc>} is \tcode{true}.
-
-\pnum
-\requires \tcode{Alloc} shall satisfy the \oldconcept{Allocator} requirements
-(Table 34).
 
 \pnum
 \effects Equivalent to the preceding constructors except that \tcode{c.keys} and \tcode{c.values} are constructed with
@@ -1652,10 +1657,6 @@ template <class Alloc>
 \pnum
 \constraints \tcode{uses_allocator_v<key_container_type, Alloc> \&\&
 uses_allocator_v<mapped_container_type, Alloc>} is \tcode{true}.
-
-\pnum
-\requires \tcode{Alloc} shall satisfy the \oldconcept{Allocator} requirements
-(Table 34).
 
 \pnum
 \effects Equivalent to the preceding constructors except that \tcode{c.keys} and \tcode{c.values} are constructed with
