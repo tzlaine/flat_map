@@ -375,7 +375,8 @@ namespace std {
 
     flat_map(key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Alloc>
-    flat_map(key_container_type key_cont, mapped_container_type mapped_cont,
+    flat_map(const key_container_type& key_cont,
+             const mapped_container_type& mapped_cont,
              const Alloc& a);
     template <class Container>
       explicit flat_map(const Container& cont)
@@ -386,8 +387,8 @@ namespace std {
     flat_map(sorted_unique_t,
              key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Alloc>
-    flat_map(sorted_unique_t, key_container_type key_cont,
-             mapped_container_type mapped_cont, const Alloc& a);
+    flat_map(sorted_unique_t, const key_container_type& key_cont,
+             const mapped_container_type& mapped_cont, const Alloc& a);
     template <class Container>
       flat_map(sorted_unique_t s, const Container& cont)
         : flat_map(s, std::begin(cont), std::end(cont), key_compare()) { }
@@ -709,13 +710,14 @@ Constant.
 \indexlibrary{\idxcode{flatmap}!constructor}%
 \begin{itemdecl}
 template <class Alloc>
-flat_map(key_container_type key_cont, mapped_container_type mapped_cont,
+flat_map(const key_container_type& key_cont,
+         const mapped_container_type& mapped_cont,
          const Alloc& a);
 template <class Container, class Alloc>
   flat_map(const Container& cont, const Alloc& a);
 template <class Alloc>
-flat_map(sorted_unique_t, key_container_type key_cont,
-         mapped_container_type mapped_cont, const Alloc& a);
+flat_map(sorted_unique_t, const key_container_type& key_cont,
+         const mapped_container_type& mapped_cont, const Alloc& a);
 template <class Container, class Alloc>
   flat_map(sorted_unique_t, const Container& cont, const Alloc& a);
 template <class Alloc>
@@ -1252,7 +1254,8 @@ namespace std {
 
     flat_multimap(key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Alloc>
-    flat_multimap(key_container_type key_cont, mapped_container_type mapped_cont,
+    flat_multimap(const key_container_type& key_cont,
+                  const mapped_container_type& mapped_cont,
                   const Alloc& a);
     template <class Container>
       explicit flat_multimap(const Container& cont)
@@ -1263,8 +1266,8 @@ namespace std {
     flat_multimap(sorted_equivalent_t,
                   key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Alloc>
-    flat_multimap(sorted_equivalent_t, key_container_type key_cont,
-                  mapped_container_type mapped_cont, const Alloc& a);
+    flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
+                  const mapped_container_type& mapped_cont, const Alloc& a);
     template <class Container>
       flat_multimap(sorted_equivalent_t s, const Container& cont)
         : flat_multimap(s, std::begin(cont), std::end(cont), key_compare()) { }
@@ -1554,13 +1557,14 @@ Constant.
 \indexlibrary{\idxcode{flatmultimap}!constructor}%
 \begin{itemdecl}
 template <class Alloc>
-flat_multimap(key_container_type key_cont, mapped_container_type mapped_cont,
+flat_multimap(const key_container_type& key_cont,
+              const mapped_container_type& mapped_cont,
               const Alloc& a);
 template <class Container, class Alloc>
   flat_multimap(const Container& cont, const Alloc& a);
 template <class Alloc>
-flat_multimap(sorted_equivalent_t, key_container_type key_cont,
-              mapped_container_type mapped_cont, const Alloc& a);
+flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
+              const mapped_container_type& mapped_cont, const Alloc& a);
 template <class Container, class Alloc>
   flat_multimap(sorted_equivalent_t, const Container& cont, const Alloc& a);
 template <class Alloc>
