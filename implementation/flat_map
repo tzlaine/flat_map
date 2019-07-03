@@ -237,6 +237,7 @@ namespace std {
                 return comp(x.first, y.first);
             }
         };
+
         struct containers
         {
             key_container_type keys;
@@ -374,6 +375,7 @@ namespace std {
         {
             flat_map tmp(il, compare);
             swap(tmp);
+            return *this;
         }
 
         // iterators
@@ -395,7 +397,7 @@ namespace std {
         }
         reverse_iterator rbegin() noexcept
         {
-            return reverse_iterator(c.keys.rbegin(), c.values.begin());
+            return reverse_iterator(c.keys.rbegin(), c.values.rbegin());
         }
         const_reverse_iterator rbegin() const noexcept
         {
