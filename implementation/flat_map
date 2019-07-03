@@ -18,8 +18,7 @@ namespace std {
     struct flat_map_iterator
     {
         using iterator_category = random_access_iterator_tag;
-        using value_type = pair<KeyRef, TRef>;
-        // pair<remove_cvref_t<KeyRef>, remove_cvref_t<TRef>>;
+        using value_type = pair<remove_cvref_t<KeyRef>, remove_cvref_t<TRef>>;
         using difference_type =
             typename iterator_traits<KeyIter>::difference_type;
         using reference = pair<KeyRef, TRef>;
@@ -251,8 +250,8 @@ namespace std {
             c{std::move(key_cont), std::move(mapped_cont)},
             compare(key_compare())
         {
-            sortable_iterator first(c.keys.begin(), c.values.begin());
-            sortable_iterator last(c.keys.end(), c.values.end());
+            mutable_iterator first(c.keys.begin(), c.values.begin());
+            mutable_iterator last(c.keys.end(), c.values.end());
             sort(first, last, value_comp());
         }
         // template<class Alloc>
@@ -260,7 +259,7 @@ namespace std {
         //    const key_container_type & key_cont,
         //    const mapped_container_type & mapped_cont,
         //    const Alloc & a);
-        // TODO: Added comp.
+        // TODO: Add comp in the wording.
         template<class Container>
         explicit flat_map(
             const Container & cont, const key_compare & comp = key_compare()) :
@@ -281,7 +280,7 @@ namespace std {
         //    const key_container_type & key_cont,
         //    const mapped_container_type & mapped_cont,
         //    const Alloc & a);
-        // TODO: Added comp.
+        // TODO: Add comp in the wording.
         template<class Container>
         flat_map(
             sorted_unique_t s,
@@ -458,7 +457,6 @@ namespace std {
         template<class... Args>
         iterator emplace_hint(const_iterator position, Args &&... args)
         {
-            // TODO: Ignoring hint.
             return emplace(std::forward<Args &&>(args)...);
         }
         pair<iterator, bool> insert(const value_type & x) { return emplace(x); }
@@ -488,54 +486,34 @@ namespace std {
         void insert(InputIterator first, InputIterator last)
         {
             auto const prev_size = size();
-            copy(first, last, containers_back_inserter(c));
-
-            {
-                sortable_iterator sortable_first(
-                    c.keys.begin() + prev_size, c.values.begin() + prev_size);
-                sortable_iterator sortable_last(c.keys.end(), c.values.end());
-                sort(sortable_first, sortable_last, value_comp());
+            for (auto it = first; it != last; ++it) {
+                c.keys.push_back(it->first);
+                c.values.push_back(it->second);
             }
 
-            auto new_first = iterator(
+            mutable_iterator new_first(
                 c.keys.begin() + prev_size, c.values.begin() + prev_size);
-#if 0
-            containers buf;
-            // NOTE: inplace_merge would be better, but it does not work with
-            // libstdc++'s implementation, because it uses a temporary buffer
-            // that does not work with flat_map's proxy iterators.
-            merge(
-                begin(),
-                new_first,
-                new_first,
-                end(),
-                containers_back_inserter(buf),
-                value_comp());
-            buf.keys.swap(c.keys);
-            buf.values.swap(c.values);
-#else
-            inplace_merge(begin(), new_first, end(), value_comp());
-#endif
+            mutable_iterator new_last(c.keys.end(), c.values.end());
+            sort(new_first, new_last, value_comp());
+
+            mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
+            inplace_merge(mutable_first, new_first, new_last, value_comp());
         }
         template<class InputIterator>
         void insert(sorted_unique_t, InputIterator first, InputIterator last)
         {
             auto const prev_size = size();
-            copy(first, last, containers_back_inserter(c));
+            for (auto it = first; it != last; ++it) {
+                c.keys.push_back(it->first);
+                c.values.push_back(it->second);
+            }
 
-            auto new_first = iterator(
+            mutable_iterator new_first(
                 c.keys.begin() + prev_size, c.values.begin() + prev_size);
-            inplace_merge(begin(), new_first, end(), value_comp());
-            containers buf;
-            merge(
-                begin(),
-                new_first,
-                new_first,
-                end(),
-                containers_back_inserter(buf),
-                value_comp());
-            buf.keys.swap(c.keys);
-            buf.values.swap(c.values);
+            mutable_iterator new_last(c.keys.end(), c.values.end());
+
+            mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
+            inplace_merge(mutable_first, new_first, new_last, value_comp());
         }
         void insert(initializer_list<value_type> il)
         {
@@ -588,14 +566,12 @@ namespace std {
         iterator
         try_emplace(const_iterator hint, const key_type & k, Args &&... args)
         {
-            // TODO: Ignoring hint.
             return try_emplace(k, std::forward<Args &&>(args)...).first;
         }
         template<class... Args>
         iterator
         try_emplace(const_iterator hint, key_type && k, Args &&... args)
         {
-            // TODO: Ignoring hint.
             return try_emplace(
                        std::forward<key_type &&>(k),
                        std::forward<Args &&>(args)...)
@@ -634,13 +610,11 @@ namespace std {
         iterator
         insert_or_assign(const_iterator hint, const key_type & k, M && obj)
         {
-            // TODO: Ignoring hint.
             return insert_or_assign(k, std::forward<M &&>(obj)).first;
         }
         template<class M>
         iterator insert_or_assign(const_iterator hint, key_type && k, M && obj)
         {
-            // TODO: Ignoring hint.
             return insert_or_assign(
                        std::forward<key_type &&>(k), std::forward<M &&>(obj))
                 .first;
@@ -674,8 +648,7 @@ namespace std {
                 c.keys.erase(first.mapped_iter(), last.mapped_iter()));
         }
 
-        void
-        swap(flat_map & fm) noexcept(is_nothrow_swappable_v<key_compare>)
+        void swap(flat_map & fm) noexcept(is_nothrow_swappable_v<key_compare>)
         {
             using std::swap;
             swap(compare, fm.compare);
@@ -866,7 +839,7 @@ namespace std {
         using mapped_iter_t = typename MappedContainer::iterator;
         using mapped_const_iter_t = typename MappedContainer::const_iterator;
 
-        using sortable_iterator = flat_map_iterator<
+        using mutable_iterator = flat_map_iterator<
             key_type &,
             mapped_type &,
             key_iter_t,
