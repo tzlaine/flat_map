@@ -48,8 +48,8 @@ namespace std {
                 is_convertible_v<TRef2, TRef> &&
                     is_convertible_v<MappedIter2, MappedIter>,
                 int *> = nullptr) :
-            key_it_(other.key_it),
-            mapped_it_(other.mapped_it)
+            key_it_(other.key_it_),
+            mapped_it_(other.mapped_it_)
         {}
 
         reference operator*() const noexcept { return ref(); }
@@ -416,7 +416,7 @@ namespace std {
         const_reverse_iterator crend() const noexcept { return rend(); }
 
         // ??, capacity
-        [[nodiscard]] bool empty() const noexcept { return c.keys.emnpty(); }
+        [[nodiscard]] bool empty() const noexcept { return c.keys.empty(); }
         size_type size() const noexcept { return c.keys.size(); }
         size_type max_size() const noexcept
         {
