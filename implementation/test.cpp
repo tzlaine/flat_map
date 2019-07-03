@@ -1,10 +1,11 @@
 #include "flat_map"
 
+#include <gtest/gtest.h>
+
 #include <string>
-#include <cassert>
 
 
-int main()
+TEST(std_flat_map, ctors)
 {
     using fmap_t = std::flat_map<std::string, int>;
     using pair_t = std::pair<std::string, int>;
@@ -21,13 +22,13 @@ int main()
 
         fmap_t map1(input_vec);
 
-        assert(!std::equal(
+        EXPECT_FALSE(std::equal(
             map1.begin(),
             map1.end(),
             input_vec.begin(),
             input_vec.end(),
             pair_cmp));
-        assert(std::equal(
+        EXPECT_TRUE(std::equal(
             map1.begin(),
             map1.end(),
             sorted_vec.begin(),
@@ -36,9 +37,7 @@ int main()
 
         fmap_t map2({pair_t{"key1", 1}, pair_t{"key0", 0}});
 
-        assert(std::equal(
+        EXPECT_TRUE(std::equal(
             map1.begin(), map1.end(), map2.begin(), map2.end(), pair_cmp));
     }
-
-    // TODO
 }
