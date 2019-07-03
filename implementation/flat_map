@@ -453,13 +453,13 @@ namespace std {
         template<class... Args>
         pair<iterator, bool> emplace(Args &&... args)
         {
-            pair<key_type, mapped_type> p(std::forward<Args &&>(args)...);
+            pair<key_type, mapped_type> p(std::forward<Args>(args)...);
             return try_emplace(std::move(p.first), std::move(p.second));
         }
         template<class... Args>
         iterator emplace_hint(const_iterator position, Args &&... args)
         {
-            return emplace(std::forward<Args &&>(args)...);
+            return emplace(std::forward<Args>(args)...).first;
         }
         pair<iterator, bool> insert(const value_type & x) { return emplace(x); }
         pair<iterator, bool> insert(value_type && x)
@@ -480,9 +480,9 @@ namespace std {
             return emplace(std::forward<P>(x));
         }
         template<class P>
-        iterator insert(const_iterator position, P && p)
+        iterator insert(const_iterator position, P && x) // TODO: Wording p -> x
         {
-            return emplace_hint(position, std::forward<P &&>(p));
+            return emplace_hint(position, std::forward<P>(x));
         }
         template<class InputIterator>
         void insert(InputIterator first, InputIterator last)
@@ -493,13 +493,14 @@ namespace std {
                 c.values.push_back(it->second);
             }
 
-            mutable_iterator new_first(
+            mutable_iterator inserted_first(
                 c.keys.begin() + prev_size, c.values.begin() + prev_size);
-            mutable_iterator new_last(c.keys.end(), c.values.end());
-            sort(new_first, new_last, value_comp());
+            mutable_iterator inserted_last(c.keys.end(), c.values.end());
+            sort(inserted_first, inserted_last, value_comp());
 
             mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
-            inplace_merge(mutable_first, new_first, new_last, value_comp());
+            inplace_merge(
+                mutable_first, inserted_first, inserted_last, value_comp());
         }
         template<class InputIterator>
         void insert(sorted_unique_t, InputIterator first, InputIterator last)
@@ -510,12 +511,13 @@ namespace std {
                 c.values.push_back(it->second);
             }
 
-            mutable_iterator new_first(
+            mutable_iterator inserted_first(
                 c.keys.begin() + prev_size, c.values.begin() + prev_size);
-            mutable_iterator new_last(c.keys.end(), c.values.end());
+            mutable_iterator inserted_last(c.keys.end(), c.values.end());
 
             mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
-            inplace_merge(mutable_first, new_first, new_last, value_comp());
+            inplace_merge(
+                mutable_first, inserted_first, inserted_last, value_comp());
         }
         void insert(initializer_list<value_type> il)
         {
@@ -536,8 +538,9 @@ namespace std {
             mapped_container_type && mapped_cont)
         {
             scoped_clear _(this);
-            c.key = std::move(key_cont);
+            c.keys = std::move(key_cont);
             c.values = std::move(mapped_cont);
+            _.release();
         }
 
         template<class... Args>
@@ -559,7 +562,7 @@ namespace std {
             if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
                 auto values_it =
                     c.values.emplace(project(it), std::forward<Args>(args)...);
-                it = c.keys.insert(it, std::forward<key_type &&>(k));
+                it = c.keys.insert(it, std::forward<key_type>(k));
                 return pair<iterator, bool>(iterator(it, values_it), true);
             }
             return pair<iterator, bool>(iterator(it, project(it)), false);
@@ -568,15 +571,15 @@ namespace std {
         iterator
         try_emplace(const_iterator hint, const key_type & k, Args &&... args)
         {
-            return try_emplace(k, std::forward<Args &&>(args)...).first;
+            return try_emplace(k, std::forward<Args>(args)...).first;
         }
         template<class... Args>
         iterator
         try_emplace(const_iterator hint, key_type && k, Args &&... args)
         {
             return try_emplace(
-                       std::forward<key_type &&>(k),
-                       std::forward<Args &&>(args)...)
+                       std::forward<key_type>(k),
+                       std::forward<Args>(args)...)
                 .first;
         }
 
@@ -586,12 +589,12 @@ namespace std {
             auto it = key_lower_bound(k);
             if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
                 auto values_it =
-                    c.values.insert(project(it), std::forward<M &&>(obj));
+                    c.values.insert(project(it), std::forward<M>(obj));
                 it = c.keys.insert(it, k);
                 return pair<iterator, bool>(iterator(it, values_it), true);
             }
             auto values_it = project(it);
-            *values_it = std::forward<M &&>(obj);
+            *values_it = std::forward<M>(obj);
             return pair<iterator, bool>(iterator(it, values_it), false);
         }
         template<class M>
@@ -600,25 +603,25 @@ namespace std {
             auto it = key_lower_bound(k);
             if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
                 auto values_it =
-                    c.values.insert(project(it), std::forward<M &&>(obj));
-                it = c.keys.insert(it, std::forward<key_type &&>(k));
+                    c.values.insert(project(it), std::forward<M>(obj));
+                it = c.keys.insert(it, std::forward<key_type>(k));
                 return pair<iterator, bool>(iterator(it, values_it), true);
             }
             auto values_it = project(it);
-            *values_it = std::forward<M &&>(obj);
+            *values_it = std::forward<M>(obj);
             return pair<iterator, bool>(iterator(it, values_it), false);
         }
         template<class M>
         iterator
         insert_or_assign(const_iterator hint, const key_type & k, M && obj)
         {
-            return insert_or_assign(k, std::forward<M &&>(obj)).first;
+            return insert_or_assign(k, std::forward<M>(obj)).first;
         }
         template<class M>
         iterator insert_or_assign(const_iterator hint, key_type && k, M && obj)
         {
             return insert_or_assign(
-                       std::forward<key_type &&>(k), std::forward<M &&>(obj))
+                       std::forward<key_type>(k), std::forward<M>(obj))
                 .first;
         }
 
@@ -647,7 +650,7 @@ namespace std {
         {
             return iterator(
                 c.keys.erase(first.key_iter(), last.key_iter()),
-                c.keys.erase(first.mapped_iter(), last.mapped_iter()));
+                c.values.erase(first.mapped_iter(), last.mapped_iter()));
         }
 
         void swap(flat_map & fm) noexcept(is_nothrow_swappable_v<key_compare>)
@@ -681,7 +684,7 @@ namespace std {
         const_iterator find(const key_type & x) const
         {
             auto it = key_find(x);
-            return iterator(it, project(it));
+            return const_iterator(it, project(it));
         }
         template<class K>
         iterator find(const K & x)
@@ -698,13 +701,13 @@ namespace std {
         size_type count(const key_type & x) const
         {
             auto it = key_find(x);
-            return size_type(it != c.keys.end() ? 0 : 1);
+            return size_type(it == c.keys.end() ? 0 : 1);
         }
         template<class K>
         size_type count(const K & x) const
         {
             auto it = key_find(x);
-            return size_type(it != c.keys.end() ? 0 : 1);
+            return size_type(it == c.keys.end() ? 0 : 1);
         }
         bool contains(const key_type & x) const
         {
@@ -723,7 +726,7 @@ namespace std {
         const_iterator lower_bound(const key_type & x) const
         {
             auto it = key_lower_bound(x);
-            return iterator(it, project(it));
+            return const_iterator(it, project(it));
         }
         template<class K>
         iterator lower_bound(const K & x)
@@ -735,7 +738,7 @@ namespace std {
         const_iterator lower_bound(const K & x) const
         {
             auto it = key_lower_bound(x);
-            return iterator(it, project(it));
+            return const_iterator(it, project(it));
         }
         iterator upper_bound(const key_type & x)
         {
@@ -745,7 +748,7 @@ namespace std {
         const_iterator upper_bound(const key_type & x) const
         {
             auto it = key_upper_bound(x);
-            return iterator(it, project(it));
+            return const_iterator(it, project(it));
         }
         template<class K>
         iterator upper_bound(const K & x)
@@ -757,7 +760,7 @@ namespace std {
         const_iterator upper_bound(const K & x) const
         {
             auto it = key_upper_bound(x);
-            return iterator(it, project(it));
+            return const_iterator(it, project(it));
         }
         pair<iterator, iterator> equal_range(const key_type & x)
         {
@@ -830,7 +833,12 @@ namespace std {
         struct scoped_clear
         {
             explicit scoped_clear(flat_map * fm) : fm_(fm) {}
-            ~scoped_clear() { fm_->clear(); }
+            ~scoped_clear()
+            {
+                if (fm_)
+                    fm_->clear();
+            }
+            void release() { fm_ = nullptr; }
 
         private:
             flat_map * fm_;
@@ -859,22 +867,22 @@ namespace std {
         template<typename K>
         key_iter_t key_lower_bound(const K & k)
         {
-            return lower_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::lower_bound(c.keys.begin(), c.keys.end(), k, compare);
         }
         template<typename K>
         key_const_iter_t key_lower_bound(const K & k) const
         {
-            return lower_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::lower_bound(c.keys.begin(), c.keys.end(), k, compare);
         }
         template<typename K>
         key_iter_t key_upper_bound(const K & k)
         {
-            return upper_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::upper_bound(c.keys.begin(), c.keys.end(), k, compare);
         }
         template<typename K>
         key_const_iter_t key_upper_bound(const K & k) const
         {
-            return upper_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::upper_bound(c.keys.begin(), c.keys.end(), k, compare);
         }
         template<typename K>
         key_iter_t key_find(const K & k)
