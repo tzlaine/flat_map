@@ -1,3 +1,5 @@
+#include "flat_map"
+
 #include <boost/container/flat_map.hpp>
 
 #include <algorithm>
@@ -19,58 +21,6 @@ enum map_impl_kind
     num_map_impl_kinds
 };
 
-template <typename T, typename U, typename ValueType = std::pair<T, U>>
-struct split_map_t
-{
-    using const_iterator = typename std::vector<U>::const_iterator;
-
-    size_t size() const
-    { return values.size(); }
-
-    typename std::vector<U>::iterator lower_bound(T const & t)
-    {
-        auto const keys_it = std::lower_bound(keys.begin(), keys.end(), t);
-        return values.begin() + (keys_it - keys.begin());
-    }
-
-    typename std::vector<U>::iterator find(T const & t)
-    {
-        auto const it = lower_bound(t);
-        if (it != values.end() && *it == t)
-            return it;
-        return values.end();
-    }
-
-    U& operator[](T const & t)
-    {
-        auto const values_it = lower_bound(t);
-        if (values_it != values.end() && *values_it == t)
-            return *values_it;
-        auto const keys_it = keys.begin() + (values_it - values.begin());
-        keys.insert(keys_it, t);
-        return *values.insert(values_it, U());
-    }
-
-    void erase(T const & t)
-    {
-        auto values_it = find(t);
-        if (values_it != values.end()) {
-            auto const keys_it = keys.begin() + (values_it - values.begin());
-            keys.erase(keys_it);
-            values.erase(values_it);
-        }
-    }
-
-    std::vector<U> keys;
-    std::vector<U> values;
-};
-
-template <typename T, typename U>
-typename split_map_t<T, U>::const_iterator begin(split_map_t<T, U> const & c)
-{ return c.values.begin(); }
-template <typename T, typename U>
-typename split_map_t<T, U>::const_iterator end(split_map_t<T, U> const & c)
-{ return c.values.end(); }
 
 template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
 struct map_impl
@@ -87,7 +37,7 @@ struct map_impl<KeyType, ValueType, boost_flat_map>
 template <typename KeyType, typename ValueType>
 struct map_impl<KeyType, ValueType, split_map>
 {
-    using type = split_map_t<KeyType, ValueType>;
+    using type = std::flat_map<KeyType, ValueType>;
 };
 
 template <typename KeyType, typename ValueType, map_impl_kind MapImpl>
@@ -238,7 +188,7 @@ void test(std::size_t size, output_files_t & output_files)
 
     test_map_type<KeyType, ValueType, boost_flat_map, iterations>("boost flat_map", v, output_files);
     test_map_type<KeyType, ValueType, std_map, iterations>("std::map", v, output_files);
-    test_map_type<KeyType, ValueType, split_map, iterations>("split_map", v, output_files);
+    test_map_type<KeyType, ValueType, split_map, iterations>("std::flat_map", v, output_files);
 
     std::cout << std::endl;
 }

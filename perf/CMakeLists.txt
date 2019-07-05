@@ -5,9 +5,9 @@ find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS})
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    add_definitions(--stdlib=libc++ -std=c++1z -O3)
+    add_definitions(--stdlib=libc++ -std=c++17 -O3)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_definitions(-std=c++1y -O3)
+    add_definitions(-std=c++17 -O3)
 endif ()
 
 add_executable(perf_test ${CMAKE_SOURCE_DIR}/map_insertion_perf_tests.cpp)
