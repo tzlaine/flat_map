@@ -337,11 +337,6 @@ namespace std {
       flat_set(sorted_unique_t s, InputIterator first, InputIterator last,
                const Alloc& a);
 
-    template <class Alloc>
-      flat_set(flat_set&& m, const Alloc& a);
-    template<class Alloc>
-      flat_set(const flat_set& m, const Alloc& a);
-
     flat_set(initializer_list<key_type>&& il,
              const key_compare& comp = key_compare())
         : flat_set(il, comp) { }
@@ -547,10 +542,6 @@ template <class InputIterator, class Alloc>
 template <class InputIterator, class Alloc>
   flat_set(sorted_unique_t s, InputIterator first, InputIterator last,
            const Alloc& a);
-template <class Alloc>
-  flat_set(flat_set&& m, const Alloc& a);
-template<class Alloc>
-  flat_set(const flat_set& m, const Alloc& a);
 template <class Alloc>
   flat_set(initializer_list<key_type>&& il,
            const key_compare& comp, const Alloc& a);
@@ -832,11 +823,6 @@ class flat_multiset {
       flat_multiset(sorted_equivalent_t s, InputIterator first, InputIterator last,
                     const Alloc& a);
 
-    template <class Alloc>
-     flat_multiset(flat_multiset&& m, const Alloc& a);
-   template<class Alloc>
-     flat_multiset(const flat_multiset& m, const Alloc& a);
-
     flat_multiset(initializer_list<key_type>&& il,
                   const key_compare& comp = key_compare())
       : flat_multiset(il, comp) { }
@@ -1041,10 +1027,6 @@ template <class InputIterator, class Alloc>
 template <class InputIterator, class Alloc>
   flat_multiset(sorted_equivalent_t s, InputIterator first, InputIterator last,
                 const Alloc& a);
-template <class Alloc>
- flat_multiset(flat_multiset&& m, const Alloc& a);
-emplate<class Alloc>
- flat_multiset(const flat_multiset& m, const Alloc& a);
 template <class Alloc>
   flat_multiset(initializer_list<key_type>&& il,
                 const key_compare& comp, const Alloc& a);
