@@ -2,11 +2,15 @@
 #ifndef REFERENCE_IMPLEMENTATION_FLAT_MAP_
 #define REFERENCE_IMPLEMENTATION_FLAT_MAP_
 
-// NOTE: This implementation has only been tested against libstdc++.
+// NOTE: This implementation has only been tested against libstdc++ and libc++.
 
 #include <algorithm>
 #include <iterator>
 #include <vector>
+
+#if defined(__GNUC__) && !defined(__clang__)
+#include <bits/uses_allocator.h>
+#endif
 
 
 namespace std {
@@ -45,8 +49,8 @@ namespace std {
         flat_map_iterator(
             flat_map_iterator<KeyRef, TRef2, KeyIter, MappedIter2> other,
             enable_if_t<
-                is_convertible_v<TRef2, TRef> &&
-                    is_convertible_v<MappedIter2, MappedIter>,
+                is_convertible<TRef2, TRef>::value &&
+                    is_convertible<MappedIter2, MappedIter>::value,
                 int *> = nullptr) :
             key_it_(other.key_it_),
             mapped_it_(other.mapped_it_)
@@ -115,8 +119,7 @@ namespace std {
 
         friend bool operator==(flat_map_iterator lhs, flat_map_iterator rhs)
         {
-            return lhs.key_it_ == rhs.key_it_ &&
-                   lhs.mapped_it_ == rhs.mapped_it_;
+            return lhs.key_it_ == rhs.key_it_;
         }
         friend bool operator!=(flat_map_iterator lhs, flat_map_iterator rhs)
         {
@@ -125,11 +128,7 @@ namespace std {
 
         friend bool operator<(flat_map_iterator lhs, flat_map_iterator rhs)
         {
-            if (lhs.key_it_ < rhs.key_it_)
-                return true;
-            if (rhs.key_it_ < lhs.key_it_)
-                return false;
-            return lhs.mapped_it_ < rhs.mapped_it_;
+            return lhs.key_it_ < rhs.key_it_;
         }
         friend bool operator<=(flat_map_iterator lhs, flat_map_iterator rhs)
         {
@@ -188,6 +187,26 @@ namespace std {
         class MappedContainer = vector<T>>
     class flat_map
     {
+        template<typename Alloc>
+        using uses = enable_if_t<
+            uses_allocator<KeyContainer, Alloc>::value &&
+            uses_allocator<MappedContainer, Alloc>::value>;
+
+        template<typename Container, typename = void>
+        struct has_begin_end : false_type
+        {
+        };
+        template<typename Container>
+        struct has_begin_end<
+            Container,
+            void_t<
+                decltype(std::begin(declval<Container>())),
+                decltype(std::end(declval<Container>()))>> : true_type
+        {
+        };
+        template<typename Container>
+        using container = enable_if_t<has_begin_end<Container>::value>;
+
     public:
         // types:
         using key_type = Key;
@@ -253,18 +272,32 @@ namespace std {
             mutable_iterator last(c.keys.end(), c.values.end());
             sort(first, last, value_comp());
         }
-        // template<class Alloc>
-        // flat_map(
-        //    const key_container_type & key_cont,
-        //    const mapped_container_type & mapped_cont,
-        //    const Alloc & a);
-        template<class Container>
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            const key_container_type & key_cont,
+            const mapped_container_type & mapped_cont,
+            const Alloc & a) :
+            c{key_container_type(key_cont, a),
+              mapped_container_type(mapped_cont, a)},
+            compare()
+        {
+            mutable_iterator first(c.keys.begin(), c.values.begin());
+            mutable_iterator last(c.keys.end(), c.values.end());
+            sort(first, last, value_comp());
+        }
+        template<class Container, class Enable = container<Container>>
         explicit flat_map(
             const Container & cont, const key_compare & comp = key_compare()) :
             flat_map(std::begin(cont), std::end(cont), comp)
         {}
-        // template<class Container, class Alloc>
-        // flat_map(const Container & cont, const Alloc & a);
+        template<
+            class Container,
+            class Alloc,
+            class Enable1 = container<Container>,
+            class Enable2 = uses<Alloc>>
+        flat_map(const Container & cont, const Alloc & a) :
+            flat_map(std::begin(cont), std::end(cont), a)
+        {}
         flat_map(
             sorted_unique_t,
             key_container_type key_cont,
@@ -272,26 +305,47 @@ namespace std {
             c{std::move(key_cont), std::move(mapped_cont)},
             compare(key_compare())
         {}
-        // template<class Alloc>
-        // flat_map(
-        //    sorted_unique_t,
-        //    const key_container_type & key_cont,
-        //    const mapped_container_type & mapped_cont,
-        //    const Alloc & a);
-        template<class Container>
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            sorted_unique_t,
+            const key_container_type & key_cont,
+            const mapped_container_type & mapped_cont,
+            const Alloc & a) :
+            c{key_container_type(key_cont, a),
+              mapped_container_type(mapped_cont, a)},
+            compare()
+        {}
+        template<class Container, class Enable = container<Container>>
         flat_map(
             sorted_unique_t s,
             const Container & cont,
             const key_compare & comp = key_compare()) :
             flat_map(s, std::begin(cont), std::end(cont), key_compare())
         {}
-        // template<class Container, class Alloc>
-        // flat_map(sorted_unique_t, const Container & cont, const Alloc & a);
+        template<
+            class Container,
+            class Alloc,
+            class Enable1 = container<Container>,
+            class Enable2 = uses<Alloc>>
+        flat_map(sorted_unique_t s, const Container & cont, const Alloc & a) :
+            c{key_container_type(a), mapped_container_type(a)},
+            compare()
+        {
+            c.keys.reserve(cont.size());
+            c.values.reserve(cont.size());
+            insert(s, std::begin(cont), std::end(cont));
+        }
         explicit flat_map(const key_compare & comp) : c(), compare(comp) {}
-        // template<class Alloc>
-        // flat_map(const key_compare & comp, const Alloc & a);
-        // template<class Alloc>
-        // explicit flat_map(const Alloc & a);
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(const key_compare & comp, const Alloc & a) :
+            c{key_container_type(a), mapped_container_type(a)},
+            compare(comp)
+        {}
+        template<class Alloc, class Enable = uses<Alloc>>
+        explicit flat_map(const Alloc & a) :
+            c{key_container_type(a), mapped_container_type(a)},
+            compare()
+        {}
         template<class InputIterator>
         flat_map(
             InputIterator first,
@@ -302,14 +356,21 @@ namespace std {
         {
             insert(first, last);
         }
-        // template<class InputIterator, class Alloc>
-        // flat_map(
-        //    InputIterator first,
-        //    InputIterator last,
-        //    const key_compare & comp,
-        //    const Alloc & a);
-        // template<class InputIterator, class Alloc>
-        // flat_map(InputIterator first, InputIterator last, const Alloc & a);
+        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            InputIterator first,
+            InputIterator last,
+            const key_compare & comp,
+            const Alloc & a) :
+            c{key_container_type(a), mapped_container_type(a)},
+            compare(comp)
+        {
+            insert(first, last);
+        }
+        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        flat_map(InputIterator first, InputIterator last, const Alloc & a) :
+            flat_map(first, last, key_compare(), a)
+        {}
         template<class InputIterator>
         flat_map(
             sorted_unique_t s,
@@ -321,19 +382,27 @@ namespace std {
         {
             insert(s, first, last);
         }
-        // template<class InputIterator, class Alloc>
-        // flat_map(
-        //    sorted_unique_t,
-        //    InputIterator first,
-        //    InputIterator last,
-        //    const key_compare & comp,
-        //    const Alloc & a);
-        // template<class InputIterator, class Alloc>
-        // flat_map(
-        //    sorted_unique_t,
-        //    InputIterator first,
-        //    InputIterator last,
-        //    const Alloc & a);
+        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            sorted_unique_t s,
+            InputIterator first,
+            InputIterator last,
+            const key_compare & comp,
+            const Alloc & a) :
+            c{key_container_type(a), mapped_container_type(a)},
+            compare(comp)
+        {
+            insert(s, first, last);
+        }
+        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            sorted_unique_t s,
+            InputIterator first,
+            InputIterator last,
+            const Alloc & a) :
+            flat_map(s, first, last, key_compare(), a)
+        {}
+        // TODO: Remove!
         // template<class Alloc>
         // flat_map(flat_map && m, const Alloc & a);
         // template<class Alloc>
@@ -343,30 +412,38 @@ namespace std {
             const key_compare & comp = key_compare()) :
             flat_map(il, comp)
         {}
-        // template<class Alloc>
-        // flat_map(
-        //    initializer_list<value_type> && il,
-        //    const key_compare & comp,
-        //    const Alloc & a);
-        // template<class Alloc>
-        // flat_map(initializer_list<value_type> && il, const Alloc & a);
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            initializer_list<value_type> && il,
+            const key_compare & comp,
+            const Alloc & a) :
+            flat_map(std::begin(il), std::end(il), comp, a)
+        {}
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(initializer_list<value_type> && il, const Alloc & a) :
+            flat_map(std::begin(il), std::end(il), key_compare(), a)
+        {}
         flat_map(
             sorted_unique_t s,
             initializer_list<value_type> && il,
             const key_compare & comp = key_compare()) :
             flat_map(s, il, comp)
         {}
-        // template<class Alloc>
-        // flat_map(
-        //    sorted_unique_t,
-        //    initializer_list<value_type> && il,
-        //    const key_compare & comp,
-        //    const Alloc & a);
-        // template<class Alloc>
-        // flat_map(
-        //    sorted_unique_t,
-        //    initializer_list<value_type> && il,
-        //    const Alloc & a);
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            sorted_unique_t s,
+            initializer_list<value_type> && il,
+            const key_compare & comp,
+            const Alloc & a) :
+            flat_map(s, std::begin(il), std::end(il), comp, a)
+        {}
+        template<class Alloc, class Enable = uses<Alloc>>
+        flat_map(
+            sorted_unique_t s,
+            initializer_list<value_type> && il,
+            const Alloc & a) :
+            flat_map(s, std::begin(il), std::end(il), key_compare(), a)
+        {}
         flat_map & operator=(initializer_list<value_type> il)
         {
             flat_map tmp(il, compare);
@@ -446,13 +523,21 @@ namespace std {
         }
 
         // ??, modifiers
-        template<class... Args>
+        template<
+            class... Args,
+            class Enable = enable_if_t<is_constructible<
+                pair<key_type, mapped_type>,
+                Args &&...>::value>>
         pair<iterator, bool> emplace(Args &&... args)
         {
             pair<key_type, mapped_type> p(std::forward<Args>(args)...);
             return try_emplace(std::move(p.first), std::move(p.second));
         }
-        template<class... Args>
+        template<
+            class... Args,
+            class Enable = enable_if_t<is_constructible<
+                pair<key_type, mapped_type>,
+                Args &&...>::value>>
         iterator emplace_hint(const_iterator position, Args &&... args)
         {
             return emplace(std::forward<Args>(args)...).first;
@@ -470,12 +555,18 @@ namespace std {
         {
             return emplace_hint(position, std::move(x));
         }
-        template<class P>
+        template<
+            class P,
+            class Enable = enable_if_t<
+                is_constructible<pair<key_type, mapped_type>, P &&>::value>>
         pair<iterator, bool> insert(P && x)
         {
             return emplace(std::forward<P>(x));
         }
-        template<class P>
+        template<
+            class P,
+            class Enable = enable_if_t<
+                is_constructible<pair<key_type, mapped_type>, P &&>::value>>
         iterator insert(const_iterator position, P && x)
         {
             return emplace_hint(position, std::forward<P>(x));
@@ -494,6 +585,9 @@ namespace std {
             mutable_iterator inserted_last(c.keys.end(), c.values.end());
             sort(inserted_first, inserted_last, value_comp());
 
+            if (!prev_size)
+                return;
+
             mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
             inplace_merge(
                 mutable_first, inserted_first, inserted_last, value_comp());
@@ -510,6 +604,9 @@ namespace std {
             mutable_iterator inserted_first(
                 c.keys.begin() + prev_size, c.values.begin() + prev_size);
             mutable_iterator inserted_last(c.keys.end(), c.values.end());
+
+            if (!prev_size)
+                return;
 
             mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
             inplace_merge(
@@ -539,7 +636,10 @@ namespace std {
             _.release();
         }
 
-        template<class... Args>
+        template<
+            class... Args,
+            class Enable =
+                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
         pair<iterator, bool> try_emplace(const key_type & k, Args &&... args)
         {
             auto it = key_lower_bound(k);
@@ -551,7 +651,10 @@ namespace std {
             }
             return pair<iterator, bool>(iterator(it, project(it)), false);
         }
-        template<class... Args>
+        template<
+            class... Args,
+            class Enable =
+                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
         pair<iterator, bool> try_emplace(key_type && k, Args &&... args)
         {
             auto it = key_lower_bound(k);
@@ -563,13 +666,19 @@ namespace std {
             }
             return pair<iterator, bool>(iterator(it, project(it)), false);
         }
-        template<class... Args>
+        template<
+            class... Args,
+            class Enable =
+                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
         iterator
         try_emplace(const_iterator hint, const key_type & k, Args &&... args)
         {
             return try_emplace(k, std::forward<Args>(args)...).first;
         }
-        template<class... Args>
+        template<
+            class... Args,
+            class Enable =
+                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
         iterator
         try_emplace(const_iterator hint, key_type && k, Args &&... args)
         {
@@ -579,7 +688,11 @@ namespace std {
                 .first;
         }
 
-        template<class M>
+        template<
+            class M,
+            class Enable = enable_if_t<
+                is_assignable<mapped_type &, M>::value &&
+                is_constructible<mapped_type, M &&>::value>>
         pair<iterator, bool> insert_or_assign(const key_type & k, M && obj)
         {
             auto it = key_lower_bound(k);
@@ -593,7 +706,11 @@ namespace std {
             *values_it = std::forward<M>(obj);
             return pair<iterator, bool>(iterator(it, values_it), false);
         }
-        template<class M>
+        template<
+            class M,
+            class Enable = enable_if_t<
+                is_assignable<mapped_type &, M>::value &&
+                is_constructible<mapped_type, M &&>::value>>
         pair<iterator, bool> insert_or_assign(key_type && k, M && obj)
         {
             auto it = key_lower_bound(k);
@@ -607,13 +724,21 @@ namespace std {
             *values_it = std::forward<M>(obj);
             return pair<iterator, bool>(iterator(it, values_it), false);
         }
-        template<class M>
+        template<
+            class M,
+            class Enable = enable_if_t<
+                is_assignable<mapped_type &, M>::value &&
+                is_constructible<mapped_type, M &&>::value>>
         iterator
         insert_or_assign(const_iterator hint, const key_type & k, M && obj)
         {
             return insert_or_assign(k, std::forward<M>(obj)).first;
         }
-        template<class M>
+        template<
+            class M,
+            class Enable = enable_if_t<
+                is_assignable<mapped_type &, M>::value &&
+                is_constructible<mapped_type, M &&>::value>>
         iterator insert_or_assign(const_iterator hint, key_type && k, M && obj)
         {
             return insert_or_assign(
@@ -649,7 +774,13 @@ namespace std {
                 c.values.erase(first.mapped_iter(), last.mapped_iter()));
         }
 
-        void swap(flat_map & fm) noexcept(is_nothrow_swappable_v<key_compare>)
+        void swap(flat_map & fm) noexcept(
+#if defined(__clang__)
+            __is_nothrow_swappable<key_compare>::value
+#else
+            is_nothrow_swappable<key_compare>::value
+#endif
+        )
         {
             using std::swap;
             swap(compare, fm.compare);
