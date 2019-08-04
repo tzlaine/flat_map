@@ -402,11 +402,6 @@ namespace std {
             const Alloc & a) :
             flat_map(s, first, last, key_compare(), a)
         {}
-        // TODO: Remove!
-        // template<class Alloc>
-        // flat_map(flat_map && m, const Alloc & a);
-        // template<class Alloc>
-        // flat_map(const flat_map & m, const Alloc & a);
         flat_map(
             initializer_list<value_type> && il,
             const key_compare & comp = key_compare()) :
