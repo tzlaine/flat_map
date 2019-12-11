@@ -1174,48 +1174,6 @@ namespace std {
                 it = c.keys.end();
             return it;
         }
-
-        struct containers_back_insert_iterator
-        {
-            using value_type = void;
-            using difference_type = void;
-            using pointer = void;
-            using reference = void;
-            using iterator_category = output_iterator_tag;
-
-            explicit containers_back_insert_iterator(containers & c) :
-                c_(addressof(c))
-            {}
-
-            template<typename U, typename V>
-            containers_back_insert_iterator & operator=(pair<U, V> const & p)
-            {
-                c_->keys.push_back(p.first);
-                c_->values.push_back(p.second);
-                return *this;
-            }
-
-            template<typename U, typename V>
-            containers_back_insert_iterator & operator=(pair<U, V> && p)
-            {
-                c_->keys.push_back(std::move(p.first));
-                c_->values.push_back(std::move(p.second));
-                return *this;
-            }
-
-            containers_back_insert_iterator & operator*() { return *this; }
-            containers_back_insert_iterator & operator++() { return *this; }
-            containers_back_insert_iterator operator++(int) { return *this; }
-
-        private:
-            containers * c_;
-        };
-
-        static containers_back_insert_iterator
-        containers_back_inserter(containers & conts)
-        {
-            return containers_back_insert_iterator(conts);
-        }
     };
 }
 
