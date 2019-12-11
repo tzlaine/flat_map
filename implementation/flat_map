@@ -12,163 +12,269 @@
 #include <bits/uses_allocator.h>
 #endif
 
+#define CPP20_CONCEPTS 201703L < __cplusplus && defined(__cpp_lib_ranges)
+#define CMCSTL2_CONCEPTS                                                       \
+    201703L <= __cplusplus && __has_include(<stl2/ranges.hpp>)
+#define USE_CONCEPTS CPP20_CONCEPTS || CMCSTL2_CONCEPTS
+
+#if CPP20_CONCEPTS
+#include <ranges>
+#elif CMCSTL2_CONCEPTS
+#include <stl2/ranges.hpp>
+#include <stl2/algorithm.hpp>
+#endif
+
 
 namespace std {
 
-    template<typename T>
-    using remove_cvref_t = remove_cv_t<remove_reference_t<T>>;
+#if CMCSTL2_CONCEPTS && !CPP20_CONCEPTS
+    using namespace experimental;
+#endif
 
-    template<class KeyRef, class TRef, class KeyIter, class MappedIter>
-    struct flat_map_iterator
-    {
-        using iterator_category = random_access_iterator_tag;
-        using value_type = pair<remove_cvref_t<KeyRef>, remove_cvref_t<TRef>>;
-        using difference_type =
-            typename iterator_traits<KeyIter>::difference_type;
-        using reference = pair<KeyRef, TRef>;
+    namespace dtl {
+        template<typename T>
+        using remove_cvref_t = remove_cv_t<remove_reference_t<T>>;
 
-        struct arrow_proxy
+        template<typename T1, typename T2>
+        struct ref_pair
         {
-            reference * operator->() noexcept { return &value_; }
-            reference const * operator->() const noexcept { return &value_; }
-            explicit arrow_proxy(reference value) noexcept :
-                value_(std::move(value))
+            static_assert(is_reference<T1>{} && is_reference<T2>{});
+
+            using pair_type = pair<remove_cvref_t<T1>, remove_cvref_t<T2>>;
+            using pair_of_references_type =
+                pair<remove_cvref_t<T1> &, remove_cvref_t<T2> &>;
+            using const_pair_of_references_type =
+                pair<remove_cvref_t<T1> const &, remove_cvref_t<T2> const &>;
+
+            ref_pair(T1 t1, T2 t2) : first(t1), second(t2) {}
+            ref_pair(ref_pair const & other) :
+                first(other.first), second(other.second)
+            {}
+            ref_pair(ref_pair && other) :
+                first(other.first), second(other.second)
+            {}
+            ref_pair const & operator=(ref_pair const & other) const
+            {
+                first = other.first;
+                second = other.second;
+                return *this;
+            }
+            ref_pair const & operator=(ref_pair && other) const
+            {
+                first = other.first;
+                second = other.second;
+                return *this;
+            }
+
+            ref_pair const & operator=(pair_type const & other) const
+            {
+                first = other.first;
+                second = other.second;
+                return *this;
+            }
+            ref_pair const & operator=(pair_type && other) const
+            {
+                first = std::move(other.first);
+                second = std::move(other.second);
+                return *this;
+            }
+
+            operator pair_type() const { return pair_type(first, second); }
+            operator pair_of_references_type() const
+            {
+                return pair_of_references_type(first, second);
+            }
+            operator const_pair_of_references_type() const
+            {
+                return const_pair_of_references_type(first, second);
+            }
+            bool operator==(ref_pair rhs) const
+            {
+                return first == rhs.first && second == rhs.second;
+            }
+            bool operator!=(ref_pair rhs) const { return !(*this == rhs); }
+            bool operator<(ref_pair rhs) const
+            {
+                if (first < rhs.first)
+                    return true;
+                if (rhs.first < first)
+                    return false;
+                return second < rhs.second;
+            }
+
+            T1 first;
+            T2 second;
+        };
+
+        template<typename T1, typename T2>
+        void swap(ref_pair<T1, T2> const & lhs, ref_pair<T1, T2> const & rhs)
+        {
+            using std::swap;
+            swap(lhs.first, rhs.first);
+            swap(lhs.second, rhs.second);
+        }
+
+        template<class KeyRef, class TRef, class KeyIter, class MappedIter>
+        struct flat_map_iterator
+        {
+            static_assert(is_reference<KeyRef>{} && is_reference<TRef>{});
+
+            using iterator_category = random_access_iterator_tag;
+            using value_type =
+                pair<remove_cvref_t<KeyRef>, remove_cvref_t<TRef>>;
+            using difference_type =
+                typename iterator_traits<KeyIter>::difference_type;
+            using reference = ref_pair<KeyRef, TRef>;
+
+            struct arrow_proxy
+            {
+                reference * operator->() noexcept { return &value_; }
+                reference const * operator->() const noexcept
+                {
+                    return &value_;
+                }
+                explicit arrow_proxy(reference value) noexcept :
+                    value_(std::move(value))
+                {}
+
+            private:
+                reference value_;
+            };
+            using pointer = arrow_proxy;
+
+            flat_map_iterator() {}
+            flat_map_iterator(KeyIter key_it, MappedIter mapped_it) :
+                key_it_(key_it), mapped_it_(mapped_it)
+            {}
+            template<class TRef2, class MappedIter2>
+            flat_map_iterator(
+                flat_map_iterator<KeyRef, TRef2, KeyIter, MappedIter2> other,
+                enable_if_t<
+                    is_convertible<TRef2, TRef>::value &&
+                        is_convertible<MappedIter2, MappedIter>::value,
+                    int *> = nullptr) :
+                key_it_(other.key_it_), mapped_it_(other.mapped_it_)
             {}
 
+            reference operator*() const noexcept { return ref(); }
+            pointer operator->() const noexcept { return arrow_proxy(ref()); }
+
+            reference operator[](difference_type n) const noexcept
+            {
+                return reference(*(key_it_ + n), *(mapped_it_ + n));
+            }
+
+            flat_map_iterator operator+(difference_type n) const noexcept
+            {
+                return flat_map_iterator(key_it_ + n, mapped_it_ + n);
+            }
+            flat_map_iterator operator-(difference_type n) const noexcept
+            {
+                return flat_map_iterator(key_it_ - n, mapped_it_ - n);
+            }
+
+            flat_map_iterator & operator++() noexcept
+            {
+                ++key_it_;
+                ++mapped_it_;
+                return *this;
+            }
+            flat_map_iterator operator++(int) noexcept
+            {
+                flat_map_iterator tmp(*this);
+                ++key_it_;
+                ++mapped_it_;
+                return tmp;
+            }
+
+            flat_map_iterator & operator--() noexcept
+            {
+                --key_it_;
+                --mapped_it_;
+                return *this;
+            }
+            flat_map_iterator operator--(int) noexcept
+            {
+                flat_map_iterator tmp(*this);
+                --key_it_;
+                --mapped_it_;
+                return tmp;
+            }
+
+            flat_map_iterator & operator+=(difference_type n) noexcept
+            {
+                key_it_ += n;
+                mapped_it_ += n;
+                return *this;
+            }
+            flat_map_iterator & operator-=(difference_type n) noexcept
+            {
+                key_it_ -= n;
+                mapped_it_ -= n;
+                return *this;
+            }
+
+            KeyIter key_iter() const { return key_it_; }
+            MappedIter mapped_iter() const { return mapped_it_; }
+
+            friend bool operator==(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return lhs.key_it_ == rhs.key_it_;
+            }
+            friend bool operator!=(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return !(lhs == rhs);
+            }
+
+            friend bool operator<(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return lhs.key_it_ < rhs.key_it_;
+            }
+            friend bool operator<=(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return lhs == rhs || lhs < rhs;
+            }
+            friend bool operator>(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return rhs < lhs;
+            }
+            friend bool operator>=(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return lhs == rhs || rhs < lhs;
+            }
+
+            friend typename flat_map_iterator::difference_type
+            operator-(flat_map_iterator lhs, flat_map_iterator rhs)
+            {
+                return lhs.key_it_ - rhs.key_it_;
+            }
+
         private:
-            reference value_;
+            template<
+                class KeyRef2,
+                class TRef2,
+                class KeyIter2,
+                class MappedIter2>
+            friend struct flat_map_iterator;
+
+            reference ref() const { return reference(*key_it_, *mapped_it_); }
+
+            KeyIter key_it_;
+            MappedIter mapped_it_;
         };
-        using pointer = arrow_proxy;
-
-        flat_map_iterator() {}
-        flat_map_iterator(KeyIter key_it, MappedIter mapped_it) :
-            key_it_(key_it),
-            mapped_it_(mapped_it)
-        {}
-        template<class TRef2, class MappedIter2>
-        flat_map_iterator(
-            flat_map_iterator<KeyRef, TRef2, KeyIter, MappedIter2> other,
-            enable_if_t<
-                is_convertible<TRef2, TRef>::value &&
-                    is_convertible<MappedIter2, MappedIter>::value,
-                int *> = nullptr) :
-            key_it_(other.key_it_),
-            mapped_it_(other.mapped_it_)
-        {}
-
-        reference operator*() const noexcept { return ref(); }
-        pointer operator->() const noexcept { return arrow_proxy(ref()); }
-
-        reference operator[](difference_type n) const noexcept
-        {
-            return reference(*(key_it_ + n), *(mapped_it_ + n));
-        }
-
-        flat_map_iterator operator+(difference_type n) const noexcept
-        {
-            return flat_map_iterator(key_it_ + n, mapped_it_ + n);
-        }
-        flat_map_iterator operator-(difference_type n) const noexcept
-        {
-            return flat_map_iterator(key_it_ - n, mapped_it_ - n);
-        }
-
-        flat_map_iterator & operator++() noexcept
-        {
-            ++key_it_;
-            ++mapped_it_;
-            return *this;
-        }
-        flat_map_iterator operator++(int)noexcept
-        {
-            flat_map_iterator tmp(*this);
-            ++key_it_;
-            ++mapped_it_;
-            return tmp;
-        }
-
-        flat_map_iterator & operator--() noexcept
-        {
-            --key_it_;
-            --mapped_it_;
-            return *this;
-        }
-        flat_map_iterator operator--(int)noexcept
-        {
-            flat_map_iterator tmp(*this);
-            --key_it_;
-            --mapped_it_;
-            return tmp;
-        }
-
-        flat_map_iterator & operator+=(difference_type n) noexcept
-        {
-            key_it_ += n;
-            mapped_it_ += n;
-            return *this;
-        }
-        flat_map_iterator & operator-=(difference_type n) noexcept
-        {
-            key_it_ -= n;
-            mapped_it_ -= n;
-            return *this;
-        }
-
-        KeyIter key_iter() const { return key_it_; }
-        MappedIter mapped_iter() const { return mapped_it_; }
-
-        friend bool operator==(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return lhs.key_it_ == rhs.key_it_;
-        }
-        friend bool operator!=(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        friend bool operator<(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return lhs.key_it_ < rhs.key_it_;
-        }
-        friend bool operator<=(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return lhs == rhs || lhs < rhs;
-        }
-        friend bool operator>(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return rhs < lhs;
-        }
-        friend bool operator>=(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return lhs == rhs || rhs < lhs;
-        }
-
-        friend typename flat_map_iterator::difference_type
-        operator-(flat_map_iterator lhs, flat_map_iterator rhs)
-        {
-            return lhs.key_it_ - rhs.key_it_;
-        }
-
-    private:
-        template<class KeyRef2, class TRef2, class KeyIter2, class MappedIter2>
-        friend struct flat_map_iterator;
-
-        reference ref() const { return reference(*key_it_, *mapped_it_); }
-
-        KeyIter key_it_;
-        MappedIter mapped_it_;
-    };
 
 
-    // NOTE: This overload was necessary, since iter_swap(it1, it2) calls
-    // swap(*it1, *it2).  All std::swap() overloads expect lvalues, and
-    // flat_map's iterators produce proxy rvalues when dereferenced.
-    template<class KeyRef, class TRef>
-    inline void swap(pair<KeyRef, TRef> && lhs, pair<KeyRef, TRef> && rhs)
-    {
-        using std::swap;
-        swap(lhs.first, rhs.first);
-        swap(lhs.second, rhs.second);
+        // NOTE: This overload was necessary, since iter_swap(it1, it2) calls
+        // swap(*it1, *it2).  All std::swap() overloads expect lvalues, and
+        // flat_map's iterators produce proxy rvalues when dereferenced.
+        template<class KeyRef, class TRef>
+        inline void swap(pair<KeyRef, TRef> && lhs, pair<KeyRef, TRef> && rhs)
+        {
+            using std::swap;
+            swap(lhs.first, rhs.first);
+            swap(lhs.second, rhs.second);
+        }
+
     }
 
 
@@ -177,7 +283,6 @@ namespace std {
         explicit sorted_unique_t() = default;
     };
     inline constexpr sorted_unique_t sorted_unique{};
-
 
     template<
         class Key,
@@ -217,22 +322,22 @@ namespace std {
         using const_reference = pair<const key_type &, const mapped_type &>;
         using size_type = size_t;
         using difference_type = ptrdiff_t;
-        using iterator = flat_map_iterator<
+        using iterator = dtl::flat_map_iterator<
             const key_type &,
             mapped_type &,
             typename KeyContainer::const_iterator,
             typename MappedContainer::iterator>; // see 21.2
-        using const_iterator = flat_map_iterator<
+        using const_iterator = dtl::flat_map_iterator<
             const key_type &,
             const mapped_type &,
             typename KeyContainer::const_iterator,
             typename MappedContainer::const_iterator>; // see 21.2
-        using reverse_iterator = flat_map_iterator<
+        using reverse_iterator = dtl::flat_map_iterator<
             const key_type &,
             mapped_type &,
             typename KeyContainer::const_reverse_iterator,
             typename MappedContainer::reverse_iterator>; // see 21.2
-        using const_reverse_iterator = flat_map_iterator<
+        using const_reverse_iterator = dtl::flat_map_iterator<
             const key_type &,
             const mapped_type &,
             typename KeyContainer::const_reverse_iterator,
@@ -270,7 +375,11 @@ namespace std {
         {
             mutable_iterator first(c.keys.begin(), c.values.begin());
             mutable_iterator last(c.keys.end(), c.values.end());
+#if USE_CONCEPTS
+            ranges::sort(first, last, value_comp());
+#else
             sort(first, last, value_comp());
+#endif
         }
         template<class Alloc, class Enable = uses<Alloc>>
         flat_map(
@@ -283,7 +392,11 @@ namespace std {
         {
             mutable_iterator first(c.keys.begin(), c.values.begin());
             mutable_iterator last(c.keys.end(), c.values.end());
+#if USE_CONCEPTS
+            ranges::sort(first, last, value_comp());
+#else
             sort(first, last, value_comp());
+#endif
         }
         template<class Container, class Enable = container<Container>>
         explicit flat_map(
@@ -578,14 +691,23 @@ namespace std {
             mutable_iterator inserted_first(
                 c.keys.begin() + prev_size, c.values.begin() + prev_size);
             mutable_iterator inserted_last(c.keys.end(), c.values.end());
+#if USE_CONCEPTS
+            ranges::sort(inserted_first, inserted_last, value_comp());
+#else
             sort(inserted_first, inserted_last, value_comp());
+#endif
 
             if (!prev_size)
                 return;
 
             mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
+#if USE_CONCEPTS
+            ranges::inplace_merge(
+                mutable_first, inserted_first, inserted_last, value_comp());
+#else
             inplace_merge(
                 mutable_first, inserted_first, inserted_last, value_comp());
+#endif
         }
         template<class InputIterator>
         void insert(sorted_unique_t, InputIterator first, InputIterator last)
@@ -604,8 +726,13 @@ namespace std {
                 return;
 
             mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
+#if USE_CONCEPTS
+            ranges::inplace_merge(
+                mutable_first, inserted_first, inserted_last, value_comp());
+#else
             inplace_merge(
                 mutable_first, inserted_first, inserted_last, value_comp());
+#endif
         }
         void insert(initializer_list<value_type> il)
         {
@@ -908,7 +1035,11 @@ namespace std {
 
         friend bool operator==(const flat_map & x, const flat_map & y)
         {
+#if USE_CONCEPTS
+            return ranges::equal(x, y);
+#else
             return equal(x.begin(), x.end(), y.begin(), y.end());
+#endif
         }
         friend bool operator!=(const flat_map & x, const flat_map & y)
         {
@@ -916,8 +1047,13 @@ namespace std {
         }
         friend bool operator<(const flat_map & x, const flat_map & y)
         {
+#if USE_CONCEPTS
+            return ranges::lexicographical_compare(
+                x, y, [](auto lhs, auto rhs) { return lhs < rhs; });
+#else
             return lexicographical_compare(
                 x.begin(), x.end(), y.begin(), y.end());
+#endif
         }
         friend bool operator>(const flat_map & x, const flat_map & y)
         {
@@ -971,7 +1107,7 @@ namespace std {
         using mapped_iter_t = typename MappedContainer::iterator;
         using mapped_const_iter_t = typename MappedContainer::const_iterator;
 
-        using mutable_iterator = flat_map_iterator<
+        using mutable_iterator = dtl::flat_map_iterator<
             key_type &,
             mapped_type &,
             key_iter_t,
@@ -989,22 +1125,38 @@ namespace std {
         template<typename K>
         key_iter_t key_lower_bound(const K & k)
         {
+#if USE_CONCEPTS
+            return ranges::lower_bound(c.keys, k, compare);
+#else
             return std::lower_bound(c.keys.begin(), c.keys.end(), k, compare);
+#endif
         }
         template<typename K>
         key_const_iter_t key_lower_bound(const K & k) const
         {
+#if USE_CONCEPTS
+            return ranges::lower_bound(c.keys, k, compare);
+#else
             return std::lower_bound(c.keys.begin(), c.keys.end(), k, compare);
+#endif
         }
         template<typename K>
         key_iter_t key_upper_bound(const K & k)
         {
+#if USE_CONCEPTS
+            return ranges::upper_bound(c.keys, k, compare);
+#else
             return std::upper_bound(c.keys.begin(), c.keys.end(), k, compare);
+#endif
         }
         template<typename K>
         key_const_iter_t key_upper_bound(const K & k) const
         {
+#if USE_CONCEPTS
+            return ranges::upper_bound(c.keys, k, compare);
+#else
             return std::upper_bound(c.keys.begin(), c.keys.end(), k, compare);
+#endif
         }
         template<typename K>
         key_iter_t key_find(const K & k)
