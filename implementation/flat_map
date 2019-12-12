@@ -31,250 +31,254 @@ namespace std {
     using namespace experimental;
 #endif
 
-    namespace dtl {
-        template<typename T>
-        using remove_cvref_t = remove_cv_t<remove_reference_t<T>>;
+    // TODO: Remove once we have this in C++20 mode ubiquitously.
+    template<typename _T>
+    using __remove_cvref_t = remove_cv_t<remove_reference_t<_T>>;
 
-        template<typename T1, typename T2>
-        struct ref_pair
+    template<typename _T1, typename _T2>
+    struct __ref_pair
+    {
+        static_assert(is_reference<_T1>{} && is_reference<_T2>{});
+
+        using __pair_type = pair<__remove_cvref_t<_T1>, __remove_cvref_t<_T2>>;
+        using __pair_of_references_type =
+            pair<__remove_cvref_t<_T1> &, __remove_cvref_t<_T2> &>;
+        using __const_pair_of_references_type =
+            pair<__remove_cvref_t<_T1> const &, __remove_cvref_t<_T2> const &>;
+
+        __ref_pair(_T1 __t1, _T2 __t2) : first(__t1), second(__t2) {}
+        __ref_pair(__ref_pair const & __other) :
+            first(__other.first), second(__other.second)
+        {}
+        __ref_pair(__ref_pair && __other) :
+            first(__other.first), second(__other.second)
+        {}
+        __ref_pair const & operator=(__ref_pair const & __other) const
         {
-            static_assert(is_reference<T1>{} && is_reference<T2>{});
-
-            using pair_type = pair<remove_cvref_t<T1>, remove_cvref_t<T2>>;
-            using pair_of_references_type =
-                pair<remove_cvref_t<T1> &, remove_cvref_t<T2> &>;
-            using const_pair_of_references_type =
-                pair<remove_cvref_t<T1> const &, remove_cvref_t<T2> const &>;
-
-            ref_pair(T1 t1, T2 t2) : first(t1), second(t2) {}
-            ref_pair(ref_pair const & other) :
-                first(other.first), second(other.second)
-            {}
-            ref_pair(ref_pair && other) :
-                first(other.first), second(other.second)
-            {}
-            ref_pair const & operator=(ref_pair const & other) const
-            {
-                first = other.first;
-                second = other.second;
-                return *this;
-            }
-            ref_pair const & operator=(ref_pair && other) const
-            {
-                first = other.first;
-                second = other.second;
-                return *this;
-            }
-
-            ref_pair const & operator=(pair_type const & other) const
-            {
-                first = other.first;
-                second = other.second;
-                return *this;
-            }
-            ref_pair const & operator=(pair_type && other) const
-            {
-                first = std::move(other.first);
-                second = std::move(other.second);
-                return *this;
-            }
-
-            operator pair_type() const { return pair_type(first, second); }
-            operator pair_of_references_type() const
-            {
-                return pair_of_references_type(first, second);
-            }
-            operator const_pair_of_references_type() const
-            {
-                return const_pair_of_references_type(first, second);
-            }
-            bool operator==(ref_pair rhs) const
-            {
-                return first == rhs.first && second == rhs.second;
-            }
-            bool operator!=(ref_pair rhs) const { return !(*this == rhs); }
-            bool operator<(ref_pair rhs) const
-            {
-                if (first < rhs.first)
-                    return true;
-                if (rhs.first < first)
-                    return false;
-                return second < rhs.second;
-            }
-
-            T1 first;
-            T2 second;
-        };
-
-        template<typename T1, typename T2>
-        void swap(ref_pair<T1, T2> const & lhs, ref_pair<T1, T2> const & rhs)
+            first = __other.first;
+            second = __other.second;
+            return *this;
+        }
+        __ref_pair const & operator=(__ref_pair && __other) const
         {
-            using std::swap;
-            swap(lhs.first, rhs.first);
-            swap(lhs.second, rhs.second);
+            first = __other.first;
+            second = __other.second;
+            return *this;
         }
 
-        template<class KeyRef, class TRef, class KeyIter, class MappedIter>
-        struct flat_map_iterator
+        __ref_pair const & operator=(__pair_type const & __other) const
         {
-            static_assert(is_reference<KeyRef>{} && is_reference<TRef>{});
+            first = __other.first;
+            second = __other.second;
+            return *this;
+        }
+        __ref_pair const & operator=(__pair_type && __other) const
+        {
+            first = std::move(__other.first);
+            second = std::move(__other.second);
+            return *this;
+        }
 
-            using iterator_category = random_access_iterator_tag;
-            using value_type =
-                pair<remove_cvref_t<KeyRef>, remove_cvref_t<TRef>>;
-            using difference_type =
-                typename iterator_traits<KeyIter>::difference_type;
-            using reference = ref_pair<KeyRef, TRef>;
+        operator __pair_type() const { return __pair_type(first, second); }
+        operator __pair_of_references_type() const
+        {
+            return __pair_of_references_type(first, second);
+        }
+        operator __const_pair_of_references_type() const
+        {
+            return __const_pair_of_references_type(first, second);
+        }
+        bool operator==(__ref_pair __rhs) const
+        {
+            return first == __rhs.first && second == __rhs.second;
+        }
+        bool operator!=(__ref_pair __rhs) const { return !(*this == __rhs); }
+        bool operator<(__ref_pair __rhs) const
+        {
+            if (first < __rhs.first)
+                return true;
+            if (__rhs.first < first)
+                return false;
+            return second < __rhs.second;
+        }
 
-            struct arrow_proxy
-            {
-                reference * operator->() noexcept { return &value_; }
-                reference const * operator->() const noexcept
-                {
-                    return &value_;
-                }
-                explicit arrow_proxy(reference value) noexcept :
-                    value_(std::move(value))
-                {}
+        _T1 first;
+        _T2 second;
+    };
 
-            private:
-                reference value_;
-            };
-            using pointer = arrow_proxy;
+    template<typename _T1, typename _T2>
+    void
+    swap(__ref_pair<_T1, _T2> const & __lhs, __ref_pair<_T1, _T2> const & __rhs)
+    {
+        using std::swap;
+        swap(__lhs.first, __rhs.first);
+        swap(__lhs.second, __rhs.second);
+    }
 
-            flat_map_iterator() {}
-            flat_map_iterator(KeyIter key_it, MappedIter mapped_it) :
-                key_it_(key_it), mapped_it_(mapped_it)
+    template<class _KeyRef, class _TRef, class _KeyIter, class _MappedIter>
+    struct __flat_map_iterator
+    {
+        static_assert(is_reference<_KeyRef>{} && is_reference<_TRef>{});
+
+        using iterator_category = random_access_iterator_tag;
+        using value_type =
+            pair<__remove_cvref_t<_KeyRef>, __remove_cvref_t<_TRef>>;
+        using difference_type =
+            typename iterator_traits<_KeyIter>::difference_type;
+        using reference = __ref_pair<_KeyRef, _TRef>;
+
+        struct __arrow_proxy
+        {
+            reference * operator->() noexcept { return &__value_; }
+            reference const * operator->() const noexcept { return &__value_; }
+            explicit __arrow_proxy(reference __value) noexcept :
+                __value_(std::move(__value))
             {}
-            template<class TRef2, class MappedIter2>
-            flat_map_iterator(
-                flat_map_iterator<KeyRef, TRef2, KeyIter, MappedIter2> other,
-                enable_if_t<
-                    is_convertible<TRef2, TRef>::value &&
-                        is_convertible<MappedIter2, MappedIter>::value,
-                    int *> = nullptr) :
-                key_it_(other.key_it_), mapped_it_(other.mapped_it_)
-            {}
-
-            reference operator*() const noexcept { return ref(); }
-            pointer operator->() const noexcept { return arrow_proxy(ref()); }
-
-            reference operator[](difference_type n) const noexcept
-            {
-                return reference(*(key_it_ + n), *(mapped_it_ + n));
-            }
-
-            flat_map_iterator operator+(difference_type n) const noexcept
-            {
-                return flat_map_iterator(key_it_ + n, mapped_it_ + n);
-            }
-            flat_map_iterator operator-(difference_type n) const noexcept
-            {
-                return flat_map_iterator(key_it_ - n, mapped_it_ - n);
-            }
-
-            flat_map_iterator & operator++() noexcept
-            {
-                ++key_it_;
-                ++mapped_it_;
-                return *this;
-            }
-            flat_map_iterator operator++(int) noexcept
-            {
-                flat_map_iterator tmp(*this);
-                ++key_it_;
-                ++mapped_it_;
-                return tmp;
-            }
-
-            flat_map_iterator & operator--() noexcept
-            {
-                --key_it_;
-                --mapped_it_;
-                return *this;
-            }
-            flat_map_iterator operator--(int) noexcept
-            {
-                flat_map_iterator tmp(*this);
-                --key_it_;
-                --mapped_it_;
-                return tmp;
-            }
-
-            flat_map_iterator & operator+=(difference_type n) noexcept
-            {
-                key_it_ += n;
-                mapped_it_ += n;
-                return *this;
-            }
-            flat_map_iterator & operator-=(difference_type n) noexcept
-            {
-                key_it_ -= n;
-                mapped_it_ -= n;
-                return *this;
-            }
-
-            KeyIter key_iter() const { return key_it_; }
-            MappedIter mapped_iter() const { return mapped_it_; }
-
-            friend bool operator==(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return lhs.key_it_ == rhs.key_it_;
-            }
-            friend bool operator!=(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return !(lhs == rhs);
-            }
-
-            friend bool operator<(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return lhs.key_it_ < rhs.key_it_;
-            }
-            friend bool operator<=(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return lhs == rhs || lhs < rhs;
-            }
-            friend bool operator>(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return rhs < lhs;
-            }
-            friend bool operator>=(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return lhs == rhs || rhs < lhs;
-            }
-
-            friend typename flat_map_iterator::difference_type
-            operator-(flat_map_iterator lhs, flat_map_iterator rhs)
-            {
-                return lhs.key_it_ - rhs.key_it_;
-            }
 
         private:
-            template<
-                class KeyRef2,
-                class TRef2,
-                class KeyIter2,
-                class MappedIter2>
-            friend struct flat_map_iterator;
-
-            reference ref() const { return reference(*key_it_, *mapped_it_); }
-
-            KeyIter key_it_;
-            MappedIter mapped_it_;
+            reference __value_;
         };
+        using pointer = __arrow_proxy;
 
+        __flat_map_iterator() {}
+        __flat_map_iterator(_KeyIter __key_it, _MappedIter __mapped_it) :
+            __key_it_(__key_it), __mapped_it_(__mapped_it)
+        {}
+        template<class _TRef2, class _MappedIter2>
+        __flat_map_iterator(
+            __flat_map_iterator<_KeyRef, _TRef2, _KeyIter, _MappedIter2>
+                __other,
+            enable_if_t<
+                is_convertible<_TRef2, _TRef>::value &&
+                    is_convertible<_MappedIter2, _MappedIter>::value,
+                int *> = nullptr) :
+            __key_it_(__other.__key_it_), __mapped_it_(__other.__mapped_it_)
+        {}
 
-        // NOTE: This overload was necessary, since iter_swap(it1, it2) calls
-        // swap(*it1, *it2).  All std::swap() overloads expect lvalues, and
-        // flat_map's iterators produce proxy rvalues when dereferenced.
-        template<class KeyRef, class TRef>
-        inline void swap(pair<KeyRef, TRef> && lhs, pair<KeyRef, TRef> && rhs)
+        reference operator*() const noexcept { return __ref(); }
+        pointer operator->() const noexcept { return __arrow_proxy(__ref()); }
+
+        reference operator[](difference_type __n) const noexcept
         {
-            using std::swap;
-            swap(lhs.first, rhs.first);
-            swap(lhs.second, rhs.second);
+            return reference(*(__key_it_ + __n), *(__mapped_it_ + __n));
         }
 
+        __flat_map_iterator operator+(difference_type __n) const noexcept
+        {
+            return __flat_map_iterator(__key_it_ + __n, __mapped_it_ + __n);
+        }
+        __flat_map_iterator operator-(difference_type __n) const noexcept
+        {
+            return __flat_map_iterator(__key_it_ - __n, __mapped_it_ - __n);
+        }
+
+        __flat_map_iterator & operator++() noexcept
+        {
+            ++__key_it_;
+            ++__mapped_it_;
+            return *this;
+        }
+        __flat_map_iterator operator++(int) noexcept
+        {
+            __flat_map_iterator tmp(*this);
+            ++__key_it_;
+            ++__mapped_it_;
+            return tmp;
+        }
+
+        __flat_map_iterator & operator--() noexcept
+        {
+            --__key_it_;
+            --__mapped_it_;
+            return *this;
+        }
+        __flat_map_iterator operator--(int) noexcept
+        {
+            __flat_map_iterator tmp(*this);
+            --__key_it_;
+            --__mapped_it_;
+            return tmp;
+        }
+
+        __flat_map_iterator & operator+=(difference_type __n) noexcept
+        {
+            __key_it_ += __n;
+            __mapped_it_ += __n;
+            return *this;
+        }
+        __flat_map_iterator & operator-=(difference_type __n) noexcept
+        {
+            __key_it_ -= __n;
+            __mapped_it_ -= __n;
+            return *this;
+        }
+
+        _KeyIter __key_iter() const { return __key_it_; }
+        _MappedIter __mapped_iter() const { return __mapped_it_; }
+
+        friend bool
+        operator==(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return __lhs.__key_it_ == __rhs.__key_it_;
+        }
+        friend bool
+        operator!=(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return !(__lhs == __rhs);
+        }
+
+        friend bool
+        operator<(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return __lhs.__key_it_ < __rhs.__key_it_;
+        }
+        friend bool
+        operator<=(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return __lhs == __rhs || __lhs < __rhs;
+        }
+        friend bool
+        operator>(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return __rhs < __lhs;
+        }
+        friend bool
+        operator>=(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return __lhs == __rhs || __rhs < __lhs;
+        }
+
+        friend typename __flat_map_iterator::difference_type
+        operator-(__flat_map_iterator __lhs, __flat_map_iterator __rhs)
+        {
+            return __lhs.__key_it_ - __rhs.__key_it_;
+        }
+
+    private:
+        template<
+            class _KeyRef2,
+            class _TRef2,
+            class _KeyIter2,
+            class _MappedIter2>
+        friend struct __flat_map_iterator;
+
+        reference __ref() const { return reference(*__key_it_, *__mapped_it_); }
+
+        _KeyIter __key_it_;
+        _MappedIter __mapped_it_;
+    };
+
+
+    // NOTE: This overload was necessary, since iter_swap(it1, it2) calls
+    // swap(*it1, *it2).  All std::swap() overloads expect lvalues, and
+    // flat_map's iterators produce proxy rvalues when dereferenced.
+    template<class _KeyRef, class _TRef>
+    inline void
+    swap(pair<_KeyRef, _TRef> && __lhs, pair<_KeyRef, _TRef> && __rhs)
+    {
+        using std::swap;
+        swap(__lhs.first, __rhs.first);
+        swap(__lhs.second, __rhs.second);
     }
 
 
@@ -285,78 +289,76 @@ namespace std {
     inline constexpr sorted_unique_t sorted_unique{};
 
     template<
-        class Key,
-        class T,
-        class Compare = less<Key>,
-        class KeyContainer = vector<Key>,
-        class MappedContainer = vector<T>>
+        class _Key,
+        class _T,
+        class _Compare = less<_Key>,
+        class _KeyContainer = vector<_Key>,
+        class _MappedContainer = vector<_T>>
     class flat_map
     {
-        template<typename Alloc>
-        using uses = enable_if_t<
-            uses_allocator<KeyContainer, Alloc>::value &&
-            uses_allocator<MappedContainer, Alloc>::value>;
+        template<typename _Alloc>
+        using __uses = enable_if_t<
+            uses_allocator<_KeyContainer, _Alloc>::value &&
+            uses_allocator<_MappedContainer, _Alloc>::value>;
 
-        template<typename Container, typename = void>
-        struct has_begin_end : false_type
-        {
-        };
-        template<typename Container>
-        struct has_begin_end<
-            Container,
+        template<typename _Container, typename = void>
+        struct __has_begin_end : false_type
+        {};
+        template<typename _Container>
+        struct __has_begin_end<
+            _Container,
             void_t<
-                decltype(std::begin(declval<Container>())),
-                decltype(std::end(declval<Container>()))>> : true_type
-        {
-        };
-        template<typename Container>
-        using container = enable_if_t<has_begin_end<Container>::value>;
+                decltype(std::begin(declval<_Container>())),
+                decltype(std::end(declval<_Container>()))>> : true_type
+        {};
+        template<typename _Container>
+        using __container = enable_if_t<__has_begin_end<_Container>::value>;
 
     public:
         // types:
-        using key_type = Key;
-        using mapped_type = T;
+        using key_type = _Key;
+        using mapped_type = _T;
         using value_type = pair<const key_type, mapped_type>;
-        using key_compare = Compare;
+        using key_compare = _Compare;
         using reference = pair<const key_type &, mapped_type &>;
         using const_reference = pair<const key_type &, const mapped_type &>;
         using size_type = size_t;
         using difference_type = ptrdiff_t;
-        using iterator = dtl::flat_map_iterator<
+        using iterator = __flat_map_iterator<
             const key_type &,
             mapped_type &,
-            typename KeyContainer::const_iterator,
-            typename MappedContainer::iterator>; // see 21.2
-        using const_iterator = dtl::flat_map_iterator<
+            typename _KeyContainer::const_iterator,
+            typename _MappedContainer::iterator>; // see 21.2
+        using const_iterator = __flat_map_iterator<
             const key_type &,
             const mapped_type &,
-            typename KeyContainer::const_iterator,
-            typename MappedContainer::const_iterator>; // see 21.2
-        using reverse_iterator = dtl::flat_map_iterator<
+            typename _KeyContainer::const_iterator,
+            typename _MappedContainer::const_iterator>; // see 21.2
+        using reverse_iterator = __flat_map_iterator<
             const key_type &,
             mapped_type &,
-            typename KeyContainer::const_reverse_iterator,
-            typename MappedContainer::reverse_iterator>; // see 21.2
-        using const_reverse_iterator = dtl::flat_map_iterator<
+            typename _KeyContainer::const_reverse_iterator,
+            typename _MappedContainer::reverse_iterator>; // see 21.2
+        using const_reverse_iterator = __flat_map_iterator<
             const key_type &,
             const mapped_type &,
-            typename KeyContainer::const_reverse_iterator,
-            typename MappedContainer::const_reverse_iterator>; // see 21.2
-        using key_container_type = KeyContainer;
-        using mapped_container_type = MappedContainer;
+            typename _KeyContainer::const_reverse_iterator,
+            typename _MappedContainer::const_reverse_iterator>; // see 21.2
+        using key_container_type = _KeyContainer;
+        using mapped_container_type = _MappedContainer;
 
         class value_compare
         {
             friend flat_map;
 
         private:
-            key_compare comp;
-            value_compare(key_compare c) : comp(c) {}
+            key_compare __comp;
+            value_compare(key_compare __c) : __comp(__c) {}
 
         public:
-            bool operator()(const_reference x, const_reference y) const
+            bool operator()(const_reference __x, const_reference __y) const
             {
-                return comp(x.first, y.first);
+                return __comp(__x.first, __y.first);
             }
         };
 
@@ -369,228 +371,246 @@ namespace std {
         // ??, construct/copy/destroy
         flat_map() : flat_map(key_compare()) {}
         flat_map(
-            key_container_type key_cont, mapped_container_type mapped_cont) :
-            c{std::move(key_cont), std::move(mapped_cont)},
-            compare(key_compare())
+            key_container_type __key_cont,
+            mapped_container_type __mapped_cont) :
+            __c{std::move(__key_cont), std::move(__mapped_cont)},
+            __compare(key_compare())
         {
-            mutable_iterator first(c.keys.begin(), c.values.begin());
-            mutable_iterator last(c.keys.end(), c.values.end());
+            __mutable_iterator __first(__c.keys.begin(), __c.values.begin());
+            __mutable_iterator __last(__c.keys.end(), __c.values.end());
 #if USE_CONCEPTS
-            ranges::sort(first, last, value_comp());
+            ranges::sort(__first, __last, value_comp());
 #else
-            sort(first, last, value_comp());
+            sort(__first, __last, value_comp());
 #endif
         }
-        template<class Alloc, class Enable = uses<Alloc>>
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
         flat_map(
-            const key_container_type & key_cont,
-            const mapped_container_type & mapped_cont,
-            const Alloc & a) :
-            c{key_container_type(key_cont, a),
-              mapped_container_type(mapped_cont, a)},
-            compare()
+            const key_container_type & __key_cont,
+            const mapped_container_type & __mapped_cont,
+            const _Alloc & __a) :
+            __c{key_container_type(__key_cont, __a),
+                mapped_container_type(__mapped_cont, __a)},
+            __compare()
         {
-            mutable_iterator first(c.keys.begin(), c.values.begin());
-            mutable_iterator last(c.keys.end(), c.values.end());
+            __mutable_iterator __first(__c.keys.begin(), __c.values.begin());
+            __mutable_iterator __last(__c.keys.end(), __c.values.end());
 #if USE_CONCEPTS
-            ranges::sort(first, last, value_comp());
+            ranges::sort(__first, __last, value_comp());
 #else
-            sort(first, last, value_comp());
+            sort(__first, __last, value_comp());
 #endif
         }
-        template<class Container, class Enable = container<Container>>
+        template<class _Container, class _Enable = __container<_Container>>
         explicit flat_map(
-            const Container & cont, const key_compare & comp = key_compare()) :
-            flat_map(std::begin(cont), std::end(cont), comp)
+            const _Container & __cont,
+            const key_compare & __comp = key_compare()) :
+            flat_map(std::begin(__cont), std::end(__cont), __comp)
         {}
         template<
-            class Container,
-            class Alloc,
-            class Enable1 = container<Container>,
-            class Enable2 = uses<Alloc>>
-        flat_map(const Container & cont, const Alloc & a) :
-            flat_map(std::begin(cont), std::end(cont), a)
+            class _Container,
+            class _Alloc,
+            class _Enable1 = __container<_Container>,
+            class _Enable2 = __uses<_Alloc>>
+        flat_map(const _Container & __cont, const _Alloc & __a) :
+            flat_map(std::begin(__cont), std::end(__cont), __a)
         {}
         flat_map(
             sorted_unique_t,
-            key_container_type key_cont,
-            mapped_container_type mapped_cont) :
-            c{std::move(key_cont), std::move(mapped_cont)},
-            compare(key_compare())
+            key_container_type __key_cont,
+            mapped_container_type __mapped_cont) :
+            __c{std::move(__key_cont), std::move(__mapped_cont)},
+            __compare(key_compare())
         {}
-        template<class Alloc, class Enable = uses<Alloc>>
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
         flat_map(
             sorted_unique_t,
-            const key_container_type & key_cont,
-            const mapped_container_type & mapped_cont,
-            const Alloc & a) :
-            c{key_container_type(key_cont, a),
-              mapped_container_type(mapped_cont, a)},
-            compare()
+            const key_container_type & __key_cont,
+            const mapped_container_type & __mapped_cont,
+            const _Alloc & __a) :
+            __c{key_container_type(__key_cont, __a),
+                mapped_container_type(__mapped_cont, __a)},
+            __compare()
         {}
-        template<class Container, class Enable = container<Container>>
+        template<class _Container, class _Enable = __container<_Container>>
         flat_map(
-            sorted_unique_t s,
-            const Container & cont,
-            const key_compare & comp = key_compare()) :
-            flat_map(s, std::begin(cont), std::end(cont), key_compare())
+            sorted_unique_t __s,
+            const _Container & __cont,
+            const key_compare & __comp = key_compare()) :
+            flat_map(__s, std::begin(__cont), std::end(__cont), key_compare())
         {}
         template<
-            class Container,
-            class Alloc,
-            class Enable1 = container<Container>,
-            class Enable2 = uses<Alloc>>
-        flat_map(sorted_unique_t s, const Container & cont, const Alloc & a) :
-            c{key_container_type(a), mapped_container_type(a)},
-            compare()
+            class _Container,
+            class _Alloc,
+            class _Enable1 = __container<_Container>,
+            class _Enable2 = __uses<_Alloc>>
+        flat_map(
+            sorted_unique_t __s,
+            const _Container & __cont,
+            const _Alloc & __a) :
+            __c{key_container_type(__a), mapped_container_type(__a)},
+            __compare()
         {
-            c.keys.reserve(cont.size());
-            c.values.reserve(cont.size());
-            insert(s, std::begin(cont), std::end(cont));
+            __c.keys.reserve(__cont.size());
+            __c.values.reserve(__cont.size());
+            insert(__s, std::begin(__cont), std::end(__cont));
         }
-        explicit flat_map(const key_compare & comp) : c(), compare(comp) {}
-        template<class Alloc, class Enable = uses<Alloc>>
-        flat_map(const key_compare & comp, const Alloc & a) :
-            c{key_container_type(a), mapped_container_type(a)},
-            compare(comp)
+        explicit flat_map(const key_compare & __comp) : __c(), __compare(__comp)
         {}
-        template<class Alloc, class Enable = uses<Alloc>>
-        explicit flat_map(const Alloc & a) :
-            c{key_container_type(a), mapped_container_type(a)},
-            compare()
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
+        flat_map(const key_compare & __comp, const _Alloc & __a) :
+            __c{key_container_type(__a), mapped_container_type(__a)},
+            __compare(__comp)
         {}
-        template<class InputIterator>
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
+        explicit flat_map(const _Alloc & __a) :
+            __c{key_container_type(__a), mapped_container_type(__a)},
+            __compare()
+        {}
+        template<class _InputIterator>
         flat_map(
-            InputIterator first,
-            InputIterator last,
-            const key_compare & comp = key_compare()) :
-            c(),
-            compare(comp)
+            _InputIterator __first,
+            _InputIterator __last,
+            const key_compare & __comp = key_compare()) :
+            __c(), __compare(__comp)
         {
-            insert(first, last);
+            insert(__first, __last);
         }
-        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        template<
+            class _InputIterator,
+            class _Alloc,
+            class _Enable = __uses<_Alloc>>
         flat_map(
-            InputIterator first,
-            InputIterator last,
-            const key_compare & comp,
-            const Alloc & a) :
-            c{key_container_type(a), mapped_container_type(a)},
-            compare(comp)
+            _InputIterator __first,
+            _InputIterator __last,
+            const key_compare & __comp,
+            const _Alloc & __a) :
+            __c{key_container_type(__a), mapped_container_type(__a)},
+            __compare(__comp)
         {
-            insert(first, last);
+            insert(__first, __last);
         }
-        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
-        flat_map(InputIterator first, InputIterator last, const Alloc & a) :
-            flat_map(first, last, key_compare(), a)
-        {}
-        template<class InputIterator>
+        template<
+            class _InputIterator,
+            class _Alloc,
+            class _Enable = __uses<_Alloc>>
         flat_map(
-            sorted_unique_t s,
-            InputIterator first,
-            InputIterator last,
-            const key_compare & comp = key_compare()) :
-            c(),
-            compare(comp)
+            _InputIterator __first, _InputIterator __last, const _Alloc & __a) :
+            flat_map(__first, __last, key_compare(), __a)
+        {}
+        template<class _InputIterator>
+        flat_map(
+            sorted_unique_t __s,
+            _InputIterator __first,
+            _InputIterator __last,
+            const key_compare & __comp = key_compare()) :
+            __c(), __compare(__comp)
         {
-            insert(s, first, last);
+            insert(__s, __first, __last);
         }
-        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        template<
+            class _InputIterator,
+            class _Alloc,
+            class _Enable = __uses<_Alloc>>
         flat_map(
-            sorted_unique_t s,
-            InputIterator first,
-            InputIterator last,
-            const key_compare & comp,
-            const Alloc & a) :
-            c{key_container_type(a), mapped_container_type(a)},
-            compare(comp)
+            sorted_unique_t __s,
+            _InputIterator __first,
+            _InputIterator __last,
+            const key_compare & __comp,
+            const _Alloc & __a) :
+            __c{key_container_type(__a), mapped_container_type(__a)},
+            __compare(__comp)
         {
-            insert(s, first, last);
+            insert(__s, __first, __last);
         }
-        template<class InputIterator, class Alloc, class Enable = uses<Alloc>>
+        template<
+            class _InputIterator,
+            class _Alloc,
+            class _Enable = __uses<_Alloc>>
         flat_map(
-            sorted_unique_t s,
-            InputIterator first,
-            InputIterator last,
-            const Alloc & a) :
-            flat_map(s, first, last, key_compare(), a)
-        {}
-        flat_map(
-            initializer_list<value_type> && il,
-            const key_compare & comp = key_compare()) :
-            flat_map(il, comp)
-        {}
-        template<class Alloc, class Enable = uses<Alloc>>
-        flat_map(
-            initializer_list<value_type> && il,
-            const key_compare & comp,
-            const Alloc & a) :
-            flat_map(std::begin(il), std::end(il), comp, a)
-        {}
-        template<class Alloc, class Enable = uses<Alloc>>
-        flat_map(initializer_list<value_type> && il, const Alloc & a) :
-            flat_map(std::begin(il), std::end(il), key_compare(), a)
+            sorted_unique_t __s,
+            _InputIterator __first,
+            _InputIterator __last,
+            const _Alloc & __a) :
+            flat_map(__s, __first, __last, key_compare(), __a)
         {}
         flat_map(
-            sorted_unique_t s,
-            initializer_list<value_type> && il,
-            const key_compare & comp = key_compare()) :
-            flat_map(s, il, comp)
+            initializer_list<value_type> && __il,
+            const key_compare & __comp = key_compare()) :
+            flat_map(__il, __comp)
         {}
-        template<class Alloc, class Enable = uses<Alloc>>
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
         flat_map(
-            sorted_unique_t s,
-            initializer_list<value_type> && il,
-            const key_compare & comp,
-            const Alloc & a) :
-            flat_map(s, std::begin(il), std::end(il), comp, a)
+            initializer_list<value_type> && __il,
+            const key_compare & __comp,
+            const _Alloc & __a) :
+            flat_map(std::begin(__il), std::end(__il), __comp, __a)
         {}
-        template<class Alloc, class Enable = uses<Alloc>>
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
+        flat_map(initializer_list<value_type> && __il, const _Alloc & __a) :
+            flat_map(std::begin(__il), std::end(__il), key_compare(), __a)
+        {}
         flat_map(
-            sorted_unique_t s,
-            initializer_list<value_type> && il,
-            const Alloc & a) :
-            flat_map(s, std::begin(il), std::end(il), key_compare(), a)
+            sorted_unique_t __s,
+            initializer_list<value_type> && __il,
+            const key_compare & __comp = key_compare()) :
+            flat_map(__s, __il, __comp)
         {}
-        flat_map & operator=(initializer_list<value_type> il)
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
+        flat_map(
+            sorted_unique_t __s,
+            initializer_list<value_type> && __il,
+            const key_compare & __comp,
+            const _Alloc & __a) :
+            flat_map(__s, std::begin(__il), std::end(__il), __comp, __a)
+        {}
+        template<class _Alloc, class _Enable = __uses<_Alloc>>
+        flat_map(
+            sorted_unique_t __s,
+            initializer_list<value_type> && __il,
+            const _Alloc & __a) :
+            flat_map(__s, std::begin(__il), std::end(__il), key_compare(), __a)
+        {}
+        flat_map & operator=(initializer_list<value_type> __il)
         {
-            flat_map tmp(il, compare);
-            swap(tmp);
+            flat_map __tmp(__il, __compare);
+            swap(__tmp);
             return *this;
         }
 
         // iterators
         iterator begin() noexcept
         {
-            return iterator(c.keys.begin(), c.values.begin());
+            return iterator(__c.keys.begin(), __c.values.begin());
         }
         const_iterator begin() const noexcept
         {
-            return const_iterator(c.keys.begin(), c.values.begin());
+            return const_iterator(__c.keys.begin(), __c.values.begin());
         }
         iterator end() noexcept
         {
-            return iterator(c.keys.end(), c.values.end());
+            return iterator(__c.keys.end(), __c.values.end());
         }
         const_iterator end() const noexcept
         {
-            return const_iterator(c.keys.end(), c.values.end());
+            return const_iterator(__c.keys.end(), __c.values.end());
         }
         reverse_iterator rbegin() noexcept
         {
-            return reverse_iterator(c.keys.rbegin(), c.values.rbegin());
+            return reverse_iterator(__c.keys.rbegin(), __c.values.rbegin());
         }
         const_reverse_iterator rbegin() const noexcept
         {
-            return const_reverse_iterator(c.keys.rbegin(), c.values.rbegin());
+            return const_reverse_iterator(
+                __c.keys.rbegin(), __c.values.rbegin());
         }
         reverse_iterator rend() noexcept
         {
-            return reverse_iterator(c.keys.rend(), c.values.rend());
+            return reverse_iterator(__c.keys.rend(), __c.values.rend());
         }
         const_reverse_iterator rend() const noexcept
         {
-            return const_reverse_iterator(c.keys.rend(), c.values.rend());
+            return const_reverse_iterator(__c.keys.rend(), __c.values.rend());
         }
 
         const_iterator cbegin() const noexcept { return begin(); }
@@ -599,304 +619,334 @@ namespace std {
         const_reverse_iterator crend() const noexcept { return rend(); }
 
         // ??, capacity
-        [[nodiscard]] bool empty() const noexcept { return c.keys.empty(); }
-        size_type size() const noexcept { return c.keys.size(); }
+        [[nodiscard]] bool empty() const noexcept { return __c.keys.empty(); }
+        size_type size() const noexcept { return __c.keys.size(); }
         size_type max_size() const noexcept
         {
-            return std::min<size_type>(c.keys.max_size(), c.values.max_size());
+            return std::min<size_type>(
+                __c.keys.max_size(), __c.values.max_size());
         }
 
         // ??, element access
-        mapped_type & operator[](const key_type & x)
+        mapped_type & operator[](const key_type & __x)
         {
-            return try_emplace(x).first->second;
+            return try_emplace(__x).first->second;
         }
-        mapped_type & operator[](key_type && x)
+        mapped_type & operator[](key_type && __x)
         {
-            return try_emplace(std::move(x)).first->second;
+            return try_emplace(std::move(__x)).first->second;
         }
-        mapped_type & at(const key_type & x)
+        mapped_type & at(const key_type & __x)
         {
-            auto it = key_find(x);
-            if (it == c.keys.end())
+            auto __it = __key_find(__x);
+            if (__it == __c.keys.end())
                 throw out_of_range("Value not found by flat_map.at()");
-            return *project(it);
+            return *__project(__it);
         }
-        const mapped_type & at(const key_type & x) const
+        const mapped_type & at(const key_type & __x) const
         {
-            auto it = key_find(x);
-            if (it == c.keys.end())
+            auto __it = __key_find(__x);
+            if (__it == __c.keys.end())
                 throw out_of_range("Value not found by flat_map.at()");
-            return *project(it);
+            return *__project(__it);
         }
 
         // ??, modifiers
         template<
-            class... Args,
-            class Enable = enable_if_t<is_constructible<
+            class... _Args,
+            class _Enable = enable_if_t<is_constructible<
                 pair<key_type, mapped_type>,
-                Args &&...>::value>>
-        pair<iterator, bool> emplace(Args &&... args)
+                _Args &&...>::value>>
+        pair<iterator, bool> emplace(_Args &&... __args)
         {
-            pair<key_type, mapped_type> p(std::forward<Args>(args)...);
-            return try_emplace(std::move(p.first), std::move(p.second));
+            pair<key_type, mapped_type> __p(std::forward<_Args>(__args)...);
+            return try_emplace(std::move(__p.first), std::move(__p.second));
         }
         template<
-            class... Args,
-            class Enable = enable_if_t<is_constructible<
+            class... _Args,
+            class _Enable = enable_if_t<is_constructible<
                 pair<key_type, mapped_type>,
-                Args &&...>::value>>
-        iterator emplace_hint(const_iterator position, Args &&... args)
+                _Args &&...>::value>>
+        iterator emplace_hint(const_iterator __position, _Args &&... __args)
         {
-            return emplace(std::forward<Args>(args)...).first;
+            return emplace(std::forward<_Args>(__args)...).first;
         }
-        pair<iterator, bool> insert(const value_type & x) { return emplace(x); }
-        pair<iterator, bool> insert(value_type && x)
+        pair<iterator, bool> insert(const value_type & __x)
         {
-            return emplace(std::move(x));
+            return emplace(__x);
         }
-        iterator insert(const_iterator position, const value_type & x)
+        pair<iterator, bool> insert(value_type && __x)
         {
-            return emplace_hint(position, x);
+            return emplace(std::move(__x));
         }
-        iterator insert(const_iterator position, value_type && x)
+        iterator insert(const_iterator __position, const value_type & __x)
         {
-            return emplace_hint(position, std::move(x));
+            return emplace_hint(__position, __x);
         }
-        template<
-            class P,
-            class Enable = enable_if_t<
-                is_constructible<pair<key_type, mapped_type>, P &&>::value>>
-        pair<iterator, bool> insert(P && x)
+        iterator insert(const_iterator __position, value_type && __x)
         {
-            return emplace(std::forward<P>(x));
+            return emplace_hint(__position, std::move(__x));
         }
         template<
-            class P,
-            class Enable = enable_if_t<
-                is_constructible<pair<key_type, mapped_type>, P &&>::value>>
-        iterator insert(const_iterator position, P && x)
+            class _P,
+            class _Enable = enable_if_t<
+                is_constructible<pair<key_type, mapped_type>, _P &&>::value>>
+        pair<iterator, bool> insert(_P && __x)
         {
-            return emplace_hint(position, std::forward<P>(x));
+            return emplace(std::forward<_P>(__x));
         }
-        template<class InputIterator>
-        void insert(InputIterator first, InputIterator last)
+        template<
+            class _P,
+            class _Enable = enable_if_t<
+                is_constructible<pair<key_type, mapped_type>, _P &&>::value>>
+        iterator insert(const_iterator __position, _P && __x)
         {
-            auto const prev_size = size();
-            for (auto it = first; it != last; ++it) {
-                c.keys.push_back(it->first);
-                c.values.push_back(it->second);
+            return emplace_hint(__position, std::forward<_P>(__x));
+        }
+        template<class _InputIterator>
+        void insert(_InputIterator __first, _InputIterator __last)
+        {
+            auto const __prev_size = size();
+            for (auto __it = __first; __it != __last; ++__it) {
+                __c.keys.push_back(__it->first);
+                __c.values.push_back(__it->second);
             }
 
-            mutable_iterator inserted_first(
-                c.keys.begin() + prev_size, c.values.begin() + prev_size);
-            mutable_iterator inserted_last(c.keys.end(), c.values.end());
+            __mutable_iterator __inserted_first(
+                __c.keys.begin() + __prev_size,
+                __c.values.begin() + __prev_size);
+            __mutable_iterator __inserted_last(
+                __c.keys.end(), __c.values.end());
 #if USE_CONCEPTS
-            ranges::sort(inserted_first, inserted_last, value_comp());
+            ranges::sort(__inserted_first, __inserted_last, value_comp());
 #else
-            sort(inserted_first, inserted_last, value_comp());
+            sort(__inserted_first, __inserted_last, value_comp());
 #endif
 
-            if (!prev_size)
+            if (!__prev_size)
                 return;
 
-            mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
+            __mutable_iterator __mutable_first(
+                __c.keys.begin(), __c.values.begin());
 #if USE_CONCEPTS
             ranges::inplace_merge(
-                mutable_first, inserted_first, inserted_last, value_comp());
+                __mutable_first,
+                __inserted_first,
+                __inserted_last,
+                value_comp());
 #else
             inplace_merge(
-                mutable_first, inserted_first, inserted_last, value_comp());
+                __mutable_first,
+                __inserted_first,
+                __inserted_last,
+                value_comp());
 #endif
         }
-        template<class InputIterator>
-        void insert(sorted_unique_t, InputIterator first, InputIterator last)
+        template<class _InputIterator>
+        void
+        insert(sorted_unique_t, _InputIterator __first, _InputIterator __last)
         {
-            auto const prev_size = size();
-            for (auto it = first; it != last; ++it) {
-                c.keys.push_back(it->first);
-                c.values.push_back(it->second);
+            auto const __prev_size = size();
+            for (auto __it = __first; __it != __last; ++__it) {
+                __c.keys.push_back(__it->first);
+                __c.values.push_back(__it->second);
             }
 
-            mutable_iterator inserted_first(
-                c.keys.begin() + prev_size, c.values.begin() + prev_size);
-            mutable_iterator inserted_last(c.keys.end(), c.values.end());
+            __mutable_iterator __inserted_first(
+                __c.keys.begin() + __prev_size,
+                __c.values.begin() + __prev_size);
+            __mutable_iterator __inserted_last(
+                __c.keys.end(), __c.values.end());
 
-            if (!prev_size)
+            if (!__prev_size)
                 return;
 
-            mutable_iterator mutable_first(c.keys.begin(), c.values.begin());
+            __mutable_iterator __mutable_first(
+                __c.keys.begin(), __c.values.begin());
 #if USE_CONCEPTS
             ranges::inplace_merge(
-                mutable_first, inserted_first, inserted_last, value_comp());
+                __mutable_first,
+                __inserted_first,
+                __inserted_last,
+                value_comp());
 #else
             inplace_merge(
-                mutable_first, inserted_first, inserted_last, value_comp());
+                __mutable_first,
+                __inserted_first,
+                __inserted_last,
+                value_comp());
 #endif
         }
-        void insert(initializer_list<value_type> il)
+        void insert(initializer_list<value_type> __il)
         {
-            insert(il.begin(), il.end());
+            insert(__il.begin(), __il.end());
         }
-        void insert(sorted_unique_t s, initializer_list<value_type> il)
+        void insert(sorted_unique_t __s, initializer_list<value_type> __il)
         {
-            insert(s, il.begin(), il.end());
+            insert(__s, __il.begin(), __il.end());
         }
 
         containers extract() &&
         {
-            scoped_clear _(this);
-            return std::move(c);
+            __scoped_clear _(this);
+            return std::move(__c);
         }
         void replace(
-            key_container_type && key_cont,
-            mapped_container_type && mapped_cont)
+            key_container_type && __key_cont,
+            mapped_container_type && __mapped_cont)
         {
-            scoped_clear _(this);
-            c.keys = std::move(key_cont);
-            c.values = std::move(mapped_cont);
-            _.release();
+            __scoped_clear _(this);
+            __c.keys = std::move(__key_cont);
+            __c.values = std::move(__mapped_cont);
+            _.__release();
         }
 
         template<
-            class... Args,
-            class Enable =
-                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
-        pair<iterator, bool> try_emplace(const key_type & k, Args &&... args)
+            class... _Args,
+            class _Enable =
+                enable_if_t<is_constructible<mapped_type, _Args &&...>::value>>
+        pair<iterator, bool>
+        try_emplace(const key_type & __k, _Args &&... __args)
         {
-            auto it = key_lower_bound(k);
-            if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
-                auto values_it =
-                    c.values.emplace(project(it), std::forward<Args>(args)...);
-                it = c.keys.insert(it, k);
-                return pair<iterator, bool>(iterator(it, values_it), true);
+            auto __it = __key_lower_bound(__k);
+            if (__it == __c.keys.end() || __compare(*__it, __k) ||
+                __compare(__k, *__it)) {
+                auto __values_it = __c.values.emplace(
+                    __project(__it), std::forward<_Args>(__args)...);
+                __it = __c.keys.insert(__it, __k);
+                return pair<iterator, bool>(iterator(__it, __values_it), true);
             }
-            return pair<iterator, bool>(iterator(it, project(it)), false);
+            return pair<iterator, bool>(iterator(__it, __project(__it)), false);
         }
         template<
-            class... Args,
-            class Enable =
-                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
-        pair<iterator, bool> try_emplace(key_type && k, Args &&... args)
+            class... _Args,
+            class _Enable =
+                enable_if_t<is_constructible<mapped_type, _Args &&...>::value>>
+        pair<iterator, bool> try_emplace(key_type && __k, _Args &&... __args)
         {
-            auto it = key_lower_bound(k);
-            if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
-                auto values_it =
-                    c.values.emplace(project(it), std::forward<Args>(args)...);
-                it = c.keys.insert(it, std::forward<key_type>(k));
-                return pair<iterator, bool>(iterator(it, values_it), true);
+            auto __it = __key_lower_bound(__k);
+            if (__it == __c.keys.end() || __compare(*__it, __k) ||
+                __compare(__k, *__it)) {
+                auto __values_it = __c.values.emplace(
+                    __project(__it), std::forward<_Args>(__args)...);
+                __it = __c.keys.insert(__it, std::forward<key_type>(__k));
+                return pair<iterator, bool>(iterator(__it, __values_it), true);
             }
-            return pair<iterator, bool>(iterator(it, project(it)), false);
+            return pair<iterator, bool>(iterator(__it, __project(__it)), false);
         }
         template<
-            class... Args,
-            class Enable =
-                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
-        iterator
-        try_emplace(const_iterator hint, const key_type & k, Args &&... args)
+            class... _Args,
+            class _Enable =
+                enable_if_t<is_constructible<mapped_type, _Args &&...>::value>>
+        iterator try_emplace(
+            const_iterator __hint, const key_type & __k, _Args &&... __args)
         {
-            return try_emplace(k, std::forward<Args>(args)...).first;
+            return try_emplace(__k, std::forward<_Args>(__args)...).first;
         }
         template<
-            class... Args,
-            class Enable =
-                enable_if_t<is_constructible<mapped_type, Args &&...>::value>>
+            class... _Args,
+            class _Enable =
+                enable_if_t<is_constructible<mapped_type, _Args &&...>::value>>
         iterator
-        try_emplace(const_iterator hint, key_type && k, Args &&... args)
+        try_emplace(const_iterator __hint, key_type && __k, _Args &&... __args)
         {
             return try_emplace(
-                       std::forward<key_type>(k),
-                       std::forward<Args>(args)...)
+                       std::forward<key_type>(__k),
+                       std::forward<_Args>(__args)...)
                 .first;
         }
 
         template<
-            class M,
-            class Enable = enable_if_t<
-                is_assignable<mapped_type &, M>::value &&
-                is_constructible<mapped_type, M &&>::value>>
-        pair<iterator, bool> insert_or_assign(const key_type & k, M && obj)
+            class _M,
+            class _Enable = enable_if_t<
+                is_assignable<mapped_type &, _M>::value &&
+                is_constructible<mapped_type, _M &&>::value>>
+        pair<iterator, bool> insert_or_assign(const key_type & __k, _M && __obj)
         {
-            auto it = key_lower_bound(k);
-            if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
-                auto values_it =
-                    c.values.insert(project(it), std::forward<M>(obj));
-                it = c.keys.insert(it, k);
-                return pair<iterator, bool>(iterator(it, values_it), true);
+            auto __it = __key_lower_bound(__k);
+            if (__it == __c.keys.end() || __compare(*__it, __k) ||
+                __compare(__k, *__it)) {
+                auto __values_it =
+                    __c.values.insert(__project(__it), std::forward<_M>(__obj));
+                __it = __c.keys.insert(__it, __k);
+                return pair<iterator, bool>(iterator(__it, __values_it), true);
             }
-            auto values_it = project(it);
-            *values_it = std::forward<M>(obj);
-            return pair<iterator, bool>(iterator(it, values_it), false);
+            auto __values_it = __project(__it);
+            *__values_it = std::forward<_M>(__obj);
+            return pair<iterator, bool>(iterator(__it, __values_it), false);
         }
         template<
-            class M,
-            class Enable = enable_if_t<
-                is_assignable<mapped_type &, M>::value &&
-                is_constructible<mapped_type, M &&>::value>>
-        pair<iterator, bool> insert_or_assign(key_type && k, M && obj)
+            class _M,
+            class _Enable = enable_if_t<
+                is_assignable<mapped_type &, _M>::value &&
+                is_constructible<mapped_type, _M &&>::value>>
+        pair<iterator, bool> insert_or_assign(key_type && __k, _M && __obj)
         {
-            auto it = key_lower_bound(k);
-            if (it == c.keys.end() || compare(*it, k) || compare(k, *it)) {
-                auto values_it =
-                    c.values.insert(project(it), std::forward<M>(obj));
-                it = c.keys.insert(it, std::forward<key_type>(k));
-                return pair<iterator, bool>(iterator(it, values_it), true);
+            auto __it = __key_lower_bound(__k);
+            if (__it == __c.keys.end() || __compare(*__it, __k) ||
+                __compare(__k, *__it)) {
+                auto __values_it =
+                    __c.values.insert(__project(__it), std::forward<_M>(__obj));
+                __it = __c.keys.insert(__it, std::forward<key_type>(__k));
+                return pair<iterator, bool>(iterator(__it, __values_it), true);
             }
-            auto values_it = project(it);
-            *values_it = std::forward<M>(obj);
-            return pair<iterator, bool>(iterator(it, values_it), false);
+            auto __values_it = __project(__it);
+            *__values_it = std::forward<_M>(__obj);
+            return pair<iterator, bool>(iterator(__it, __values_it), false);
         }
         template<
-            class M,
-            class Enable = enable_if_t<
-                is_assignable<mapped_type &, M>::value &&
-                is_constructible<mapped_type, M &&>::value>>
+            class _M,
+            class _Enable = enable_if_t<
+                is_assignable<mapped_type &, _M>::value &&
+                is_constructible<mapped_type, _M &&>::value>>
         iterator
-        insert_or_assign(const_iterator hint, const key_type & k, M && obj)
+        insert_or_assign(const_iterator hint, const key_type & __k, _M && __obj)
         {
-            return insert_or_assign(k, std::forward<M>(obj)).first;
+            return insert_or_assign(__k, std::forward<_M>(__obj)).first;
         }
         template<
-            class M,
-            class Enable = enable_if_t<
-                is_assignable<mapped_type &, M>::value &&
-                is_constructible<mapped_type, M &&>::value>>
-        iterator insert_or_assign(const_iterator hint, key_type && k, M && obj)
+            class _M,
+            class _Enable = enable_if_t<
+                is_assignable<mapped_type &, _M>::value &&
+                is_constructible<mapped_type, _M &&>::value>>
+        iterator
+        insert_or_assign(const_iterator hint, key_type && __k, _M && __obj)
         {
             return insert_or_assign(
-                       std::forward<key_type>(k), std::forward<M>(obj))
+                       std::forward<key_type>(__k), std::forward<_M>(__obj))
                 .first;
         }
 
-        iterator erase(iterator position)
+        iterator erase(iterator __position)
         {
             return iterator(
-                c.keys.erase(position.key_iter()),
-                c.values.erase(position.mapped_iter()));
+                __c.keys.erase(__position.__key_iter()),
+                __c.values.erase(__position.__mapped_iter()));
         }
-        iterator erase(const_iterator position)
+        iterator erase(const_iterator __position)
         {
             return iterator(
-                c.keys.erase(position.key_iter()),
-                c.values.erase(position.mapped_iter()));
+                __c.keys.erase(__position.__key_iter()),
+                __c.values.erase(__position.__mapped_iter()));
         }
-        size_type erase(const key_type & x)
+        size_type erase(const key_type & __x)
         {
-            auto it = key_find(x);
-            if (it == c.keys.end())
+            auto __it = __key_find(__x);
+            if (__it == __c.keys.end())
                 return size_type(0);
-            c.values.erase(project(it));
-            c.keys.erase(it);
+            __c.values.erase(__project(__it));
+            __c.keys.erase(__it);
             return size_type(1);
         }
-        iterator erase(const_iterator first, const_iterator last)
+        iterator erase(const_iterator __first, const_iterator __last)
         {
             return iterator(
-                c.keys.erase(first.key_iter(), last.key_iter()),
-                c.values.erase(first.mapped_iter(), last.mapped_iter()));
+                __c.keys.erase(__first.__key_iter(), __last.__key_iter()),
+                __c.values.erase(
+                    __first.__mapped_iter(), __last.__mapped_iter()));
         }
 
-        void swap(flat_map & fm) noexcept(
+        void swap(flat_map & __fm) noexcept(
 #if defined(__clang__)
             __is_nothrow_swappable<key_compare>::value
 #else
@@ -905,274 +955,288 @@ namespace std {
         )
         {
             using std::swap;
-            swap(compare, fm.compare);
-            swap(c.keys, fm.c.keys);
-            swap(c.values, fm.c.values);
+            swap(__compare, __fm.__compare);
+            swap(__c.keys, __fm.__c.keys);
+            swap(__c.values, __fm.__c.values);
         }
         void clear() noexcept
         {
-            c.keys.clear();
-            c.values.clear();
+            __c.keys.clear();
+            __c.values.clear();
         }
 
         // observers
-        key_compare key_comp() const { return compare; }
-        value_compare value_comp() const { return value_compare(compare); }
-        const key_container_type & keys() const noexcept { return c.keys; }
+        key_compare key_comp() const { return __compare; }
+        value_compare value_comp() const { return value_compare(__compare); }
+        const key_container_type & keys() const noexcept { return __c.keys; }
         const mapped_container_type & values() const noexcept
         {
-            return c.values;
+            return __c.values;
         }
 
         // map operations
-        iterator find(const key_type & x)
+        iterator find(const key_type & __x)
         {
-            auto it = key_find(x);
-            return iterator(it, project(it));
+            auto __it = __key_find(__x);
+            return iterator(__it, __project(__it));
         }
-        const_iterator find(const key_type & x) const
+        const_iterator find(const key_type & __x) const
         {
-            auto it = key_find(x);
-            return const_iterator(it, project(it));
+            auto __it = __key_find(__x);
+            return const_iterator(__it, __project(__it));
         }
-        template<class K>
-        iterator find(const K & x)
+        template<class _K>
+        iterator find(const _K & __x)
         {
-            auto it = key_find(x);
-            return iterator(it, project(it));
+            auto __it = __key_find(__x);
+            return iterator(__it, __project(__it));
         }
-        template<class K>
-        const_iterator find(const K & x) const
+        template<class _K>
+        const_iterator find(const _K & __x) const
         {
-            auto it = key_find(x);
-            return iterator(it, project(it));
+            auto __it = __key_find(__x);
+            return iterator(__it, __project(__it));
         }
-        size_type count(const key_type & x) const
+        size_type count(const key_type & __x) const
         {
-            auto it = key_find(x);
-            return size_type(it == c.keys.end() ? 0 : 1);
+            auto __it = __key_find(__x);
+            return size_type(__it == __c.keys.end() ? 0 : 1);
         }
-        template<class K>
-        size_type count(const K & x) const
+        template<class _K>
+        size_type count(const _K & __x) const
         {
-            auto it = key_find(x);
-            return size_type(it == c.keys.end() ? 0 : 1);
+            auto __it = __key_find(__x);
+            return size_type(__it == __c.keys.end() ? 0 : 1);
         }
-        bool contains(const key_type & x) const
+        bool contains(const key_type & __x) const
         {
-            return count(x) == size_type(1);
+            return count(__x) == size_type(1);
         }
-        template<class K>
-        bool contains(const K & x) const
+        template<class _K>
+        bool contains(const _K & __x) const
         {
-            return count(x) == size_type(1);
+            return count(__x) == size_type(1);
         }
-        iterator lower_bound(const key_type & x)
+        iterator lower_bound(const key_type & __x)
         {
-            auto it = key_lower_bound(x);
-            return iterator(it, project(it));
+            auto __it = __key_lower_bound(__x);
+            return iterator(__it, __project(__it));
         }
-        const_iterator lower_bound(const key_type & x) const
+        const_iterator lower_bound(const key_type & __x) const
         {
-            auto it = key_lower_bound(x);
-            return const_iterator(it, project(it));
+            auto __it = __key_lower_bound(__x);
+            return const_iterator(__it, __project(__it));
         }
-        template<class K>
-        iterator lower_bound(const K & x)
+        template<class _K>
+        iterator lower_bound(const _K & __x)
         {
-            auto it = key_lower_bound(x);
-            return iterator(it, project(it));
+            auto __it = __key_lower_bound(__x);
+            return iterator(__it, __project(__it));
         }
-        template<class K>
-        const_iterator lower_bound(const K & x) const
+        template<class _K>
+        const_iterator lower_bound(const _K & __x) const
         {
-            auto it = key_lower_bound(x);
-            return const_iterator(it, project(it));
+            auto __it = __key_lower_bound(__x);
+            return const_iterator(__it, __project(__it));
         }
-        iterator upper_bound(const key_type & x)
+        iterator upper_bound(const key_type & __x)
         {
-            auto it = key_upper_bound(x);
-            return iterator(it, project(it));
+            auto __it = __key_upper_bound(__x);
+            return iterator(__it, __project(__it));
         }
-        const_iterator upper_bound(const key_type & x) const
+        const_iterator upper_bound(const key_type & __x) const
         {
-            auto it = key_upper_bound(x);
-            return const_iterator(it, project(it));
+            auto __it = __key_upper_bound(__x);
+            return const_iterator(__it, __project(__it));
         }
-        template<class K>
-        iterator upper_bound(const K & x)
+        template<class _K>
+        iterator upper_bound(const _K & __x)
         {
-            auto it = key_upper_bound(x);
-            return iterator(it, project(it));
+            auto __it = __key_upper_bound(__x);
+            return iterator(__it, __project(__it));
         }
-        template<class K>
-        const_iterator upper_bound(const K & x) const
+        template<class _K>
+        const_iterator upper_bound(const _K & __x) const
         {
-            auto it = key_upper_bound(x);
-            return const_iterator(it, project(it));
+            auto __it = __key_upper_bound(__x);
+            return const_iterator(__it, __project(__it));
         }
-        pair<iterator, iterator> equal_range(const key_type & x)
+        pair<iterator, iterator> equal_range(const key_type & __k)
         {
-            return pair<iterator, iterator>(lower_bound(x), upper_bound(x));
+            iterator const __first = lower_bound(__k);
+            iterator const __last =
+                find_if(__first, end(), [&](auto const & __x) {
+                    return __compare(__k, __x.first);
+                });
+            return pair<iterator, iterator>(__first, __last);
         }
         pair<const_iterator, const_iterator>
-        equal_range(const key_type & x) const
+        equal_range(const key_type & __k) const
         {
-            return pair<const_iterator, const_iterator>(
-                lower_bound(x), upper_bound(x));
+            const_iterator const __first = lower_bound(__k);
+            const_iterator const __last =
+                find_if(__first, end(), [&](auto const & __x) {
+                    return __compare(__k, __x.first);
+                });
+            return pair<const_iterator, const_iterator>(__first, __last);
         }
-        template<class K>
-        pair<iterator, iterator> equal_range(const K & x)
+        template<class _K>
+        pair<iterator, iterator> equal_range(const _K & __k)
         {
-            return pair<iterator, iterator>(lower_bound(x), upper_bound(x));
+            iterator const __first = lower_bound(__k);
+            iterator const __last =
+                find_if(__first, end(), [&](auto const & __x) {
+                    return __compare(__k, __x.first);
+                });
+            return pair<iterator, iterator>(__first, __last);
         }
-        template<class K>
-        pair<const_iterator, const_iterator> equal_range(const K & x) const
+        template<class _K>
+        pair<const_iterator, const_iterator> equal_range(const _K & __k) const
         {
-            return pair<const_iterator, const_iterator>(
-                lower_bound(x), upper_bound(x));
+            const_iterator const __first = lower_bound(__k);
+            const_iterator const __last =
+                find_if(__first, end(), [&](auto const & __x) {
+                    return __compare(__k, __x.first);
+                });
+            return pair<const_iterator, const_iterator>(__first, __last);
         }
 
-        friend bool operator==(const flat_map & x, const flat_map & y)
+        friend bool operator==(const flat_map & __x, const flat_map & __y)
         {
 #if USE_CONCEPTS
-            return ranges::equal(x, y);
+            return ranges::equal(__x, __y);
 #else
-            return equal(x.begin(), x.end(), y.begin(), y.end());
+            return equal(__x.begin(), __x.end(), __y.begin(), __y.end());
 #endif
         }
-        friend bool operator!=(const flat_map & x, const flat_map & y)
+        friend bool operator!=(const flat_map & __x, const flat_map & __y)
         {
-            return !(x == y);
+            return !(__x == __y);
         }
-        friend bool operator<(const flat_map & x, const flat_map & y)
+        friend bool operator<(const flat_map & __x, const flat_map & __y)
         {
 #if USE_CONCEPTS
             return ranges::lexicographical_compare(
-                x, y, [](auto lhs, auto rhs) { return lhs < rhs; });
+                __x, __y, [](auto __lhs, auto __rhs) { return __lhs < __rhs; });
 #else
             return lexicographical_compare(
-                x.begin(), x.end(), y.begin(), y.end());
+                __x.begin(), __x.end(), __y.begin(), __y.end());
 #endif
         }
-        friend bool operator>(const flat_map & x, const flat_map & y)
+        friend bool operator>(const flat_map & __x, const flat_map & __y)
         {
-            return y < x;
+            return __y < __x;
         }
-        friend bool operator<=(const flat_map & x, const flat_map & y)
+        friend bool operator<=(const flat_map & __x, const flat_map & __y)
         {
-            return !(y < x);
+            return !(__y < __x);
         }
-        friend bool operator>=(const flat_map & x, const flat_map & y)
+        friend bool operator>=(const flat_map & __x, const flat_map & __y)
         {
-            return !(x < y);
+            return !(__x < __y);
         }
 
         friend void
-        swap(flat_map & x, flat_map & y) noexcept(noexcept(x.swap(y)))
+        swap(flat_map & __x, flat_map & __y) noexcept(noexcept(__x.swap(__y)))
         {
-            return x.swap(y);
+            return __x.swap(__y);
         }
 
     private:
-        containers c;        // exposition only
-        key_compare compare; // exposition only
+        containers __c;        // exposition only
+        key_compare __compare; // exposition only
         // exposition only
-        struct key_equiv
+        struct __scoped_clear
         {
-            key_equiv(key_compare c) : comp(c) {}
-            bool operator()(const_reference x, const_reference y) const
+            explicit __scoped_clear(flat_map * __fm) : __fm_(__fm) {}
+            ~__scoped_clear()
             {
-                return comp(x.first, y.first) || comp(y.first, x.first);
+                if (__fm_)
+                    __fm_->clear();
             }
-            key_compare comp;
-        };
-
-        struct scoped_clear
-        {
-            explicit scoped_clear(flat_map * fm) : fm_(fm) {}
-            ~scoped_clear()
-            {
-                if (fm_)
-                    fm_->clear();
-            }
-            void release() { fm_ = nullptr; }
+            void __release() { __fm_ = nullptr; }
 
         private:
-            flat_map * fm_;
+            flat_map * __fm_;
         };
 
-        using key_iter_t = typename KeyContainer::iterator;
-        using key_const_iter_t = typename KeyContainer::const_iterator;
-        using mapped_iter_t = typename MappedContainer::iterator;
-        using mapped_const_iter_t = typename MappedContainer::const_iterator;
+        using __key_iter_t = typename _KeyContainer::iterator;
+        using __key_const_iter_t = typename _KeyContainer::const_iterator;
+        using __mapped_iter_t = typename _MappedContainer::iterator;
+        using __mapped_const_iter_t = typename _MappedContainer::const_iterator;
 
-        using mutable_iterator = dtl::flat_map_iterator<
+        using __mutable_iterator = __flat_map_iterator<
             key_type &,
             mapped_type &,
-            key_iter_t,
-            mapped_iter_t>;
+            __key_iter_t,
+            __mapped_iter_t>;
 
-        mapped_iter_t project(key_iter_t key_it)
+        __mapped_iter_t __project(__key_iter_t __key_it)
         {
-            return c.values.begin() + (key_it - c.keys.begin());
+            return __c.values.begin() + (__key_it - __c.keys.begin());
         }
-        mapped_const_iter_t project(key_const_iter_t key_it) const
+        __mapped_const_iter_t __project(__key_const_iter_t __key_it) const
         {
-            return c.values.begin() + (key_it - c.keys.begin());
+            return __c.values.begin() + (__key_it - __c.keys.begin());
         }
 
-        template<typename K>
-        key_iter_t key_lower_bound(const K & k)
+        template<typename _K>
+        __key_iter_t __key_lower_bound(const _K & __k)
         {
 #if USE_CONCEPTS
-            return ranges::lower_bound(c.keys, k, compare);
+            return ranges::lower_bound(__c.keys, __k, __compare);
 #else
-            return std::lower_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::lower_bound(
+                __c.keys.begin(), __c.keys.end(), __k, __compare);
 #endif
         }
-        template<typename K>
-        key_const_iter_t key_lower_bound(const K & k) const
+        template<typename _K>
+        __key_const_iter_t __key_lower_bound(const _K & __k) const
         {
 #if USE_CONCEPTS
-            return ranges::lower_bound(c.keys, k, compare);
+            return ranges::lower_bound(__c.keys, __k, __compare);
 #else
-            return std::lower_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::lower_bound(
+                __c.keys.begin(), __c.keys.end(), __k, __compare);
 #endif
         }
-        template<typename K>
-        key_iter_t key_upper_bound(const K & k)
+        template<typename _K>
+        __key_iter_t __key_upper_bound(const _K & __k)
         {
 #if USE_CONCEPTS
-            return ranges::upper_bound(c.keys, k, compare);
+            return ranges::upper_bound(__c.keys, __k, __compare);
 #else
-            return std::upper_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::upper_bound(
+                __c.keys.begin(), __c.keys.end(), __k, __compare);
 #endif
         }
-        template<typename K>
-        key_const_iter_t key_upper_bound(const K & k) const
+        template<typename _K>
+        __key_const_iter_t __key_upper_bound(const _K & __k) const
         {
 #if USE_CONCEPTS
-            return ranges::upper_bound(c.keys, k, compare);
+            return ranges::upper_bound(__c.keys, __k, __compare);
 #else
-            return std::upper_bound(c.keys.begin(), c.keys.end(), k, compare);
+            return std::upper_bound(
+                __c.keys.begin(), __c.keys.end(), __k, __compare);
 #endif
         }
-        template<typename K>
-        key_iter_t key_find(const K & k)
+        template<typename _K>
+        __key_iter_t __key_find(const _K & __k)
         {
-            auto it = key_lower_bound(k);
-            if (it != c.keys.end() && (compare(*it, k) || compare(k, *it)))
-                it = c.keys.end();
-            return it;
+            auto __it = __key_lower_bound(__k);
+            if (__it != __c.keys.end() &&
+                (__compare(*__it, __k) || __compare(__k, *__it)))
+                __it = __c.keys.end();
+            return __it;
         }
-        template<typename K>
-        key_const_iter_t key_find(const K & k) const
+        template<typename _K>
+        __key_const_iter_t __key_find(const _K & __k) const
         {
-            auto it = key_lower_bound(k);
-            if (it != c.keys.end() && (compare(*it, k) || compare(k, *it)))
-                it = c.keys.end();
-            return it;
+            auto __it = __key_lower_bound(__k);
+            if (__it != __c.keys.end() &&
+                (__compare(*__it, __k) || __compare(__k, *__it)))
+                __it = __c.keys.end();
+            return __it;
         }
     };
 }
