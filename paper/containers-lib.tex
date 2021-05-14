@@ -228,6 +228,7 @@ A deduction guide for a container adaptor shall not participate in overload reso
 
 \begin{codeblock}
 #include <initializer_list>
+#include <compare>
 
 namespace std {
   // \ref{flatmap}, class template \tcode{flat_map}
@@ -245,6 +246,17 @@ namespace std {
 
   struct sorted_equivalent_t { explicit sorted_equivalent_t() = default; };
   inline constexpr sorted_equivalent_t sorted_equivalent {};
+
+  template <class Key, class T, class Compare,
+            class KeyContainer,
+            class MappedContainer, class Alloc>
+    struct uses_allocator<flat_map<Key, T, Compare, KeyContainer, MappedContainer>, Alloc>
+
+  template <class Key, class T, class Compare,
+            class KeyContainer,
+            class MappedContainer, class Alloc>
+    struct uses_allocator<flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>, Alloc>
+
 }
 \end{codeblock}
 \end{addedblock}
@@ -261,7 +273,7 @@ A \tcode{flat_map} is a container adaptor that provides an associative
 container interface that supports unique keys (contains at most one of each
 key value) and provides for fast retrieval of values of another type \tcode{T}
 based on the keys. \tcode{flat_map} supports input iterators that model
-the \libconcept{RandomAccessIterator} (22.3.4.13) concept.
+the \libconcept{random_access_iterator} (22.3.4.13) concept.
 
 \pnum
 A \tcode{flat_map} satisfies all of the requirements of a container and of a
@@ -295,8 +307,8 @@ additional semantic information.
 \pnum
 A \tcode{flat_map} maintains the following invariants: it contains the same
 number of keys and values; the keys are sorted with respect to the comparison
-object; and the value at offset \tcode{o} within the value container is the
-value associated with the key at offset \tcode{o} within the key container.
+object; and the value at offset \tcode{off} within the value container is the
+value associated with the key at offset \tcode{off} within the key container.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
@@ -1131,7 +1143,7 @@ container interface that supports equivalent keys (possibly containing
 multiple copies of the same key value) and provides for fast retrieval of
 values of another type \tcode{T} based on the keys. \tcode{flat_multimap}
 supports input iterators that model the
-\libconcept{RandomAccessIterator} (22.3.4.13)
+\libconcept{random_access_iterator} (22.3.4.13)
 concept.
 
 \pnum
@@ -1161,14 +1173,14 @@ a \tcode{flat_multimap<Key,T>} the \tcode{key_type} is \tcode{Key} and the
 \pnum
 Except as otherwise noted, operations on \tcode{flat_multimap} are equivalent
 to those of \tcode{flat_map}, except that \tcode{flat_multimap} operations do
-not remove elements with equal keys.  \begin{example}\tcode{flat_multimap}
-constructors do not erase non-unique elements after sorting them.\end{example}
+not remove or replace elements with equal keys.  \begin{example}\tcode{flat_multimap}
+constructors and emplace do not erase non-unique elements after sorting them.\end{example}
 
 \pnum
 A \tcode{flat_multimap} maintains the following invariants: it contains the
 same number of keys and values; the keys are sorted with respect to the
-comparison object; and the value at offset \tcode{o} within the value
-container is the value associated with the key at offset \tcode{o} within the
+comparison object; and the value at offset \tcode{off} within the value
+container is the value associated with the key at offset \tcode{off} within the
 key container.
 
 \pnum
