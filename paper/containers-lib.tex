@@ -870,7 +870,7 @@ with \tcode{std::forward<Args>(args)...};  if the map already
 contains an element whose key is equivalent to \tcode{t.first}, \tcode{*this}
 is unchanged.  Otherwise, equivalent to:
 \begin{codeblock}
-auto key_it = std::lower_bound(std::begin(c.keys), std::end(c.keys), t.first, compare);
+auto key_it = std::upper_bound(std::begin(c.keys), std::end(c.keys), t.first, compare);
 auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
 c.keys.emplace(key_it, std::move(t.first));
 c.values.emplace(value_it, std::move(t.second));
@@ -963,7 +963,7 @@ template<class... Args>
 If the map already contains an element whose key is equivalent to \tcode{k},
 \tcode{*this} and \tcode{args...} are unchanged.  Otherwise equivalent to:
 \begin{codeblock}
-auto key_it = std::lower_bound(std::begin(c.keys), std::end(c.keys), k, compare);
+auto key_it = std::upper_bound(std::begin(c.keys), std::end(c.keys), k, compare);
 auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
 c.keys.insert(key_it, k);
 c.values.emplace(value_it, std::forward<Args>(args)...);
@@ -997,7 +997,7 @@ template<class... Args>
 If the map already contains an element whose key is equivalent to \tcode{k},
 \tcode{*this}, \tcode{k}, and \tcode{args...} are unchanged.  Otherwise equivalent to:
 \begin{codeblock}
-auto key_it = std::lower_bound(std::begin(c.keys), std::end(c.keys), k, compare);
+auto key_it = std::upper_bound(std::begin(c.keys), std::end(c.keys), k, compare);
 auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
 c.keys.emplace(key_it, std::move(k));
 c.values.emplace(value_it, std::forward<Args>(args)...);
