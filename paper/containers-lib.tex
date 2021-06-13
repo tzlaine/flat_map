@@ -691,8 +691,14 @@ flat_map(key_container_type key_cont, mapped_container_type mapped_cont);
 \effects Initializes \tcode{c.keys} with \tcode{std::move(key_cont)} and
 \tcode{c.values} with \tcode{std::move(mapped_cont)}; value-initializes
 \tcode{compare}; sorts the range \range{begin()}{end()} with respect to
-\tcode{value_comp()}; and finally erases the range \range{ranges::unique(*this,
-key_equiv(compare))}{end()};
+\tcode{value_comp()}; and finally and finally erases the duplicate elements
+as if by:
+\begin{codeblock}
+auto zv = ranges::zip_view(c.keys, c.values);
+auto it = ranges::unique(zv, key_equiv(compare));
+c.keys.erase(c.keys.end() + (zv.end() - it), c.keys.end());
+c.values.erase(c.values.end() + (zv.end() - it), c.values.end());
+\end{codeblock}
 
 \pnum
 \complexity
@@ -916,7 +922,13 @@ for (; first != last; ++first) {
 sorts the range of newly inserted elements with respect
 to \tcode{value_comp()}; merges the resulting sorted range and the sorted
 range of pre-existing elements into a single sorted range; and finally erases
-the range \range{ranges::unique(*this, key_equiv(compare))}{end()}.
+the duplicate elements as if by:
+\begin{codeblock}
+auto zv = ranges::zip_view(c.keys, c.values);
+auto it = ranges::unique(zv, key_equiv(compare));
+c.keys.erase(c.keys.end() + (zv.end() - it), c.keys.end());
+c.values.erase(c.values.end() + (zv.end() - it), c.values.end());
+\end{codeblock}
 
 \pnum
 \complexity
@@ -939,8 +951,14 @@ for (; first != last; ++first) {
 }
 \end{codeblock}
 merges the sorted range of newly added elements and the sorted range of
-pre-existing elements into a single sorted range; and finally erases the
-range \range{ranges::unique(*this, key_equiv(compare))}{end()}.
+pre-existing elements into a single sorted range; and finally and finally
+erases the duplicate elements as if by:
+\begin{codeblock}
+auto zv = ranges::zip_view(c.keys, c.values);
+auto it = ranges::unique(zv, key_equiv(compare));
+c.keys.erase(c.keys.end() + (zv.end() - it), c.keys.end());
+c.values.erase(c.values.end() + (zv.end() - it), c.values.end());
+\end{codeblock}
 
 \pnum
 \complexity
