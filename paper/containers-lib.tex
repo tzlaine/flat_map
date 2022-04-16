@@ -1629,3 +1629,71 @@ and \tcode{c.values} are constructed with uses-allocator
 construction (19.10.8.2).
 \end{itemdescr}
 \end{addedblock}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+Add to section [container.adaptors.format]:
+
+\rSec2[container.adaptors.format]{Formatting}
+\begin{addedblock}
+\pnum
+For each of \tcode{flat_map} and \tcode{flat_multimap}, the library provides the following formatter specialization where \placeholder{map-type} is the name of the template:
+\begin{codeblock}
+namespace std {
+  template <class charT, formattable<charT> Key, formattable<charT> T, class... U>
+  struct formatter<@\placeholder{map-type}@<Key, T, U...>, charT>
+  {
+  private:
+    range_formatter<pair<const Key, T>> underlying_; // \expos
+  public:
+    formatter();
+
+    template <class ParseContext>
+      constexpr typename ParseContext::iterator
+        parse(ParseContext& ctx);
+
+    template <class FormatContext>
+      typename FormatContext::iterator
+        format(const @\placeholder{map-type}@<Key, T, U...>& r, FormatContext& ctx) const;
+  };
+}
+\end{codeblock}
+
+\begin{itemdecl}
+formatter();
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+
+\begin{codeblock}
+this->set_brackets(@\placeholder{STATICALLY-WIDEN}@<charT>("{"), @\placeholder{STATICALLY-WIDEN}@<charT>("}"));
+this->underlying().set_brackets({}, {});
+this->underlying().set_separator(@\placeholder{STATICALLY-WIDEN}@<charT>(": "));
+\end{codeblock}
+\end{itemdescr}
+
+\begin{itemdecl}
+template <class ParseContext>
+  constexpr typename ParseContext::iterator
+    parse(ParseContext& ctx);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to \tcode{return underlying_.parse(ctx);}
+\end{itemdescr}
+
+\begin{itemdecl}
+template <class FormatContext>
+  typename FormatContext::iterator
+    format(const @\placeholder{map-type}@<Key, T, U...>& r, FormatContext& ctx) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to \tcode{return underlying_.format(r, ctx);}
+\end{itemdescr}
+\end{addedblock}
+
