@@ -101,7 +101,7 @@ container requirements,
 and components for
 sequence containers and
 associative containers,
-as summarized in Table 76.
+as summarized in Table 72.
 
 \begin{libsumtab}{Containers library summary}{tab:containers.lib.summary}
 21.2 & Requirements                     &                           \\ \rowsep
@@ -267,42 +267,48 @@ namespace std {
 \begin{addedblock}
 \rSec2[flatmap]{Class template \tcode{flat_map}}
 
+\rSec3[flatmap.overview]{Overview}
+
 \pnum
 \indexlibrary{\idxcode{flatmap}}%
 A \tcode{flat_map} is a container adaptor that provides an associative
 container interface that supports unique keys (contains at most one of each
 key value) and provides for fast retrieval of values of another type \tcode{T}
 based on the keys. \tcode{flat_map} supports input iterators that model
-the \libconcept{random_access_iterator} (22.3.4.13) concept.
+the \libconcept{random_access_iterator} concept
+([iterator.concept.random.access]).
 
 \pnum
-A \tcode{flat_map} satisfies all of the requirements of a container and of a
-reversible container (21.2).  \tcode{flat_map} satisfies
-the requirements of an associative container (21.2.6), except
-that:
+A \tcode{flat_map} satisfies all of the requirements for a container
+([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
+plus the optional container requirements ([container.opt.reqmts]) and the
+requirements regarding \tcode{const} member functions listed in
+[container.requirements.dataraces].  \tcode{flat_map} satisfies the
+requirements of an associative container ([associative.reqmts.general] and
+[associative.reqmts.except]), except that:
 \begin{itemize}
-\item it does not meet the requirements related to node handles (21.2.4),
-\item it does not meet the requirements related to iterator invalidation (21.2.1), and
+\item it does not meet the requirements related to node handles ([container.node]),
+\item it does not meet the requirements related to iterator invalidation in [associative.reqmts.general], and
 \item the time complexity of the \tcode{insert}, \tcode{emplace}, \tcode{emplace_hint},
 and \tcode{erase} members that respectively insert, emplace or erase a single
 element from the map is linear, including the ones that take an insertion
 position iterator.
 \end{itemize}
 A \tcode{flat_map} does not meet the additional requirements of an
-allocator-aware container, as described in Table 65.
+allocator-aware container, as described in [container.alloc.reqmts].
 
 \pnum
 A \tcode{flat_map} also provides most operations described
-in (21.2.6) for unique keys.  This means that a
+in [associative.reqmts] for unique keys.  This means that a
 \tcode{flat_map} supports the \tcode{a_uniq} operations
-in (21.2.6) but not the \tcode{a_eq} operations.  For
+in [associative.reqmts] but not the \tcode{a_eq} operations.  For
 a \tcode{flat_map<Key,T>} the \tcode{key_type} is \tcode{Key} and the
 \tcode{value_type} is \tcode{pair<const Key,T>}.
 
 \pnum
 Descriptions are provided here only for operations on \tcode{flat_map} that
-are not described in one of those tables or for operations where there is
-additional semantic information.
+are not described in one of those sets of requirements or for operations where
+there is additional semantic information.
 
 \pnum
 A \tcode{flat_map} maintains the following invariants: it contains the same
@@ -1154,6 +1160,8 @@ try {
 
 \rSec2[flatmultimap]{Class template \tcode{flat_multimap}}
 
+\rSec3[flatmultimap]{Overview}
+
 \pnum
 \indexlibrary{\idxcode{flatmultimap}}%
 A \tcode{flat_multimap} is a container adaptor that provides an associative
@@ -1161,30 +1169,32 @@ container interface that supports equivalent keys (possibly containing
 multiple copies of the same key value) and provides for fast retrieval of
 values of another type \tcode{T} based on the keys. \tcode{flat_multimap}
 supports input iterators that model the
-\libconcept{random_access_iterator} (22.3.4.13)
-concept.
+\libconcept{random_access_iterator} concept ([iterator.concept.random.access]).
 
 \pnum
-A \tcode{flat_multimap} satisfies all of the requirements of a container and of a
-reversible container (21.2).  \tcode{flat_map} satisfies
-the requirements of an associative container (21.2.6), except
-that:
+A \tcode{flat_multimap} satisfies all of the requirements for a container
+([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
+plus the optional container requirements ([container.opt.reqmts]) and the
+requirements regarding \tcode{const} member functions listed in
+[container.requirements.dataraces].  \tcode{flat_multimap} satisfies the
+requirements of an associative container ([associative.reqmts.general] and
+[associative.reqmts.except]), except that:
 \begin{itemize}
-\item it does not meet the requirements related to node handles (21.2.4),
-\item it does not meet the requirements related to iterator invalidation (21.2.1), and
+\item it does not meet the requirements related to node handles ([container.node]),
+\item it does not meet the requirements related to iterator invalidation in [associative.reqmts.general], and
 \item the time complexity of the \tcode{insert}, \tcode{emplace}, \tcode{emplace_hint},
 and \tcode{erase} members that respectively insert, emplace or erase a single
 element from the map is linear, including the ones that take an insertion
 position iterator.
 \end{itemize}
 A \tcode{flat_multimap} does not meet the additional requirements of an
-allocator-aware container, as described in Table 65.
+allocator-aware container, as described in [container.alloc.reqmts].
 
 \pnum
 A \tcode{flat_multimap} also provides most operations described
-in (21.2.6) for equal keys.  This means that a
+in [associative.reqmts] for equal keys.  This means that a
 \tcode{flat_multimap} supports the \tcode{a_eq} operations
-in (21.2.6) but not the \tcode{a_uniq} operations.  For
+in [associative.reqmts] but not the \tcode{a_uniq} operations.  For
 a \tcode{flat_multimap<Key,T>} the \tcode{key_type} is \tcode{Key} and the
 \tcode{value_type} is \tcode{pair<const Key,T>}.
 
@@ -1697,3 +1707,4 @@ template <class FormatContext>
 \end{itemdescr}
 \end{addedblock}
 
+%% TODO: remove_if()!
