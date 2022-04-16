@@ -795,8 +795,7 @@ size_type size() const noexcept;
 
 \begin{itemdescr}
 \pnum
-\effects
-Equivalent to: \tcode{return c.keys.size();}
+\returns \tcode{c.keys.size()}.
 \end{itemdescr}
 
 \indexlibrarymember{max_size}{flatmap}%
@@ -806,8 +805,7 @@ size_type max_size() const noexcept;
 
 \begin{itemdescr}
 \pnum
-\effects
-Equivalent to: \tcode{return min<size_type>(c.keys.max_size(), c.values.max_size());}
+\returns \tcode{min<size_type>(c.keys.max_size(), c.values.max_size())}.
 \end{itemdescr}
 
 \rSec3[flatmap.access]{Access}
