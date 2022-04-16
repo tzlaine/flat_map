@@ -1087,13 +1087,8 @@ void replace(key_container_type&& key_cont, mapped_container_type&& mapped_cont)
 \pnum
 \effects Equivalent to:
 \begin{codeblock}
-try {
-  c.keys = std::move(key_cont);
-  c.values = std::move(mapped_cont);
-} catch (...) {
-  clear();
-  throw;
-}
+c.keys = std::move(key_cont);
+c.values = std::move(mapped_cont);
 \end{codeblock}
 \end{itemdescr}
 
