@@ -807,7 +807,7 @@ size_type max_size() const noexcept;
 \begin{itemdescr}
 \pnum
 \effects
-Equivalent to: \tcode{return std::min<size_type>(c.keys.max_size(), c.values.max_size());}
+Equivalent to: \tcode{return min<size_type>(c.keys.max_size(), c.values.max_size());}
 \end{itemdescr}
 
 \rSec3[flatmap.access]{Access}
