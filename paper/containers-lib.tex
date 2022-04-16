@@ -318,8 +318,8 @@ value associated with the key at offset \tcode{off} within the key container.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
-instantiate \tcode{flat_map}. In particular, \tcode{vector} (21.3.11) and
-\tcode{deque} (21.3.8) can be used.  \begin{note}\tcode{vector<bool>} is
+instantiate \tcode{flat_map}. In particular, \tcode{vector} ([vector]) and
+\tcode{deque} ([deque]) can be used.  \begin{note}\tcode{vector<bool>} is
 not a sequence container.\end{note}
 
 \pnum
@@ -779,7 +779,7 @@ uses_allocator_v<mapped_container_type, Alloc>} is \tcode{true}.
 \pnum
 \effects Equivalent to the preceding constructors except that \tcode{c.keys}
 and \tcode{c.values} are constructed with uses-allocator
-construction (19.10.8.2).
+construction ([allocator.uses.construction]).
 \end{itemdescr}
 
 \rSec3[flatmap.capacity]{Capacity}
@@ -1213,8 +1213,8 @@ key container.
 
 \pnum
 Any sequence container supporting random access iteration can be used to
-instantiate \tcode{flat_multimap}. In particular, \tcode{vector} (21.3.11)
-and \tcode{deque} (21.3.8) can be used.  \begin{note}\tcode{vector<bool>}
+instantiate \tcode{flat_multimap}. In particular, \tcode{vector} ([vector])
+and \tcode{deque} ([deque]) can be used.  \begin{note}\tcode{vector<bool>}
 is not a sequence container.\end{note}
 
 \pnum
@@ -1636,7 +1636,7 @@ uses_allocator_v<mapped_container_type, Alloc>} is \tcode{true}.
 \pnum
 \effects Equivalent to the preceding constructors except that \tcode{c.keys}
 and \tcode{c.values} are constructed with uses-allocator
-construction (19.10.8.2).
+construction ([allocator.uses.construction]).
 \end{itemdescr}
 \end{addedblock}
 
