@@ -976,7 +976,11 @@ Linear in $N$, where $N$ is \tcode{size()} after the operation.
 template<class... Args>
   pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
 template<class... Args>
+  pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
+template<class... Args>
   iterator try_emplace(const_iterator hint, const key_type& k, Args&&... args);
+template<class... Args>
+  iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -989,56 +993,20 @@ If the map already contains an element whose key is equivalent to \tcode{k},
 \begin{codeblock}
 auto key_it = std::upper_bound(std::begin(c.keys), std::end(c.keys), k, compare);
 auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
-c.keys.insert(key_it, k);
+c.keys.insert(key_it, std::forward<decltype(k)>(k));
 c.values.emplace(value_it, std::forward<Args>(args)...);
 \end{codeblock}
 
 \pnum
 \returns
-In the first overload, the \tcode{bool} component of the returned pair
+In the first two overloads, the \tcode{bool} component of the returned pair
 is \tcode{true} if and only if the insertion took place.  The returned
 iterator points to the map element whose key is equivalent to \tcode{k}.
 
 \pnum
 \complexity
-The same as \tcode{emplace} and \tcode{emplace_hint},
-respectively.
-\end{itemdescr}
-
-\indexlibrarymember{try_emplace}{flatmap}%
-\begin{itemdecl}
-template<class... Args>
-  pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
-template<class... Args>
-  iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum \constraints \tcode{is_constructible_v<mapped_type, Args\&\&...>} is \tcode{true}.
-
-\pnum
-\effects
-If the map already contains an element whose key is equivalent to \tcode{k},
-\tcode{*this}, \tcode{k}, and \tcode{args...} are unchanged.  Otherwise equivalent to:
-\begin{codeblock}
-auto key_it = std::upper_bound(std::begin(c.keys), std::end(c.keys), k, compare);
-auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
-c.keys.emplace(key_it, std::move(k));
-c.values.emplace(value_it, std::forward<Args>(args)...);
-\end{codeblock}
-
-\pnum
-\returns
-In the first overload,
-the \tcode{bool} component of the returned pair is \tcode{true}
-if and only if the insertion took place.
-The returned iterator points to the map element
-whose key is equivalent to \tcode{k}.
-
-\pnum
-\complexity
-The same as \tcode{emplace} and \tcode{emplace_hint},
-respectively.
+The same as \tcode{emplace} for the first two overloads, and the same
+as \tcode{emplace_hint}, for the last two overloads.
 \end{itemdescr}
 
 \indexlibrarymember{insert_or_assign}{flatmap}%
@@ -1046,7 +1014,11 @@ respectively.
 template<class M>
   pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
 template<class M>
+  pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
+template<class M>
   iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
+template<class M>
+  iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -1057,57 +1029,20 @@ template<class M>
 \effects
 If the map already contains an element \tcode{e} whose key is equivalent
 to \tcode{k}, assigns \tcode{std::forward<M>(obj)} to \tcode{e.second}.
-Otherwise equivalent to \tcode{try_emplace(k, std::forward<M>(obj))} or
-\tcode{try_emplace_hint(hint, k, std::forward<M>(obj))} respectively.
+Otherwise equivalent to \tcode{try_emplace(std::forward<decltype(k)>(k),
+std::forward<M>(obj))} for the first two overloads or
+\tcode{try_emplace_hint(hint, std::forward<decltype(k)>(k), std::forward<M>(obj))} for the last two overloads.
 
 \pnum
 \returns
-In the first overload,
-the \tcode{bool} component of the returned pair is \tcode{true}
-if and only if the insertion took place.
-The returned iterator points to the map element
-whose key is equivalent to \tcode{k}.
+In the first two overloads, the \tcode{bool} component of the returned pair
+is \tcode{true} if and only if the insertion took place.  The returned
+iterator points to the map element whose key is equivalent to \tcode{k}.
 
 \pnum
 \complexity
-The same as \tcode{emplace} and \tcode{emplace_hint},
-respectively.
-\end{itemdescr}
-
-\indexlibrarymember{insert_or_assign}{flatmap}%
-\begin{itemdecl}
-template<class M>
-  pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
-template<class M>
-  iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{is_assignable_v<mapped_type\&, M>} is \tcode{true}, and
-\tcode{is_constructible_v<mapped_type, M\&\&>} is \tcode{true}.
-
-\pnum
-\effects
-If the map already contains an element \tcode{e}
-whose key is equivalent to \tcode{k},
-assigns \tcode{std::forward<M>(obj)} to \tcode{e.second}.
-Otherwise equivalent to \tcode{try_emplace(std::move(k), std::forward<M>(obj))} or
-\tcode{try_emplace_hint(hint, std::move(k), std::forward<M>(obj))} respectively.
-
-\pnum
-\returns
-In the first overload,
-the \tcode{bool} component of the returned pair is \tcode{true}
-if and only if the insertion took place.
-The returned iterator points to the map element
-whose key is equivalent to \tcode{k}.
-
-\pnum
-\complexity
-The same as \tcode{emplace} and \tcode{emplace_hint},
-respectively.
+The same as \tcode{emplace} for the first two overloads, and the same
+as \tcode{emplace_hint}, for the last two overloads.
 \end{itemdescr}
 
 \indexlibrarymember{flatmap}{swap}%
