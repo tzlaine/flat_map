@@ -594,18 +594,10 @@ namespace std {
     template <class K>
       pair<const_iterator, const_iterator> equal_range(const K& x) const;
 
-    friend bool operator==(const flat_map& x, const flat_map& y)
-      { return ranges::equal(x, y); }
-    friend bool operator!=(const flat_map& x, const flat_map& y)
-      { return !(x == y); }
-    friend bool operator< (const flat_map& x, const flat_map& y)
-      { return ranges::lexicographical_compare(x, y); }
-    friend bool operator> (const flat_map& x, const flat_map& y)
-      { return y < x; }
-    friend bool operator<=(const flat_map& x, const flat_map& y)
-      { return !(y < x); }
-    friend bool operator>=(const flat_map& x, const flat_map& y)
-      { return !(x < y); }
+    friend bool operator==(const flat_map& x, const flat_map& y);
+
+    friend @\placeholder{synth-three-way-result}@<value_type>
+      operator<=>(const flat_map& x, const flat_map& y);
 
     friend void swap(flat_map& x, flat_map& y) noexcept(noexcept(x.swap(y))
       { return x.swap(y); }
@@ -1408,18 +1400,10 @@ namespace std {
     template <class K>
       pair<const_iterator, const_iterator> equal_range(const K& x) const;
 
-    friend bool operator==(const flat_multimap& x, const flat_multimap& y)
-      { return ranges::equal(x, y); }
-    friend bool operator!=(const flat_multimap& x, const flat_multimap& y)
-      { return !(x == y); }
-    friend bool operator< (const flat_multimap& x, const flat_multimap& y)
-      { return ranges::lexicographical_compare(x, y); }
-    friend bool operator> (const flat_multimap& x, const flat_multimap& y)
-      { return y < x; }
-    friend bool operator<=(const flat_multimap& x, const flat_multimap& y)
-      { return !(y < x); }
-    friend bool operator>=(const flat_multimap& x, const flat_multimap& y)
-      { return !(x < y); }
+    friend bool operator==(const flat_multimap& x, const flat_multimap& y);
+
+    friend @\placeholder{synth-three-way-result}@<value_type>
+      operator<=>(const flat_multimap& x, const flat_multimap& y);
 
     friend void swap(flat_multimap& x, flat_multimap& y) noexcept(noexcept(x.swap(y))
       { return x.swap(y); }
