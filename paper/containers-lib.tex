@@ -316,6 +316,10 @@ number of keys and values; the keys are sorted with respect to the comparison
 object; and the value at offset \tcode{off} within the value container is the
 value associated with the key at offset \tcode{off} within the key container.
 
+\pnum If an exception is thrown during any operation on \tcode{flat_map}, that
+operation may clear the \tcode{flat_map}'s adapted containers to maintain
+these invariants.
+
 \pnum
 Any sequence container supporting random access iteration can be used to
 instantiate \tcode{flat_map}. In particular, \tcode{vector} ([vector]) and
