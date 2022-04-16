@@ -873,7 +873,7 @@ template <class... Args> pair<iterator, bool> emplace(Args&&... args);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{pair<key_type, mapped_type>(std::forward<Args>(args)...)} is well-formed.
+\pnum \constraints \tcode{is_constructible_v<pair<key_type, mapped_type>, Arg\&\&...>} is \tcode{true}.
 
 \pnum
 \effects
@@ -902,7 +902,7 @@ template<class P> iterator insert(const_iterator position, P&& x);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{pair<key_type, mapped_type>(std::forward<P>(x))} is well-formed.
+\pnum \constraints \tcode{is_constructible_v<pair<key_type, mapped_type>, P\&\&>} is \tcode{true}.
 
 \pnum
 \effects
@@ -980,7 +980,7 @@ template<class... Args>
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{mapped_type(std::forward<Args>(args)...)} is well-formed.
+\pnum \constraints \tcode{is_constructible_v<mapped_type, Args\&\&...>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1014,7 +1014,7 @@ template<class... Args>
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{mapped_type(std::forward<Args>(args)...)} is well-formed.
+\pnum \constraints \tcode{is_constructible_v<mapped_type, Args\&\&...>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1051,7 +1051,7 @@ template<class M>
 
 \begin{itemdescr}
 \pnum \constraints \tcode{is_assignable_v<mapped_type\&, M>} is \tcode{true}, and
-\tcode{mapped_type(std::forward<M>(obj))} is well-formed.
+\tcode{is_constructible_v<mapped_type, M\&\&>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1086,7 +1086,7 @@ template<class M>
 \pnum
 \constraints
 \tcode{is_assignable_v<mapped_type\&, M>} is \tcode{true}, and
-\tcode{mapped_type(std::forward<M>(obj))} is well-formed.
+\tcode{is_constructible_v<mapped_type, M\&\&>} is \tcode{true}.
 
 \pnum
 \effects
