@@ -1053,10 +1053,9 @@ void swap(flat_map& fm) noexcept(is_nothrow_swappable_v<key_compare>);
 \begin{itemdescr}
 \pnum \effects Equivalent to:
 \begin{codeblock}
-using std::swap;
-swap(compare, fm.compare);
-swap(c.keys, fm.c.keys);
-swap(c.values, fm.c.values);
+std::ranges::swap(compare, fm.compare);
+std::ranges::swap(c.keys, fm.c.keys);
+std::ranges::swap(c.values, fm.c.values);
 \end{codeblock}
 \end{itemdescr}
 
