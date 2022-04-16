@@ -1077,6 +1077,35 @@ c.values = std::move(mapped_cont);
 \end{codeblock}
 \end{itemdescr}
 
+%% TODO: Inefficient!
+%%\rSec3[flatmap.erasure]{Erasure}
+%%
+%%\indexlibrarymember{erase_if}{map}%
+%%\begin{itemdecl}
+%%template <class Key, class T, class Compare,
+%%          class KeyContainer, class MappedContainer>
+%%  typename flat_map<Key, T, Compare, KeyContainer, MappedContainer>::size_type
+%%    erase_if(map<Key, T, Compare, KeyContainer, MappedContainer>& c,
+%%             Predicate pred);
+%%\end{itemdecl}
+%%
+%%\begin{itemdescr}
+%%\pnum
+%%\effects
+%%Equivalent to:
+%%\begin{codeblock}
+%%auto original_size = c.size();
+%%for (auto i = c.begin(), last = c.end(); i != last; ) {
+%%  if (pred(*i)) {
+%%    i = c.erase(i);
+%%  } else {
+%%    ++i;
+%%  }
+%%}
+%%return original_size - c.size();
+%%\end{codeblock}
+%%\end{itemdescr}
+
 \rSec2[flatmultimap]{Class template \tcode{flat_multimap}}
 
 \rSec3[flatmultimap]{Overview}
@@ -1627,5 +1656,3 @@ template <class FormatContext>
 \effects Equivalent to \tcode{return underlying_.format(r, ctx);}
 \end{itemdescr}
 \end{addedblock}
-
-%% TODO: remove_if()!
