@@ -1057,8 +1057,8 @@ template<class M>
 \effects
 If the map already contains an element \tcode{e} whose key is equivalent
 to \tcode{k}, assigns \tcode{std::forward<M>(obj)} to \tcode{e.second}.
-Otherwise equivalent to \tcode{emplace(k, std::forward<M>(obj))} or
-\tcode{emplace_hint(hint, k, std::forward<M>(obj))} respectively.
+Otherwise equivalent to \tcode{try_emplace(k, std::forward<M>(obj))} or
+\tcode{try_emplace_hint(hint, k, std::forward<M>(obj))} respectively.
 
 \pnum
 \returns
@@ -1093,8 +1093,8 @@ template<class M>
 If the map already contains an element \tcode{e}
 whose key is equivalent to \tcode{k},
 assigns \tcode{std::forward<M>(obj)} to \tcode{e.second}.
-Otherwise equivalent to \tcode{emplace(std::move(k), std::forward<M>(obj))} or
-\tcode{emplace_hint(hint, std::move(k), std::forward<M>(obj))} respectively.
+Otherwise equivalent to \tcode{try_emplace(std::move(k), std::forward<M>(obj))} or
+\tcode{try_emplace_hint(hint, std::move(k), std::forward<M>(obj))} respectively.
 
 \pnum
 \returns
@@ -1131,7 +1131,8 @@ containers extract() &&;
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \returns \tcode{std::move(c)}
+\pnum \returns \tcode{std::move(c)}.
+
 \pnum \effects \tcode{*this} is emptied, even if the function is exited via exception.
 \end{itemdescr}
 
