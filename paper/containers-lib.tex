@@ -702,7 +702,7 @@ flat_map(key_container_type key_cont, mapped_container_type mapped_cont);
 \effects Initializes \tcode{c.keys} with \tcode{std::move(key_cont)} and
 \tcode{c.values} with \tcode{std::move(mapped_cont)}; value-initializes
 \tcode{compare}; sorts the range \range{begin()}{end()} with respect to
-\tcode{value_comp()}; and finally and finally erases the duplicate elements
+\tcode{value_comp()}; and finally erases the duplicate elements
 as if by:
 \begin{codeblock}
 auto zv = ranges::zip_view(c.keys, c.values);
@@ -945,7 +945,7 @@ for (; first != last; ++first) {
 }
 \end{codeblock}
 merges the sorted range of newly added elements and the sorted range of
-pre-existing elements into a single sorted range; and finally and finally
+pre-existing elements into a single sorted range; and finally
 erases the duplicate elements as if by:
 \begin{codeblock}
 auto zv = ranges::zip_view(c.keys, c.values);
