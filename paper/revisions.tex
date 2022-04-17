@@ -5,15 +5,17 @@
 \begin{itemize}
   \item Change references to stable names.
   \item Editorial change Alloc to Allocator.
-  \item Replace friend operators with \tcode{operator==()} and \tcode{operator<=>()}.
+  \item Replace friend operators with \tcode{operator==()} and \tcode{operator<=>()} to match C++20
   \item Update swap to use \tcode{ranges::swap}.
   \item Replace past tense 'is exited' with 'exits' via exception wording.
   \item \tcode{extract} Change: \tcode{*this} is emptied, even if...  -> from Effects to Postcondition.
   \item Remove the specification of \tcode{operator=(initializer_list<key_type>)} from prior LWG review.
   \item Update \tcode{std::upper_bound} to \tcode{ranges::upper_bound}.
-  \item Add heterogenous erase overloads.
+  \item Add heterogenous erase overloads following \href{https://wg21.link/P2077}{P2077} - \href{https://github.com/tzlaine/flat_map/commit/a241df6b978479f0cc135ec567dbea4cd7407dd6}{github}.
   \item Add .overview subheadings to keep ISO structure reviewers happy.
   \item Change 'preceding constructors' -> corresponding non-allocator constructors.
+  \item Add container erasure \tcode{erase_if} function following \href{https://wg21.link/P1209}{P1209} from C++20.
+
 \end{itemize}
 
 \subsection{Changes from R1}

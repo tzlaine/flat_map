@@ -190,9 +190,17 @@ namespace std {
   template<class Key, class Compare = less<Key>, class Container = vector<Key>>
     class flat_set;
 
+  template<class Key, class Compare, class Container>
+    size_t erase_if(flat_set<Key, Compare, Container>& c,
+                    Predicate pred);
+
   // \ref{flatmultiset}, class template \tcode{flat_multiset}
   template<class Key, class Compare = less<Key>, class Container = vector<Key>>
     class flat_multiset;
+
+  template<class Key, class Compare, class Container>
+    size_t erase_if(flat_multiset<Key, Compare, Container>& c,
+                    Predicate pred);
 }
 \end{codeblock}
 \end{addedblock}
@@ -665,6 +673,25 @@ c = std::move(cont);
 \end{codeblock}
 \end{itemdescr}
 
+\rSec3[flatset.erasure]{Erasure}
+
+\indexlibrarymember{erase_if}{flatmap}%
+\begin{itemdecl}
+template<class Key, class Compare, class Container>
+  size_t erase_if(flat_set<Key, Compare, Container>& c,
+                  Predicate pred);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
+\begin{codeblock}
+  auto [erase_first, erase_last] = ranges::remove_if(c, pred);
+  return c.erase(erase_first, erase_last);
+\end{codeblock}
+\end{itemdescr}
+
 \rSec2[flatmultiset]{Class template \tcode{flat_multiset}}
 \rSec3[flatmultiset.overview]{Overview}
 
@@ -1121,6 +1148,25 @@ The elements of \tcode{cont} are sorted with respect to \tcode{compare}.
 \effects Equivalent to:
 \begin{codeblock}
 c = std::move(cont);
+\end{codeblock}
+\end{itemdescr}
+
+\rSec3[flatmultiset.erasure]{Erasure}
+
+\indexlibrarymember{erase_if}{flatmap}%
+\begin{itemdecl}
+template<class Key, class Compare, class Container>
+  size_t erase_if(flat_multiset<Key, Compare, Container>& c,
+                  Predicate pred);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
+\begin{codeblock}
+  auto [erase_first, erase_last] = ranges::remove_if(c, pred);
+  return c.erase(erase_first, erase_last);
 \end{codeblock}
 \end{itemdescr}
 \end{addedblock}
