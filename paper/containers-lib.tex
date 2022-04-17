@@ -646,9 +646,8 @@ void swap(flat_set& fs) noexcept(is_nothrow_swappable_v<key_compare>);
 \begin{itemdescr}
 \pnum \effects Equivalent to:
 \begin{codeblock}
-using std::swap;
-swap(compare, fs.compare);
-swap(c, fs.c);
+ranges::swap(compare, fs.compare);
+ranges::swap(c, fs.c);
 \end{codeblock}
 \end{itemdescr}
 
@@ -1118,9 +1117,8 @@ void swap(flat_multiset& fms) noexcept(is_nothrow_swappable_v<key_compare>);
 \begin{itemdescr}
 \pnum \effects Equivalent to:
 \begin{codeblock}
-using std::swap;
-swap(compare, fms.compare);
-swap(c, fms.c);
+ranges::swap(compare, fms.compare);
+ranges::swap(c, fms.c);
 \end{codeblock}
 \end{itemdescr}
 
