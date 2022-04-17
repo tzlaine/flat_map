@@ -262,11 +262,6 @@ and \tcode{mapped_container_type} arguments with containers of different sizes i
 undefined.
 
 \pnum
-Constructors that take a \tcode{Container} argument \tcode{cont} shall
-participate in overload resolution only if both \tcode{std::begin(cont)} and
-\tcode{std::end(cont)} are well-formed expressions.
-
-\pnum
 The effect of calling a constructor that takes a \tcode{sorted_unique_t}
 argument with a range that is not sorted with respect to \tcode{compare}, or
 that contains equal elements, is undefined.
@@ -321,25 +316,25 @@ namespace std {
     flat_map(const key_container_type& key_cont,
              const mapped_container_type& mapped_cont,
              const Allocator& a);
-    template <class Container>
-      explicit flat_map(const Container& cont,
+    template <ranges::range Range>
+      explicit flat_map(const Range& range,
                         const key_compare& comp = key_compare())
-        : flat_map(std::begin(cont), std::end(cont), comp) { }
-    template <class Container, class Allocator>
-      flat_map(const Container& cont, const Allocator& a);
+        : flat_map(ranges::begin(cont), ranges::end(cont), comp) { }
+    template <ranges::range Range, class Allocator>
+      flat_map(const Range& range, const Allocator& a);
 
     flat_map(sorted_unique_t,
              key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Allocator>
     flat_map(sorted_unique_t, const key_container_type& key_cont,
              const mapped_container_type& mapped_cont, const Allocator& a);
-    template <class Container>
+    template <ranges::range Range>
       flat_map(sorted_unique_t s,
-               const Container& cont,
+               const Range& range,
                const key_compare& comp = key_compare())
-        : flat_map(s, std::begin(cont), std::end(cont), comp) { }
-    template <class Container, class Allocator>
-      flat_map(sorted_unique_t, const Container& cont, const Allocator& a);
+        : flat_map(s, ranges::begin(cont), ranges::end(cont), comp) { }
+    template <ranges::range Range, class Allocator>
+      flat_map(sorted_unique_t, const Range& range, const Allocator& a);
 
     explicit flat_map(const key_compare& comp)
       : c(), compare(comp) { }
@@ -536,9 +531,9 @@ namespace std {
     };
   };
 
-  template <class Container>
-    flat_map(Container)
-      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
+  template <class Range>
+    flat_map(Range)
+      -> flat_map<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_map(KeyContainer, MappedContainer)
@@ -554,9 +549,9 @@ namespace std {
                   less<typename KeyContainer::value_type>,
                   KeyContainer, MappedContainer>;
 
-  template <class Container>
-    flat_map(sorted_unique_t, Container)
-      -> flat_map<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
+  template <class Range>
+    flat_map(sorted_unique_t, Range)
+      -> flat_map<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_map(sorted_unique_t, KeyContainer, MappedContainer)
@@ -640,13 +635,13 @@ template <class Allocator>
 flat_map(const key_container_type& key_cont,
          const mapped_container_type& mapped_cont,
          const Allocator& a);
-template <class Container, class Allocator>
-  flat_map(const Container& cont, const Allocator& a);
+template <ranges::range Range, class Allocator>
+  flat_map(const Range& range, const Allocator& a);
 template <class Allocator>
 flat_map(sorted_unique_t, const key_container_type& key_cont,
          const mapped_container_type& mapped_cont, const Allocator& a);
-template <class Container, class Allocator>
-  flat_map(sorted_unique_t, const Container& cont, const Allocator& a);
+template <ranges::range Range, class Allocator>
+  flat_map(sorted_unique_t, const Range& range, const Allocator& a);
 template <class Allocator>
   flat_map(const key_compare& comp, const Allocator& a);
 template <class Allocator>
@@ -1081,11 +1076,6 @@ and \tcode{mapped_container_type} arguments with containers of different sizes i
 undefined.
 
 \pnum
-Constructors that take a \tcode{Container} argument \tcode{cont} shall
-participate in overload resolution only if both \tcode{std::begin(cont)}
-and \tcode{std::end(cont)} are well-formed expressions.
-
-\pnum
 The effect of calling a constructor that takes a \tcode{sorted_equivalent_t}
 argument with a container or containers that are not sorted with respect
 to \tcode{value_compare} is undefined.
@@ -1140,25 +1130,25 @@ namespace std {
     flat_multimap(const key_container_type& key_cont,
                   const mapped_container_type& mapped_cont,
                   const Allocator& a);
-    template <class Container>
-      explicit flat_multimap(const Container& cont,
+    template <ranges::range Range>
+      explicit flat_multimap(const Range& range,
                              const key_compare& comp = key_compare())
-        : flat_multimap(std::begin(cont), std::end(cont), comp) { }
-    template <class Container, class Allocator>
-      flat_multimap(const Container& cont, const Allocator& a);
+        : flat_multimap(ranges::begin(cont), ranges::end(cont), comp) { }
+    template <ranges::range Range, class Allocator>
+      flat_multimap(const Range& range, const Allocator& a);
 
     flat_multimap(sorted_equivalent_t,
                   key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Allocator>
     flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
                   const mapped_container_type& mapped_cont, const Allocator& a);
-    template <class Container>
+    template <ranges::range Range>
       flat_multimap(sorted_equivalent_t s,
-                    const Container& cont,
+                    const Range& range,
                     const key_compare& comp = key_compare())
-        : flat_multimap(s, std::begin(cont), std::end(cont), comp) { }
-    template <class Container, class Allocator>
-      flat_multimap(sorted_equivalent_t, const Container& cont, const Allocator& a);
+        : flat_multimap(s, ranges::begin(cont), ranges::end(cont), comp) { }
+    template <ranges::range Range, class Allocator>
+      flat_multimap(sorted_equivalent_t, const Range& range, const Allocator& a);
 
     explicit flat_multimap(const key_compare& comp)
       : c(), compare(comp) { }
@@ -1321,9 +1311,9 @@ namespace std {
     key_compare compare; // \expos
   };
 
-  template <class Container>
-    flat_multimap(Container)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
+  template <class Range>
+    flat_multimap(Range)
+      -> flat_multimap<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_multimap(KeyContainer, MappedContainer)
@@ -1339,9 +1329,9 @@ namespace std {
                        less<typename KeyContainer::value_type>,
                        KeyContainer, MappedContainer>;
 
-  template <class Container>
-    flat_multimap(sorted_equivalent_t, Container)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Container>, @\placeholder{cont-mapped-type}@<Container>>;
+  template <class Range>
+    flat_multimap(sorted_equivalent_t, Range)
+      -> flat_multimap<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_multimap(sorted_equivalent_t, KeyContainer, MappedContainer)
@@ -1421,13 +1411,13 @@ template <class Allocator>
 flat_multimap(const key_container_type& key_cont,
               const mapped_container_type& mapped_cont,
               const Allocator& a);
-template <class Container, class Allocator>
-  flat_multimap(const Container& cont, const Allocator& a);
+template <ranges::range Range, class Allocator>
+  flat_multimap(const Range& range, const Allocator& a);
 template <class Allocator>
 flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
               const mapped_container_type& mapped_cont, const Allocator& a);
-template <class Container, class Allocator>
-  flat_multimap(sorted_equivalent_t, const Container& cont, const Allocator& a);
+template <ranges::range Range, class Allocator>
+  flat_multimap(sorted_equivalent_t, const Range& range, const Allocator& a);
 template <class Allocator>
   flat_multimap(const key_compare& comp, const Allocator& a);
 template <class Allocator>
