@@ -9,6 +9,11 @@
   \item Update swap to use \tcode{ranges::swap}.
   \item Replace past tense 'is exited' with 'exits' via exception wording.
   \item \tcode{extract} Change: \tcode{*this} is emptied, even if...  -> from Effects to Postcondition.
+  \item Remove the specification of \tcode{operator=(initializer_list<key_type>)} from prior LWG review.
+  \item Update \tcode{std::upper_bound} to \tcode{ranges::upper_bound}.
+  \item Add heterogenous erase overloads.
+  \item Add .overview subheadings to keep ISO structure reviewers happy.
+  \item Change 'preceding constructors' -> corresponding non-allocator constructors.
 \end{itemize}
 
 \subsection{Changes from R1}

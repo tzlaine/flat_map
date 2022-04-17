@@ -201,6 +201,7 @@ namespace std {
 
 \begin{addedblock}
 \rSec2[flatset]{Class template \tcode{flat_set}}
+\rSec3[flatset.overview]{Overview}
 
 \pnum
 \indexlibrary{\idxcode{flatset}}%
@@ -409,6 +410,7 @@ namespace std {
     iterator erase(iterator position);
     iterator erase(const_iterator position);
     size_type erase(const key_type& x);
+    template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
     void swap(flat_set& fs) noexcept(is_nothrow_swappable_v<key_compare>);
@@ -552,26 +554,11 @@ template <class Allocator>
 \constraints \tcode{uses_allocator_v<key_container_type, Allocator>} is \tcode{true}.
 
 \pnum
-\effects Equivalent to the preceding constructors except that \tcode{c}
+\effects Equivalent to the cooresponding non-allocator constructors except that \tcode{c}
 is constructed with uses-allocator construction ([allocator.uses.construction]).
 \end{itemdescr}
 
 \rSec3[flatset.modifiers]{Modifiers}
-
-\indexlibrarymember{operator=}{flatset}%
-\begin{itemdecl}
-flat_set& operator=(initializer_list<value_type> il);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\effects Equivalent to:
-\begin{codeblock}
-clear();
-insert(il);
-return *this;
-\end{codeblock}
-\end{itemdescr}
 
 \indexlibrarymember{emplace}{flatset}%
 \begin{itemdecl}
@@ -658,6 +645,7 @@ container_type extract() &&;
 
 \begin{itemdescr}
 \pnum \returns \tcode{std::move(c)}.
+
 \pnum \ensures \tcode{*this} is emptied, even if the function exits via exception.
 \end{itemdescr}
 
@@ -678,6 +666,7 @@ c = std::move(cont);
 \end{itemdescr}
 
 \rSec2[flatmultiset]{Class template \tcode{flat_multiset}}
+\rSec3[flatmultiset.overview]{Overview}
 
 \pnum
 \indexlibrary{\idxcode{flatmultiset}}%
@@ -886,6 +875,7 @@ class flat_multiset {
     iterator erase(iterator position);
     iterator erase(const_iterator position);
     size_type erase(const key_type& x);
+    template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
     void swap(flat_multiset& fms) noexcept(is_nothrow_swappable_v<key_compare>);
@@ -1028,26 +1018,11 @@ template <class Allocator>
 \constraints \tcode{uses_allocator_v<key_container_type, Allocator>} is \tcode{true}.
 
 \pnum
-\effects Equivalent to the preceding constructors except that \tcode{c}
-is constructed with uses-allocator construction (19.10.8.2).
+\effects Equivalent to the cooresponding non-allocator constructors except that \tcode{c}
+is constructed with uses-allocator construction ([allocator.uses.construction]).
 \end{itemdescr}
 
 \rSec3[flatmultiset.modifiers]{Modifiers}
-
-\indexlibrarymember{operator=}{flatmultiset}%
-\begin{itemdecl}
-flat_multiset& operator=(initializer_list<value_type> il);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\effects Equivalent to:
-\begin{codeblock}
-clear();
-insert(il);
-return *this;
-\end{codeblock}
-\end{itemdescr}
 
 \indexlibrarymember{emplace}{flatmultiset}%
 \begin{itemdecl}
@@ -1062,7 +1037,7 @@ template <class... Args> iterator emplace(Args&&... args);
 First, initializes a \tcode{key_type} object \tcode{t}
 with \tcode{std::forward<Args>(args)...}, then inserts \tcode{t} as if by:
 \begin{codeblock}
-auto it = std::upper_bound(c.begin(), c.end(), t, compare);
+auto it = ranges::upper_bound(c, t, compare);
 c.emplace(it, std::move(t));
 \end{codeblock}
 
@@ -1129,6 +1104,7 @@ container_type extract() &&;
 
 \begin{itemdescr}
 \pnum \returns \tcode{std::move(c)}.
+
 \pnum \ensures \tcode{*this} is emptied, even if the function exits via exception.
 \end{itemdescr}
 
