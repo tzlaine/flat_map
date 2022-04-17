@@ -447,18 +447,10 @@ namespace std {
     template <class K>
       pair<const_iterator, const_iterator> equal_range(const K& x) const;
 
-    friend bool operator==(const flat_set& x, const flat_set& y)
-      { return ranges::equal(x, y); }
-    friend bool operator!=(const flat_set& x, const flat_set& y)
-      { return !(x == y); }
-    friend bool operator< (const flat_set& x, const flat_set& y)
-      { return ranges::lexicographical_compare(x, y); }
-    friend bool operator> (const flat_set& x, const flat_set& y)
-      { return y < x; }
-    friend bool operator<=(const flat_set& x, const flat_set& y)
-      { return !(y < x); }
-    friend bool operator>=(const flat_set& x, const flat_set& y)
-      { return !(x < y); }
+    friend bool operator==(const flat_set& x, const flat_set& y);
+
+    friend @\placeholder{synth-three-way-result}@<value_type>
+    bool operator<=>(const flat_set& x, const flat_set& y);
 
     friend void swap(flat_set& x, flat_set& y) noexcept(noexcept(x.swap(y))
       { return x.swap(y); }
@@ -933,18 +925,10 @@ class flat_multiset {
     template <class K>
       pair<const_iterator, const_iterator> equal_range(const K& x) const;
 
-    friend bool operator==(const flat_multiset& x, const flat_multiset& y)
-      { return ranges::equal(x, y); }
-    friend bool operator!=(const flat_multiset& x, const flat_multiset& y)
-      { return !(x == y); }
-    friend bool operator< (const flat_multiset& x, const flat_multiset& y)
-      { return ranges::lexicographical_compare(x, y); }
-    friend bool operator> (const flat_multiset& x, const flat_multiset& y)
-      { return y < x; }
-    friend bool operator<=(const flat_multiset& x, const flat_multiset& y)
-      { return !(y < x); }
-    friend bool operator>=(const flat_multiset& x, const flat_multiset& y)
-      { return !(x < y); }
+    friend bool operator==(const flat_multiset& x, const flat_multiset& y);
+
+    friend @\placeholder{synth-three-way-result}@<value_type>
+    bool operator<=>(const flat_multiset& x, const flat_multiset& y);
 
     friend void swap(flat_multiset& x, flat_multiset& y) noexcept(noexcept(x.swap(y))
       { return x.swap(y); }
