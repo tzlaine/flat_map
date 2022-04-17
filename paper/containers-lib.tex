@@ -427,8 +427,11 @@ namespace std {
     // \ref{flatmap.access}, element access
     mapped_type& operator[](const key_type& x);
     mapped_type& operator[](key_type&& x);
+    template<class K> mapped_type& operator[](K&& x);
     mapped_type& at(const key_type& x);
     const mapped_type& at(const key_type& x) const;
+    template<class K> mapped_type& at(const K& x);
+    template<class K> const mapped_type& at(const K& x) const;
 
     // \ref{flatmap.modifiers}, modifiers
     template <class... Args> pair<iterator, bool> emplace(Args&&... args);
@@ -464,20 +467,28 @@ namespace std {
       pair<iterator, bool> try_emplace(const key_type& k, Args&&... args);
     template <class... Args>
       pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
+    template<class K, class... Args>
+      pair<iterator, bool> try_emplace(K&& k, Args&&... args);
     template <class... Args>
       iterator try_emplace(const_iterator hint, const key_type& k,
                            Args&&... args);
     template <class... Args>
       iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args);
+    template<class K, class... Args>
+      iterator try_emplace(const_iterator hint, K&& k, Args&&... args);
     template <class M>
       pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
     template <class M>
       pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
+    template<class K, class M>
+      pair<iterator, bool> insert_or_assign(K&& k, M&& obj);
     template <class M>
       iterator insert_or_assign(const_iterator hint, const key_type& k,
                                 M&& obj);
     template <class M>
       iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
+    template<class K, class M>
+      iterator insert_or_assign(const_iterator hint, K&& k, M&& obj);
 
     iterator erase(iterator position);
     iterator erase(const_iterator position);
@@ -752,6 +763,21 @@ mapped_type& operator[](key_type&& x);
 Equivalent to: \tcode{return try_emplace(std::move(x)).first->second;}
 \end{itemdescr}
 
+\indexlibrary{\idxcode{operator[]}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class K> mapped_type& operator[](K&& x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
+
+\pnum
+\effects
+Equivalent to: \tcode{return try_emplace(std::forward<K>(x)).first->second;}
+\end{itemdescr}
+
 \indexlibrary{\idxcode{at}!\idxcode{flatmap}}%
 \begin{itemdecl}
 mapped_type&       at(const key_type& x);
@@ -759,6 +785,32 @@ const mapped_type& at(const key_type& x) const;
 \end{itemdecl}
 
 \begin{itemdescr}
+\pnum
+\returns
+A reference to the \tcode{mapped_type} corresponding to \tcode{x} in \tcode{*this}.
+
+\pnum
+\throws
+An exception object of type \tcode{out_of_range} if
+no such element is present.
+
+\pnum
+\complexity Logarithmic.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{at}!\idxcode{flatmap}}%
+\begin{itemdecl}
+template<class K> mapped_type&       at(const K& x);
+template<class K> const mapped_type& at(const K& x) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
+
+\pnum
+\expects The expression \tcode{find(x)} is well-formed and has well-defined behavior.
+
 \pnum
 \returns
 A reference to the \tcode{mapped_type} corresponding to \tcode{x} in \tcode{*this}.
@@ -818,7 +870,7 @@ The first form is equivalent to
 equivalent to \tcode{return emplace_hint(position, std::forward<P>(x))}.
 \end{itemdescr}
 
-\indexlibrarymember{flatmap}{insert}%
+\indexlibrarymember{insert}{flatmap}%
 \begin{itemdecl}
 template <class InputIterator>
   void insert(InputIterator first, InputIterator last);
@@ -849,7 +901,7 @@ $N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
 is \tcode{distance(first, last)}.
 \end{itemdescr}
 
-\indexlibrarymember{flatmap}{insert}%
+\indexlibrarymember{insert}{flatmap}%
 \begin{itemdecl}
 template <class InputIterator>
   void insert(sorted_unique_t, InputIterator first, InputIterator last);
@@ -916,6 +968,48 @@ The same as \tcode{emplace} for the first two overloads, and the same
 as \tcode{emplace_hint}, for the last two overloads.
 \end{itemdescr}
 
+\indexlibrarymember{try_emplace}{flatmap}%
+\begin{itemdecl}
+template<class K, class... Args>
+  pair<iterator, bool> try_emplace(K&& k, Args&&... args);
+template<class K, class... Args>
+  iterator try_emplace(const_iterator hint, K&& k, Args&&... args);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid
+and denotes a type.  \tcode{is_constructible_v<key_type, K\&\&>} is
+\tcode{true}.  \tcode{is_constructible_v<mapped_type, Args\&\&...>} is
+\tcode{true}.  For the first overload, \tcode{is_convertible_v<K\&\&, const_iterator>}
+and \tcode{is_convertible_v<K\&\&, iterator>} are both \tcode{false}.
+
+\pnum
+\expects The conversion from \tcode{k} into \tcode{key_type} constructs an
+object \tcode{u}, for which \tcode{find(k)} == \tcode{find(u)} is true.
+
+\pnum
+\effects
+If the map already contains an element whose key is equivalent to \tcode{k},
+\tcode{*this} and \tcode{args...} are unchanged.  Otherwise equivalent to:
+\begin{codeblock}
+auto key_it = ranges::upper_bound(c.keys, k, compare);
+auto value_it = c.values.begin() + distance(c.keys.begin(), key_it);
+c.keys.emplace(key_it, std::forward<K>(k));
+c.values.emplace(value_it, std::forward<Args>(args)...);
+\end{codeblock}
+
+\pnum
+\returns
+In the first overload, the \tcode{bool} component of the returned pair
+is \tcode{true} if and only if the insertion took place.  The returned
+iterator points to the map element whose key is equivalent to \tcode{k}.
+
+\pnum
+\complexity
+The same as \tcode{emplace} and \tcode{emplace_hint}, respectively.
+\end{itemdescr}
+
 \indexlibrarymember{insert_or_assign}{flatmap}%
 \begin{itemdecl}
 template<class M>
@@ -952,7 +1046,46 @@ The same as \tcode{emplace} for the first two overloads, and the same
 as \tcode{emplace_hint}, for the last two overloads.
 \end{itemdescr}
 
-\indexlibrarymember{flatmap}{swap}%
+\indexlibrarymember{insert_or_assign}{flatmap}%
+\begin{itemdecl}
+template<class K, class M>
+  pair<iterator, bool> insert_or_assign(K&& k, M&& obj);
+template<class K, class M>
+  iterator insert_or_assign(const_iterator hint, K&& k, M&& obj);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid
+and denotes a type.  \tcode{is_constructible_v<key_type, K\&\&>} is
+\tcode{true}.  \tcode{is_assignable_v<mapped_type\&, M>}
+is \tcode{true}, and \tcode{is_constructible_v<mapped_type, M\&\&>}
+is \tcode{true}.
+
+\pnum
+\expects The conversion from \tcode{k} into \tcode{key_type} constructs an
+object \tcode{u}, for which \tcode{find(k)} == \tcode{find(u)} is true.
+
+\effects
+If the map already contains an element \tcode{e} whose key is equivalent
+to \tcode{k}, assigns \tcode{std::forward<M>(obj)} to \tcode{e.second}.
+Otherwise equivalent to \tcode{try_emplace(std::forward<decltype(k)>(k),
+std::forward<M>(obj))} for the first two overloads or
+\tcode{try_emplace_hint(hint, std::forward<decltype(k)>(k), std::forward<M>(obj))}
+for the last two overloads.
+
+\pnum
+\returns
+In the first two overloads, the \tcode{bool} component of the returned pair
+is \tcode{true} if and only if the insertion took place.  The returned
+iterator points to the map element whose key is equivalent to \tcode{k}.
+
+\pnum
+\complexity
+The same as \tcode{emplace} and \tcode{emplace_hint}, respectively.
+\end{itemdescr}
+
+\indexlibrarymember{swap}{flatmap}%
 \begin{itemdecl}
 void swap(flat_map& fm) noexcept(is_nothrow_swappable_v<key_compare>);
 \end{itemdecl}
@@ -966,7 +1099,7 @@ ranges::swap(c.values, fm.c.values);
 \end{codeblock}
 \end{itemdescr}
 
-\indexlibrarymember{flatmap}{extract}%
+\indexlibrarymember{extract}{flatmap}%
 \begin{itemdecl}
 containers extract() &&;
 \end{itemdecl}
@@ -977,7 +1110,7 @@ containers extract() &&;
 \pnum \returns \tcode{std::move(c)}.
 \end{itemdescr}
 
-\indexlibrarymember{flatmap}{replace}%
+\indexlibrarymember{replace}{flatmap}%
 \begin{itemdecl}
 void replace(key_container_type&& key_cont, mapped_container_type&& mapped_cont);
 \end{itemdecl}
