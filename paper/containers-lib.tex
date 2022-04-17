@@ -71,24 +71,6 @@ make it easy to construct abstract data types, such as \tcode{flat_map}s
 or \tcode{flat_multimap}s, out of the basic sequence container kinds (or out
 of other program-defined sequence containers).}
 
-\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
-
-\setcounter{Paras}{5}
-\pnum
-\changed{\tcode{iterator}
-of an associative container is of the bidirectional iterator category.}
-{An associative container's \tcode{iterator} meets the bidirectional iterator requirements.}
-For associative containers where the value type is the same as the key type, both
-\tcode{iterator}
-and
-\tcode{const_iterator}
-are constant iterators. It is unspecified whether or not
-\tcode{iterator}
-and
-\tcode{const_iterator}
-are the same type.
-\begin{note} \tcode{iterator} and \tcode{const_iterator} have identical semantics in this case, and \tcode{iterator} is convertible to \tcode{const_iterator}. Users can avoid violating the one-definition rule by always using \tcode{const_iterator} in their function parameter lists. \end{note}
-
 \setcounter{chapter}{21}
 \setcounter{section}{5}
 \rSec1[container.adaptors]{Container adaptors}
