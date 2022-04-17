@@ -1201,13 +1201,13 @@ namespace std {
       flat_multimap(InputIterator first, InputIterator last,
                     const key_compare& comp, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_map(from_range_t, R&& range, const key_compare& comp = key_compare(),
-               const Allocator& a = Allocator());
+      flat_multimap(from_range_t, R&& range, const key_compare& comp = key_compare(),
+                    const Allocator& a = Allocator());
     template <class InputIterator, class Allocator>
       flat_multimap(InputIterator first, InputIterator last,
                     const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_map(from_range_t, R&& range, const Allocator& a);
+      flat_mutlimap(from_range_t, R&& range, const Allocator& a);
 
     template <class InputIterator>
       flat_multimap(sorted_equivalent_t, InputIterator first, InputIterator last,
@@ -1513,8 +1513,8 @@ and \tcode{c.values} are constructed with uses-allocator construction
 \begin{itemdecl}
 template <class Key, class T, class Compare,
           class KeyContainer, class MappedContainer>
-  typename flat_map<Key, T, Compare, KeyContainer, MappedContainer>::size_type
-    erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
+  typename flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>::size_type
+    erase_if(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& c,
              Predicate pred);
 \end{itemdecl}
 
