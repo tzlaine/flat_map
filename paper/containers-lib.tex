@@ -299,8 +299,8 @@ namespace std {
     class value_compare {
       friend flat_map;
     private:
-      key_compare comp;
-      value_compare(key_compare c) : comp(c) { }
+      key_compare comp;                           // \expos
+      value_compare(key_compare c) : comp(c) { }  // \expos
     public:
       bool operator()(const_reference x, const_reference y) const {
         return comp(x.first, y.first);
@@ -1118,8 +1118,8 @@ namespace std {
     class value_compare {
       friend flat_multimap;
     private:
-      key_compare comp;
-      value_compare(key_compare c) : comp(c) { }
+      key_compare comp;                           // \expos
+      value_compare(key_compare c) : comp(c) { }  // \expos
     public:
       bool operator()(const_reference x, const_reference y) const {
         return comp(x.first, y.first);
