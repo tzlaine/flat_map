@@ -226,6 +226,22 @@ templates \exposid{iter-key-type} and
 \exposid{iter-value-type} defined in [associative.general]} may appear in
 deduction guides for container adaptors.
 
+\begin{addedblock}
+\pnum
+The following exposition-only alias templates may appear in deduction guides
+for container adaptors:
+
+\begin{codeblock}
+  template<class Container>
+    using @\placeholder{cont-key-type}@ =                                // \expos
+      remove_const_t<typename Container::value_type::first_type>;
+  template<class Container>
+    using @\placeholder{cont-mapped-type}@ =                             // \expos
+      typename Container::value_type::second_type;
+\end{codeblock}
+\end{addedblock}
+
+
 \noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
 
 \setcounter{subsection}{3}
@@ -624,13 +640,6 @@ namespace std {
       key_compare comp;
     };
   };
-
-  template<class Container>
-    using @\placeholder{cont-key-type}@ =                                // \expos
-      remove_const_t<typename Container::value_type::first_type>;
-  template<class Container>
-    using @\placeholder{cont-mapped-type}@ =                             // \expos
-      typename Container::value_type::second_type;
 
   template <class Container>
     flat_map(Container)
@@ -1415,13 +1424,6 @@ namespace std {
     containers c;        // \expos
     key_compare compare; // \expos
   };
-
-  template<class Container>
-    using @\placeholder{cont-key-type}@ =                                // \expos
-      remove_const_t<typename Container::value_type::first_type>;
-  template<class Container>
-    using @\placeholder{cont-mapped-type}@ =                             // \expos
-      typename Container::value_type::second_type;
 
   template <class Container>
     flat_multimap(Container)
