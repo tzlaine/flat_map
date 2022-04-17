@@ -619,7 +619,7 @@ namespace std {
     struct key_equiv {
       key_equiv(key_compare c) : comp(c) { }
       bool operator()(const_reference x, const_reference y) const {
-        return comp(x.first, y.first) || comp(y.first, x.first);
+        return !comp(x.first, y.first) && !comp(y.first, x.first);
       }
       key_compare comp;
     };
