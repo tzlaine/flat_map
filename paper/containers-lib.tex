@@ -1562,7 +1562,7 @@ namespace std {
   struct formatter<@\placeholder{map-type}@<Key, T, U...>, charT>
   {
   private:
-    range_formatter<pair<const Key, T>> underlying_; // \expos
+    range_formatter<pair<const Key&, const T&>> underlying_; // \expos
   public:
     formatter();
 
