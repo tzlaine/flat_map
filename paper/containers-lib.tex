@@ -319,7 +319,7 @@ namespace std {
     template <ranges::range R>
       explicit flat_map(const R& range,
                         const key_compare& comp = key_compare())
-        : flat_map(ranges::begin(cont), ranges::end(cont), comp) { }
+        : flat_map(ranges::begin(range), ranges::end(range), comp) { }
     template <ranges::range R, class Allocator>
       flat_map(const R& range, const Allocator& a);
 
@@ -332,7 +332,7 @@ namespace std {
       flat_map(sorted_unique_t s,
                const R& range,
                const key_compare& comp = key_compare())
-        : flat_map(s, ranges::begin(cont), ranges::end(cont), comp) { }
+        : flat_map(s, ranges::begin(range), ranges::end(range), comp) { }
     template <ranges::range R, class Allocator>
       flat_map(sorted_unique_t, const R& range, const Allocator& a);
 
@@ -1133,7 +1133,7 @@ namespace std {
     template <ranges::range R>
       explicit flat_multimap(const R& range,
                              const key_compare& comp = key_compare())
-        : flat_multimap(ranges::begin(cont), ranges::end(cont), comp) { }
+        : flat_multimap(ranges::begin(range), ranges::end(range), comp) { }
     template <ranges::range R, class Allocator>
       flat_multimap(const R& range, const Allocator& a);
 
@@ -1146,7 +1146,7 @@ namespace std {
       flat_multimap(sorted_equivalent_t s,
                     const R& range,
                     const key_compare& comp = key_compare())
-        : flat_multimap(s, ranges::begin(cont), ranges::end(cont), comp) { }
+        : flat_multimap(s, ranges::begin(range), ranges::end(range), comp) { }
     template <ranges::range R, class Allocator>
       flat_multimap(sorted_equivalent_t, const R& range, const Allocator& a);
 
