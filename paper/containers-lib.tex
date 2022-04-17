@@ -766,7 +766,7 @@ contains an element whose key is equivalent to \tcode{t.first}, \tcode{*this}
 is unchanged.  Otherwise, equivalent to:
 \begin{codeblock}
 auto key_it = ranges::upper_bound(c.keys, t.first, compare);
-auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
+auto value_it = c.values.begin() + distance(c.keys.begin(), key_it);
 c.keys.emplace(key_it, std::move(t.first));
 c.values.emplace(value_it, std::move(t.second));
 \end{codeblock}
@@ -804,8 +804,8 @@ template <class InputIterator>
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
 for (; first != last; ++first) {
-  c.keys.insert(std::end(c.keys), first->first);
-  c.values.insert(std::end(c.values), first->second);
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
 }
 \end{codeblock}
 sorts the range of newly inserted elements with respect
@@ -835,8 +835,8 @@ template <class InputIterator>
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
 for (; first != last; ++first) {
-  c.keys.insert(std::end(c.keys), first->first);
-  c.values.insert(std::end(c.values), first->second);
+  c.keys.insert(c.keys.end(), first->first);
+  c.values.insert(c.values.end(), first->second);
 }
 \end{codeblock}
 merges the sorted range of newly added elements and the sorted range of
@@ -875,7 +875,7 @@ If the map already contains an element whose key is equivalent to \tcode{k},
 \tcode{*this} and \tcode{args...} are unchanged.  Otherwise equivalent to:
 \begin{codeblock}
 auto key_it = ranges::upper_bound(c.keys, k, compare);
-auto value_it = std::begin(c.values) + distance(std::begin(c.keys), key_it);
+auto value_it = c.values.begin() + distance(c.keys.begin(), key_it);
 c.keys.insert(key_it, std::forward<decltype(k)>(k));
 c.values.emplace(value_it, std::forward<Args>(args)...);
 \end{codeblock}
