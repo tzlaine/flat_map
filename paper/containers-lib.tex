@@ -409,6 +409,7 @@ namespace std {
     iterator erase(iterator position);
     iterator erase(const_iterator position);
     size_type erase(const key_type& x);
+    template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
     void swap(flat_set& fs) noexcept(is_nothrow_swappable_v<key_compare>);
@@ -872,6 +873,7 @@ class flat_multiset {
     iterator erase(iterator position);
     iterator erase(const_iterator position);
     size_type erase(const key_type& x);
+    template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
     void swap(flat_multiset& fms) noexcept(is_nothrow_swappable_v<key_compare>);
