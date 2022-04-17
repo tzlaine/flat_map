@@ -558,21 +558,6 @@ is constructed with uses-allocator construction ([allocator.uses.construction]).
 
 \rSec3[flatset.modifiers]{Modifiers}
 
-\indexlibrarymember{operator=}{flatset}%
-\begin{itemdecl}
-flat_set& operator=(initializer_list<value_type> il);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\effects Equivalent to:
-\begin{codeblock}
-clear();
-insert(il);
-return *this;
-\end{codeblock}
-\end{itemdescr}
-
 \indexlibrarymember{emplace}{flatset}%
 \begin{itemdecl}
 template <class... Args> pair<iterator, bool> emplace(Args&&... args);
@@ -1033,21 +1018,6 @@ is constructed with uses-allocator construction (19.10.8.2).
 \end{itemdescr}
 
 \rSec3[flatmultiset.modifiers]{Modifiers}
-
-\indexlibrarymember{operator=}{flatmultiset}%
-\begin{itemdecl}
-flat_multiset& operator=(initializer_list<value_type> il);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\effects Equivalent to:
-\begin{codeblock}
-clear();
-insert(il);
-return *this;
-\end{codeblock}
-\end{itemdescr}
 
 \indexlibrarymember{emplace}{flatmultiset}%
 \begin{itemdecl}
