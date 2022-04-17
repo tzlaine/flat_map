@@ -219,6 +219,13 @@ A deduction guide for a container adaptor shall not participate in overload reso
 \tcode{uses_allocator_v<MappedContainer, Allocator>} is \tcode{false}.}
 \end{itemize}
 
+\pnum
+The exposition-only alias template \exposid{iter-value-type} defined in
+[sequences.general]\added{ and the exposition-only alias
+templates \exposid{iter-key-type} and
+\exposid{iter-value-type} defined in [associative.general]} may appear in
+deduction guides for container adaptors.
+
 \noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
 
 \setcounter{subsection}{3}
@@ -622,12 +629,6 @@ namespace std {
   template<class Container>
     using @\placeholder{cont-mapped-type}@ =                             // \expos
       typename Container::value_type::second_type;
-  template<class InputIterator>
-    using @\placeholder{iter-key-type}@ = remove_const_t<                // \expos
-      typename iterator_traits<InputIterator>::value_type::first_type>;
-  template<class InputIterator>
-    using @\placeholder{iter-mapped-type}@ =                             // \expos
-      typename iterator_traits<InputIterator>::value_type::second_type;
 
   template <class Container>
     flat_map(Container)
@@ -1419,12 +1420,6 @@ namespace std {
   template<class Container>
     using @\placeholder{cont-mapped-type}@ =                             // \expos
       typename Container::value_type::second_type;
-  template<class InputIterator>
-    using @\placeholder{iter-key-type}@ = remove_const_t<                // \expos
-      typename iterator_traits<InputIterator>::value_type::first_type>;
-  template<class InputIterator>
-    using @\placeholder{iter-mapped-type}@ =                             // \expos
-      typename iterator_traits<InputIterator>::value_type::second_type;
 
   template <class Container>
     flat_multimap(Container)
