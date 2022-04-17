@@ -8,6 +8,23 @@
   \item add compare include to headers
   \item added \tcode{uses_allocator} struct
   \item clarified \tcode{flat_multimap} emplace behavior compared to {flat_map}
+  \item Change references to stable names.
+  \item Editorial change Alloc to Allocator.
+  \item Replace friend operators with \tcode{operator==()} and \tcode{operator<=>()} to match C++20 containers.
+  \item Update swap to use \tcode{ranges::swap}.
+  \item Replace past tense 'is exited' with 'exits' via exception wording.
+  \item \tcode{extract} Change: \tcode{*this} is emptied, even if...  -> from Effects to Postcondition.
+  \item Remove the specification of \tcode{operator=(initializer_list<key_type>)} from prior LWG review.
+  \item Update \tcode{std::upper_bound} to \tcode{ranges::upper_bound}.
+  \item Add heterogenous erase overloads following \href{https://wg21.link/P2077}{P2077}.
+  \item Add .overview subheadings to keep ISO structure reviewers happy.
+  \item Change 'preceding constructors' -> corresponding non-allocator constructors.
+  \item Add container erasure \tcode{erase_if} function following P1209 from C++20.
+  \item Add remaining heterogeneous operations, following \href{https://wg21.link/P2363}{P2363}.
+  \item Add range formatting interfaces following \href{https://wg21.link/P2286}{P2286}.
+  \item Add ranges::to() ctors and deduction guides following \href{https://wg21.link/P1206}{P1206}.
+  \item A variety of changes to rebase on \href{https://wg21.link/N4910}{N4910}.
+  \item Full change diffs available at \href{https://github.com/tzlaine/flat_map/commits/master}{github}.
 \end{itemize}
 
 \subsection{Changes from R6}
