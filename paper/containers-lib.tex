@@ -92,8 +92,8 @@ adaptor's \tcode{Container}\added{, \tcode{KeyContainer}, \tcode{MappedContainer
 \begin{addedblock}
 \pnum
 For container adaptors that have them, the \tcode{insert}, \tcode{emplace},
-and \tcode{erase} members shall affect the validity of iterators and
-references to the adaptor's container(s) in the same way that the containers'
+and \tcode{erase} members affect the validity of iterators and references to
+the adaptor's container(s) in the same way that the containers'
 respective \tcode{insert}, \tcode{emplace}, and \tcode{erase} members do.
 
 [\textit{Example:} A call to \tcode{flat_map<Key, T>::insert} could invalidate all iterators to
