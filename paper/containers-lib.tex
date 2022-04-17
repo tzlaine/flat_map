@@ -316,25 +316,25 @@ namespace std {
     flat_map(const key_container_type& key_cont,
              const mapped_container_type& mapped_cont,
              const Allocator& a);
-    template <ranges::range Range>
-      explicit flat_map(const Range& range,
+    template <ranges::range R>
+      explicit flat_map(const R& range,
                         const key_compare& comp = key_compare())
         : flat_map(ranges::begin(cont), ranges::end(cont), comp) { }
-    template <ranges::range Range, class Allocator>
-      flat_map(const Range& range, const Allocator& a);
+    template <ranges::range R, class Allocator>
+      flat_map(const R& range, const Allocator& a);
 
     flat_map(sorted_unique_t,
              key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Allocator>
     flat_map(sorted_unique_t, const key_container_type& key_cont,
              const mapped_container_type& mapped_cont, const Allocator& a);
-    template <ranges::range Range>
+    template <ranges::range R>
       flat_map(sorted_unique_t s,
-               const Range& range,
+               const R& range,
                const key_compare& comp = key_compare())
         : flat_map(s, ranges::begin(cont), ranges::end(cont), comp) { }
-    template <ranges::range Range, class Allocator>
-      flat_map(sorted_unique_t, const Range& range, const Allocator& a);
+    template <ranges::range R, class Allocator>
+      flat_map(sorted_unique_t, const R& range, const Allocator& a);
 
     explicit flat_map(const key_compare& comp)
       : c(), compare(comp) { }
@@ -531,9 +531,9 @@ namespace std {
     };
   };
 
-  template <class Range>
-    flat_map(Range)
-      -> flat_map<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
+  template <class R>
+    flat_map(R)
+      -> flat_map<@\placeholder{cont-key-type}@<R>, @\placeholder{cont-mapped-type}@<R>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_map(KeyContainer, MappedContainer)
@@ -549,9 +549,9 @@ namespace std {
                   less<typename KeyContainer::value_type>,
                   KeyContainer, MappedContainer>;
 
-  template <class Range>
-    flat_map(sorted_unique_t, Range)
-      -> flat_map<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
+  template <class R>
+    flat_map(sorted_unique_t, R)
+      -> flat_map<@\placeholder{cont-key-type}@<R>, @\placeholder{cont-mapped-type}@<R>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_map(sorted_unique_t, KeyContainer, MappedContainer)
@@ -635,13 +635,13 @@ template <class Allocator>
 flat_map(const key_container_type& key_cont,
          const mapped_container_type& mapped_cont,
          const Allocator& a);
-template <ranges::range Range, class Allocator>
-  flat_map(const Range& range, const Allocator& a);
+template <ranges::range R, class Allocator>
+  flat_map(const R& range, const Allocator& a);
 template <class Allocator>
 flat_map(sorted_unique_t, const key_container_type& key_cont,
          const mapped_container_type& mapped_cont, const Allocator& a);
-template <ranges::range Range, class Allocator>
-  flat_map(sorted_unique_t, const Range& range, const Allocator& a);
+template <ranges::range R, class Allocator>
+  flat_map(sorted_unique_t, const R& range, const Allocator& a);
 template <class Allocator>
   flat_map(const key_compare& comp, const Allocator& a);
 template <class Allocator>
@@ -1130,25 +1130,25 @@ namespace std {
     flat_multimap(const key_container_type& key_cont,
                   const mapped_container_type& mapped_cont,
                   const Allocator& a);
-    template <ranges::range Range>
-      explicit flat_multimap(const Range& range,
+    template <ranges::range R>
+      explicit flat_multimap(const R& range,
                              const key_compare& comp = key_compare())
         : flat_multimap(ranges::begin(cont), ranges::end(cont), comp) { }
-    template <ranges::range Range, class Allocator>
-      flat_multimap(const Range& range, const Allocator& a);
+    template <ranges::range R, class Allocator>
+      flat_multimap(const R& range, const Allocator& a);
 
     flat_multimap(sorted_equivalent_t,
                   key_container_type key_cont, mapped_container_type mapped_cont);
     template <class Allocator>
     flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
                   const mapped_container_type& mapped_cont, const Allocator& a);
-    template <ranges::range Range>
+    template <ranges::range R>
       flat_multimap(sorted_equivalent_t s,
-                    const Range& range,
+                    const R& range,
                     const key_compare& comp = key_compare())
         : flat_multimap(s, ranges::begin(cont), ranges::end(cont), comp) { }
-    template <ranges::range Range, class Allocator>
-      flat_multimap(sorted_equivalent_t, const Range& range, const Allocator& a);
+    template <ranges::range R, class Allocator>
+      flat_multimap(sorted_equivalent_t, const R& range, const Allocator& a);
 
     explicit flat_multimap(const key_compare& comp)
       : c(), compare(comp) { }
@@ -1311,9 +1311,9 @@ namespace std {
     key_compare compare; // \expos
   };
 
-  template <class Range>
-    flat_multimap(Range)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
+  template <class R>
+    flat_multimap(R)
+      -> flat_multimap<@\placeholder{cont-key-type}@<R>, @\placeholder{cont-mapped-type}@<R>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_multimap(KeyContainer, MappedContainer)
@@ -1329,9 +1329,9 @@ namespace std {
                        less<typename KeyContainer::value_type>,
                        KeyContainer, MappedContainer>;
 
-  template <class Range>
-    flat_multimap(sorted_equivalent_t, Range)
-      -> flat_multimap<@\placeholder{cont-key-type}@<Range>, @\placeholder{cont-mapped-type}@<Range>>;
+  template <class R>
+    flat_multimap(sorted_equivalent_t, R)
+      -> flat_multimap<@\placeholder{cont-key-type}@<R>, @\placeholder{cont-mapped-type}@<R>>;
 
   template <class KeyContainer, class MappedContainer>
     flat_multimap(sorted_equivalent_t, KeyContainer, MappedContainer)
@@ -1411,13 +1411,13 @@ template <class Allocator>
 flat_multimap(const key_container_type& key_cont,
               const mapped_container_type& mapped_cont,
               const Allocator& a);
-template <ranges::range Range, class Allocator>
-  flat_multimap(const Range& range, const Allocator& a);
+template <ranges::range R, class Allocator>
+  flat_multimap(const R& range, const Allocator& a);
 template <class Allocator>
 flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
               const mapped_container_type& mapped_cont, const Allocator& a);
-template <ranges::range Range, class Allocator>
-  flat_multimap(sorted_equivalent_t, const Range& range, const Allocator& a);
+template <ranges::range R, class Allocator>
+  flat_multimap(sorted_equivalent_t, const R& range, const Allocator& a);
 template <class Allocator>
   flat_multimap(const key_compare& comp, const Allocator& a);
 template <class Allocator>
