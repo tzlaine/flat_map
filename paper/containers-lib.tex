@@ -248,13 +248,13 @@ and \tcode{C::max_size()} do not throw. In particular, \tcode{vector}
 used.  \begin{note}\tcode{vector<bool>} is not a sequence container.\end{note}
 
 \pnum
-The program is ill-formed if:
-\begin{itemize}
-\item \tcode{Key} is not the same type as \tcode{KeyContainer::value_type},
-\item \tcode{T} is not the same type as \tcode{MappedContainer::value_type},
-\item \tcode{is_nothrow_swappable_v<KeyContainer>} is \tcode{false}, or
-\item \tcode{is_nothrow_swappable_v<MappedContainer>} is \tcode{false}.
-\end{itemize}
+The program is ill-formed if \tcode{Key} is not the same type
+as \tcode{KeyContainer::value_type} or
+\tcode{T} is not the same type as \tcode{MappedContainer::value_type}.
+
+\pnum
+The behavior of \tcode{flat_map} is undefined if either
+of \tcode{KeyContainer::swap()} or \tcode{MappedContainer::swap()} throws.
 
 \pnum
 The effect of calling a constructor that takes both \tcode{key_container_type}
@@ -1067,13 +1067,13 @@ and \tcode{C::max_size()} do not throw. In particular, \tcode{vector}
 used.  \begin{note}\tcode{vector<bool>} is not a sequence container.\end{note}
 
 \pnum
-The program is ill-formed if:
-\begin{itemize}
-\item \tcode{Key} is not the same type as \tcode{KeyContainer::value_type},
-\item \tcode{T} is not the same type as \tcode{MappedContainer::value_type},
-\item \tcode{is_nothrow_swappable_v<KeyContainer>} is \tcode{false}, or
-\item \tcode{is_nothrow_swappable_v<MappedContainer>} is \tcode{false}.
-\end{itemize}
+The program is ill-formed if \tcode{Key} is not the same type
+as \tcode{KeyContainer::value_type} or
+\tcode{T} is not the same type as \tcode{MappedContainer::value_type}.
+
+\pnum
+The behavior of \tcode{flat_multimap} is undefined if either
+of \tcode{KeyContainer::swap()} or \tcode{MappedContainer::swap()} throws.
 
 \pnum
 The effect of calling a constructor that takes both \tcode{key_container_type}
