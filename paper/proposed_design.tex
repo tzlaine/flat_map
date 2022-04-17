@@ -6,7 +6,7 @@ Overall, \code{flat_set} is meant to be a drop-in replacement for \code{set},
 just with different time- and space-efficiency properties.  Functionally it is
 not meant to do anything other than what we do with \code{set} now.\\
 
-Note that this paper proposes a \code{flat_multiset} as well, which hs the
+Note that this paper proposes a \code{flat_multiset} as well, which has the
 same relationship to \code{flat_set} that \code{multiset} has to \code{set}.
 That is, duplicate elements are allowed in a \code{flat_multiset}.  The pair
 of \code{flat_set} and \code{flat_multiset} will be referred to herafter
@@ -72,7 +72,7 @@ opportunities.
 
 \code{flat_set} is an adapter for an underlying storage type.  This storage
 type is configurable via the template parameter \code{Container}, which must
-be a \textit{sequence container} with random access iterator (\S26.2.3).\\
+be a \textit{sequence container} with random access iterator ([sequence.reqmts]).\\
 
 \subsubsection{Interface Differences From \code{set}}
 
@@ -107,17 +107,19 @@ be a \textit{sequence container} with random access iterator (\S26.2.3).\\
 
 \subsubsection{\code{flat_set} Requirements}
 
-Only the underlying container is allocator-aware.  \S26.2.4/7 regarding
-allocator awareness does not apply to \code{flat_set}.
+Only the underlying container is allocator-aware.  ([associative.reqmts.general])
+requirements regarding allocator awareness does not apply to \code{flat_set}.
+
+24.2.7.1 General
 
 Validity of iterators is not preserved when mutating the underlying container
 (i.e. \S26.2.4/9 does not apply).
 
-The exception safety guarantees for associative containers (\S26.2.4.1) do not
+The exception safety guarantees for associative containers ([associative.reqmts.except]) do not
 apply.
 
-The rest of the requirements follow the ones in (\S26.2.4 Associative
-containers), except \S26.2.4/10 (which applies to members not in
+The rest of the requirements follow the ones in ([associative.containers]),
+except \S26.2.4/10 (which applies to members not in
 \code{flat_set}) and some portions of the table in \S26.2.4/8; these table
 differences are outlined in ``Member Semantics'' below.
 
