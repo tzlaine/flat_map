@@ -1033,7 +1033,7 @@ template <class... Args> iterator emplace(Args&&... args);
 First, initializes a \tcode{key_type} object \tcode{t}
 with \tcode{std::forward<Args>(args)...}, then inserts \tcode{t} as if by:
 \begin{codeblock}
-auto it = std::upper_bound(c.begin(), c.end(), t, compare);
+auto it = ranges::upper_bound(c, t, compare);
 c.emplace(it, std::move(t));
 \end{codeblock}
 
