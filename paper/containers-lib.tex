@@ -157,6 +157,11 @@ namespace std {
   struct sorted_unique_t { explicit sorted_unique_t() = default; };
   inline constexpr sorted_unique_t sorted_unique {};
 
+  template<class Key, class T, class Compare>,
+           class KeyContainer, class MappedContainer>
+    size_t erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
+                    Predicate pred);
+
   // \ref{flatmultimap}, class template \tcode{flat_multimap}
   template<class Key, class T, class Compare = less<Key>,
            class KeyContainer = vector<Key>, class MappedContainer = vector<T>>
@@ -164,6 +169,11 @@ namespace std {
 
   struct sorted_equivalent_t { explicit sorted_equivalent_t() = default; };
   inline constexpr sorted_equivalent_t sorted_equivalent {};
+
+  template<class Key, class T, class Compare>,
+           class KeyContainer, class MappedContainer>
+    size_t erase_if(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& c,
+                    Predicate pred);
 
   template <class Key, class T, class Compare,
             class KeyContainer,
@@ -985,34 +995,45 @@ c.values = std::move(mapped_cont);
 \end{codeblock}
 \end{itemdescr}
 
-%% TODO: Inefficient!
-%%\rSec3[flatmap.erasure]{Erasure}
-%%
-%%\indexlibrarymember{erase_if}{map}%
-%%\begin{itemdecl}
-%%template <class Key, class T, class Compare,
-%%          class KeyContainer, class MappedContainer>
-%%  typename flat_map<Key, T, Compare, KeyContainer, MappedContainer>::size_type
-%%    erase_if(map<Key, T, Compare, KeyContainer, MappedContainer>& c,
-%%             Predicate pred);
-%%\end{itemdecl}
-%%
-%%\begin{itemdescr}
-%%\pnum
-%%\effects
-%%Equivalent to:
-%%\begin{codeblock}
-%%auto original_size = c.size();
-%%for (auto i = c.begin(), last = c.end(); i != last; ) {
-%%  if (pred(*i)) {
-%%    i = c.erase(i);
-%%  } else {
-%%    ++i;
-%%  }
-%%}
-%%return original_size - c.size();
-%%\end{codeblock}
-%%\end{itemdescr}
+\rSec3[flatmap.erasure]{Erasure}
+
+\indexlibrarymember{erase_if}{flatmap}%
+\begin{itemdecl}
+template <class Key, class T, class Compare,
+          class KeyContainer, class MappedContainer>
+  typename flat_map<Key, T, Compare, KeyContainer, MappedContainer>::size_type
+    erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
+             Predicate pred);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
+\begin{codeblock}
+auto original_size = c.size();
+
+auto [keys, values] = std::move(c).extract();
+
+auto keys_out_it = std::begin(keys);
+auto values_out_it = std::begin(keys);
+auto values_it = std::begin(keys);
+for (auto & key : keys) {
+  auto & value = *values_it;
+  if (!pred(pair<const Key&, const T&>(key, value))) {
+    *keys_out_it++ = std::move(key);
+    *values_out_it++ = std::move(value);
+  }
+  ++values_it;
+}
+
+keys.erase(keys_out_it, keys.end());
+values.erase(values_out_it, values.end());
+
+c.replace(std::move(keys), std::move(values));
+return original_size - c.size();
+\end{codeblock}
+\end{itemdescr}
 
 \rSec2[flatmultimap]{Class template \tcode{flat_multimap}}
 
@@ -1484,6 +1505,46 @@ uses_allocator_v<mapped_container_type, Allocator>} is \tcode{true}.
 \effects Equivalent to the corresponding non-allocator constructors except that \tcode{c.keys}
 and \tcode{c.values} are constructed with uses-allocator construction
 ([allocator.uses.construction]).
+\end{itemdescr}
+
+\rSec3[flatmultimap.erasure]{Erasure}
+
+\indexlibrarymember{erase_if}{flatmultimap}%
+\begin{itemdecl}
+template <class Key, class T, class Compare,
+          class KeyContainer, class MappedContainer>
+  typename flat_map<Key, T, Compare, KeyContainer, MappedContainer>::size_type
+    erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
+             Predicate pred);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
+\begin{codeblock}
+auto original_size = c.size();
+
+auto [keys, values] = std::move(c).extract();
+
+auto keys_out_it = std::begin(keys);
+auto values_out_it = std::begin(keys);
+auto values_it = std::begin(keys);
+for (auto & key : keys) {
+  auto & value = *values_it;
+  if (!pred(pair<const Key&, const T&>(key, value))) {
+    *keys_out_it++ = std::move(key);
+    *values_out_it++ = std::move(value);
+  }
+  ++values_it;
+}
+
+keys.erase(keys_out_it, keys.end());
+values.erase(values_out_it, values.end());
+
+c.replace(std::move(keys), std::move(values));
+return original_size - c.size();
+\end{codeblock}
 \end{itemdescr}
 \end{addedblock}
 
