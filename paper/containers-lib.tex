@@ -167,8 +167,11 @@ not a sequence container.\end{note}
 
 \pnum
 The program is ill-formed if \tcode{Key} is not the same type
-as \tcode{KeyContainer::value_type}
-or \tcode{is_nothrow_swappable_v<KeyContainer>} is \tcode{false}.
+as \tcode{KeyContainer::value_type}.
+
+\pnum
+The behavior of \tcode{flat_set} is undefined if \tcode{KeyContainer::swap()}
+throws.
 
 \pnum
 The effect of calling a constructor that takes a \tcode{sorted_unique_t}
@@ -705,8 +708,11 @@ is not a sequence container.\end{note}
 
 \pnum
 The program is ill-formed if \tcode{Key} is not the same type
-as \tcode{KeyContainer::value_type}
-or \tcode{is_nothrow_swappable_v<KeyContainer>} is \tcode{false}.
+as \tcode{KeyContainer::value_type}.
+
+\pnum
+The behavior of \tcode{flat_multiset} is undefined
+if \tcode{KeyContainer::swap()} throws.
 
 \pnum
 The effect of calling a constructor that takes a \tcode{sorted_equivalent_t}
