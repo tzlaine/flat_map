@@ -543,7 +543,7 @@ the insertion took place, and the iterator component of the pair points to the
 element equivalent to \tcode{t}.
 \end{itemdescr}
 
-\indexlibrarymember{flatset}{insert}%
+\indexlibrarymember{insert}{flatset}%
 \begin{itemdecl}
 template <class InputIterator>
   void insert(InputIterator first, InputIterator last);
@@ -567,7 +567,7 @@ $N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
 is \tcode{distance(first, last)}.
 \end{itemdescr}
 
-\indexlibrarymember{flatset}{insert}%
+\indexlibrarymember{insert}{flatset}%
 \begin{itemdecl}
 template <class InputIterator>
   void insert(sorted_unique_t, InputIterator first, InputIterator last);
@@ -582,7 +582,7 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 \pnum \complexity Linear.
 \end{itemdescr}
 
-\indexlibrarymember{flatset}{swap}%
+\indexlibrarymember{swap}{flatset}%
 \begin{itemdecl}
 void swap(flat_set& fs) noexcept(is_nothrow_swappable_v<key_compare>);
 \end{itemdecl}
@@ -595,7 +595,7 @@ ranges::swap(c, fs.c);
 \end{codeblock}
 \end{itemdescr}
 
-\indexlibrarymember{flatset}{extract}%
+\indexlibrarymember{extract}{flatset}%
 \begin{itemdecl}
 container_type extract() &&;
 \end{itemdecl}
@@ -606,7 +606,7 @@ container_type extract() &&;
 \pnum \ensures \tcode{*this} is emptied, even if the function exits via exception.
 \end{itemdescr}
 
-\indexlibrarymember{flatset}{replace}%
+\indexlibrarymember{replace}{flatset}%
 \begin{itemdecl}
 void replace(container_type&& cont);
 \end{itemdecl}
@@ -1062,7 +1062,7 @@ c.emplace(it, std::move(t));
 An iterator that points to the inserted element.
 \end{itemdescr}
 
-\indexlibrarymember{flatmultset}{insert}%
+\indexlibrarymember{insert}{flatmultset}%
 \begin{itemdecl}
 template <class InputIterator>
   void insert(InputIterator first, InputIterator last);
@@ -1085,7 +1085,7 @@ $N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
 is \tcode{distance(first, last)}.
 \end{itemdescr}
 
-\indexlibrarymember{flatmultiset}{insert}%
+\indexlibrarymember{insert}{flatmultiset}%
 \begin{itemdecl}
 template <class InputIterator>
   void insert(sorted_unique_t, InputIterator first, InputIterator last);
@@ -1100,7 +1100,7 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 \pnum \complexity Linear.
 \end{itemdescr}
 
-\indexlibrarymember{flatmultiset}{swap}%
+\indexlibrarymember{swap}{flatmultiset}%
 \begin{itemdecl}
 void swap(flat_multiset& fms) noexcept(is_nothrow_swappable_v<key_compare>);
 \end{itemdecl}
@@ -1113,7 +1113,7 @@ ranges::swap(c, fms.c);
 \end{codeblock}
 \end{itemdescr}
 
-\indexlibrarymember{flatmultiset}{extract}%
+\indexlibrarymember{extract}{flatmultiset}%
 \begin{itemdecl}
 container_type extract() &&;
 \end{itemdecl}
@@ -1124,7 +1124,7 @@ container_type extract() &&;
 \pnum \ensures \tcode{*this} is emptied, even if the function exits via exception.
 \end{itemdescr}
 
-\indexlibrarymember{flatmultiset}{replace}%
+\indexlibrarymember{replace}{flatmultiset}%
 \begin{itemdecl}
 void replace(container_type&& cont);
 \end{itemdecl}
