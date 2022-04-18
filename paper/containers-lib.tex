@@ -1,4 +1,4 @@
-%!TEX root = std.tex
+!TEX root = std.tex
 \setcounter{chapter}{15}
 \setcounter{section}{5}
 \setcounter{subsection}{1}
@@ -1248,5 +1248,73 @@ Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
   auto [erase_first, erase_last] = ranges::remove_if(c, pred);
   return c.erase(erase_first, erase_last);
 \end{codeblock}
+\end{itemdescr}
+\end{addedblock}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+Add to section [container.adaptors.format]:
+
+\rSec2[container.adaptors.format]{Formatting}
+\begin{addedblock}
+\pnum
+For each of \tcode{flat_set} and \tcode{flat_multiset}, the library provides
+the following formatter specialization where \placeholder{set-type} is the
+name of the template:
+
+\begin{codeblock}
+namespace std {
+  template <class charT, formattable<charT> Key, class... U>
+  struct formatter<@\placeholder{set-type}@<Key, U...>, charT>
+  {
+  private:
+    range_formatter<Key, charT> underlying_; // \expos
+
+  public:
+    formatter();
+
+    template <class ParseContext>
+      constexpr typename ParseContext::iterator
+        parse(ParseContext& ctx);
+
+    template <class FormatContext>
+      typename FormatContext::iterator
+        format(const @\placeholder{set-type}@<Key, U...>& r, FormatContext& ctx) const;
+  };
+}
+\end{codeblock}
+
+\begin{itemdecl}
+formatter();
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+this->set_brackets(@\placeholder{STATICALLY-WIDEN}@<charT>("{"), @\placeholder{STATICALLY-WIDEN}@<charT>("}"));
+\end{codeblock}
+\end{itemdescr}
+
+\begin{itemdecl}
+template <class ParseContext>
+  constexpr typename ParseContext::iterator
+    parse(ParseContext& ctx);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to: \tcode{return underlying_.parse(ctx);}
+\end{itemdescr}
+
+\begin{itemdecl}
+template <class FormatContext>
+  typename FormatContext::iterator
+    format(const @\placeholder{set-type}@<Key, U...>& r, FormatContext& ctx) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to: \tcode{return underlying_.format(r, ctx);}
 \end{itemdescr}
 \end{addedblock}
