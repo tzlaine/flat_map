@@ -320,10 +320,12 @@ namespace std {
       { return emplace(x); }
     pair<iterator, bool> insert(value_type&& x)
       { return emplace(std::move(x)); }
+    template<class K> pair<iterator, bool> insert(K&& x);
     iterator insert(const_iterator position, const value_type& x)
       { return emplace_hint(position, x); }
     iterator insert(const_iterator position, value_type&& x)
       { return emplace_hint(position, std::move(x)); }
+    template<class K> iterator insert(const_iterator hint, K&& x);
 
     template <class InputIterator>
       void insert(InputIterator first, InputIterator last);
@@ -523,6 +525,35 @@ c.emplace(it, std::move(t));
 The \tcode{bool} component of the returned pair is \tcode{true} if and only if
 the insertion took place, and the iterator component of the pair points to the
 element equivalent to \tcode{t}.
+\end{itemdescr}
+
+\indexlibrarymember{insert}{flatset}%
+\begin{itemdecl}
+template<class K> pair<iterator, bool> insert(K&& x);
+template<class K> iterator insert(const_iterator hint, K&& x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid and denotes
+a type.  \tcode{is_constructible_v<value_type, K\&\&>} is \tcode{true}.
+
+\pnum
+\expects The conversion from \tcode{k} into \tcode{value_type} constructs an
+object \tcode{u}, for which \tcode{find(k)} == \tcode{find(u)} is true.
+
+\pnum
+\effects
+If the set already contains an element equivalent to \tcode{k}, \tcode{*this}
+and \tcode{args...} are unchanged.  Otherwise, inserts a new element as if
+by: \tcode{return emplace(std::forward<K>(k));}.
+
+\pnum
+\returns
+The \tcode{bool} component of the returned pair is \tcode{true} if and only if
+the insertion took place, and the iterator component of the pair points to the
+element equivalent to \tcode{k}.
 \end{itemdescr}
 
 \indexlibrarymember{insert}{flatset}%
