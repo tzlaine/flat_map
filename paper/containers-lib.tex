@@ -613,7 +613,7 @@ template <class... Args> pair<iterator, bool> emplace(Args&&... args);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{key_type(std::forward<Args>(args)...)} is well-formed.
+\pnum \constraints \tcode{is_constructible_v<key_type, Args\&\&...>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1137,7 +1137,7 @@ template <class... Args> iterator emplace(Args&&... args);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{key_type(std::forward<Args>(args)...)} is well-formed.
+\pnum \constraints \tcode{is_constructible_v<key_type, Args\&\&...>} is \tcode{true}.
 
 \pnum
 \effects
