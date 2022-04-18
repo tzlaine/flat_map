@@ -14,25 +14,21 @@ container requirements,
 and components for
 sequence containers and
 associative containers,
-as summarized in Table 76.
+as summarized in
+\tref{containers.summary}.
 
-\begin{libsumtab}{Containers library summary}{tab:containers.lib.summary}
-21.2 & Requirements                     &                           \\ \rowsep
-21.3              & Sequence containers              & \tcode{<array>}         \\
-                             &                                  & \tcode{<deque>}         \\
-                             &                                  & \tcode{<forward_list>}  \\
-                             &                                  & \tcode{<list>}          \\
-                             &                                  & \tcode{<vector>}        \\ \rowsep
-21.4            & Associative containers           & \tcode{<map>}           \\
-                             &                                  & \tcode{<set>}           \\ \rowsep
-21.5                  & Unordered associative containers & \tcode{<unordered_map>} \\
-                             &                                  & \tcode{<unordered_set>} \\ \rowsep
-21.6     & Container adaptors               & \tcode{<queue>}         \\
-                             &                                  & \tcode{<stack>}         \\
-                             &                                  & \tcode{<flat_map>}      \\
-                             &                                  & \added{\tcode{<flat_set>}}      \\
- \rowsep
-21.7                  & Views                            & \tcode{<span>}          \\ \rowsep
+\begin{libsumtab}{Containers library summary}{containers.summary}
+\ref{container.requirements} & Requirements                     &                           \\ \rowsep
+\ref{sequences}              & Sequence containers              &
+  \tcode{<array>}, \tcode{<deque>}, \tcode{<forward_list>},
+  \tcode{<list>}, \tcode{<vector>} \\ \rowsep
+\ref{associative}            & Associative containers           &
+  \tcode{<map>}, \tcode{<set>}     \\ \rowsep
+\ref{unord}                  & Unordered associative containers &
+  \tcode{<unordered_map>}, \tcode{<unordered_set>}    \\ \rowsep
+\ref{container.adaptors}     & Container adaptors               &
+  \tcode{<queue>}, \tcode{<stack>}, \tcode{<flat_map>}\added{, \tcode{<flat_set>}}     \\ \rowsep
+\ref{views}                  & Views                            & \tcode{<span>} \\
 \end{libsumtab}
 
 
