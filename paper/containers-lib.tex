@@ -376,7 +376,8 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_map(InputIterator first, InputIterator last,
                const key_compare& comp, const Allocator& a);
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_map(from_range_t, R&& range, const key_compare& comp = key_compare(),
                const Allocator& a = Allocator())
         : flat_map(comp, a)
@@ -384,7 +385,8 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_map(InputIterator first, InputIterator last,
                const Allocator& a);
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_map(from_range_t, R&& range, const Allocator& a)
         : flat_map(std::forward<R>(range), a) { }
 
@@ -1357,7 +1359,8 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_multimap(InputIterator first, InputIterator last,
                     const key_compare& comp, const Allocator& a);
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_multimap(from_range_t, R&& range, const key_compare& comp = key_compare(),
                     const Allocator& a = Allocator())
         : flat_map(comp, a)
@@ -1365,7 +1368,8 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_multimap(InputIterator first, InputIterator last,
                     const Allocator& a);
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_mutlimap(from_range_t, R&& range, const Allocator& a)
         : flat_map(std::forward<R>(range), a) { }
 
