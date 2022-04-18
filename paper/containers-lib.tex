@@ -479,10 +479,6 @@ namespace std {
     key_compare compare; // \expos
   };
 
-  template<class InputIterator>
-    using @\placeholder{iter-value-type}@ = remove_const_t<
-      typename iterator_traits<InputIterator>::value_type>;     // \expos
-
   template <class InputIterator, class Compare = less<@\placeholder{iter-value-type}@<InputIterator>>>
     flat_set(InputIterator, InputIterator, Compare = Compare())
       -> flat_set<@\placeholder{iter-value-type}@<InputIterator>, Compare>;
@@ -1003,10 +999,6 @@ class flat_multiset {
     container_type c;    // \expos
     key_compare compare; // \expos
   };
-
-  template<class InputIterator>
-    using @\placeholder{iter-value-type}@ = remove_const_t<
-      typename iterator_traits<InputIterator>::value_type>;     // \expos
 
   template <class InputIterator, class Compare = less<@\placeholder{iter-value-type}@<InputIterator>>>
     flat_multiset(InputIterator, InputIterator, Compare = Compare())
