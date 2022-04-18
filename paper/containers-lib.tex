@@ -246,12 +246,14 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_set(InputIterator first, InputIterator last,
                const key_compare& comp, const Allocator&);
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
        flat_set(from_range_t, R&& range, const key_compare& comp = key_compare(),
                 const Allocator& a = Allocator());
     template <class InputIterator, class Allocator>
       flat_set(InputIterator first, InputIterator last, const Allocator& a);
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_set(from_range_t, R&& range, const Allocator& a);
 
     template <class InputIterator>
@@ -485,8 +487,6 @@ template <class InputIterator, class Allocator>
            const key_compare& comp, const Allocator&);
 template <class InputIterator, class Allocator>
   flat_set(InputIterator first, InputIterator last, const Allocator& a);
-template<container-compatible-range<value_type> R>
-  flat_set(from_range_t, R&& range, const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_set(sorted_unique_t, InputIterator first, InputIterator last,
            const key_compare& comp, const Allocator&);
@@ -771,10 +771,12 @@ class flat_multiset {
       flat_multiset(InputIterator first, InputIterator last,
                     const Allocator& a);
 
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_multiset(from_range_t, R&& range, const key_compare& comp = key_compare(),
               const Allocator& a = Allocator());
-    template<@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R,
+             class Allocator>
       flat_multiset(from_range_t, R&& range, const Allocator& a);
 
 
@@ -967,7 +969,7 @@ otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
 \begin{itemdecl}
 template<container-compatible-range<value_type> R>
 flat_multiset(from_range_t, R&& range, const key_compare& comp = key_compare(),
-        const Allocator& a = Allocator());
+              const Allocator& a = Allocator());
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -1008,8 +1010,6 @@ template <class InputIterator, class Allocator>
 template <class InputIterator, class Allocator>
   flat_multiset(InputIterator first, InputIterator last,
                 const Allocator& a);
-template<container-compatible-range<value_type> R>
-  flat_multiset(from_range_t, R&& range, const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                 const key_compare& comp, const Allocator&);
