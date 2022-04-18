@@ -332,8 +332,13 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_set(InputIterator first, InputIterator last,
                const key_compare& comp, const Allocator&);
+    template<@\placeholder{container-compatible-range}@<value_type> R>
+       flat_set(from_range_t, R&& range, const key_compare& comp = key_compare(),
+                const Allocator& a = Allocator());
     template <class InputIterator, class Allocator>
       flat_set(InputIterator first, InputIterator last, const Allocator& a);
+    template<@\placeholder{container-compatible-range}@<value_type> R>
+      flat_set(from_range_t, R&& range, const Allocator& a);
 
     template <class InputIterator>
       flat_set(sorted_unique_t, InputIterator first, InputIterator last,
@@ -406,6 +411,10 @@ namespace std {
       void insert(InputIterator first, InputIterator last);
     template <class InputIterator>
       void insert(sorted_unique_t, InputIterator first, InputIterator last);
+
+    template<container-compatible-range<value_type> R>
+      void insert_range(R&& range)
+        { insert(ranges::begin(range), ranges::end(range)); };
 
     void insert(initializer_list<key_type> il)
       { insert(il.begin(), il.end()); }
@@ -482,6 +491,15 @@ namespace std {
     flat_set(sorted_unique_t, InputIterator, InputIterator, Compare = Compare())
       -> flat_set<@\placeholder{iter-value-type}@<InputIterator>, Compare>;
 
+  template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
+          class Allocator = allocator<ranges::range_value_t<R>>>
+    flat_set(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+      -> flat_set<ranges::range_value_t<R>, Compare, Allocator>;
+
+   template<ranges::input_range R, class Allocator>
+     flat_set(from_range_t, R&&, Allocator)
+       -> flat_set<ranges::range_value_t<R>, less<ranges::range_value_t<R>>, Allocator>;
+
   template<class Key, class Compare = less<Key>>
     flat_set(initializer_list<Key>, Compare = Compare())
       -> flat_set<Key, Compare>;
@@ -505,6 +523,25 @@ flat_set(container_type cont);
 \tcode{compare}, sorts the range \range{begin()}{end()} with respect to
 \tcode{compare}, and finally erases the range \range{ranges::unique(*this,
 compare)}{end()};
+
+\pnum
+\complexity
+Linear in $N$ if \tcode{cont} is sorted with respect to \tcode{compare} and
+otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatset}!constructor}%
+\begin{itemdecl}
+template<container-compatible-range<value_type> R>
+flat_set(from_range_t, R&& range, const key_compare& comp = key_compare(),
+        const Allocator& a = Allocator());
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Constructs an empty \tcode{c}, inserts elements from \tcode{R}, value-initializes
+\tcode{compare}, sorts the range \range{begin()}{end()} with respect to
+\tcode{compare}.
 
 \pnum
 \complexity
@@ -538,6 +575,8 @@ template <class InputIterator, class Allocator>
            const key_compare& comp, const Allocator&);
 template <class InputIterator, class Allocator>
   flat_set(InputIterator first, InputIterator last, const Allocator& a);
+template<container-compatible-range<value_type> R>
+  flat_set(from_range_t, R&& range, const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_set(sorted_unique_t, InputIterator first, InputIterator last,
            const key_compare& comp, const Allocator&);
@@ -675,7 +714,7 @@ c = std::move(cont);
 
 \rSec3[flatset.erasure]{Erasure}
 
-\indexlibrarymember{erase_if}{flatmap}%
+\indexlibrarymember{erase_if}{flatset}%
 \begin{itemdecl}
 template<class Key, class Compare, class Container>
   size_t erase_if(flat_set<Key, Compare, Container>& c,
@@ -819,6 +858,13 @@ class flat_multiset {
       flat_multiset(InputIterator first, InputIterator last,
                     const Allocator& a);
 
+    template<@\placeholder{container-compatible-range}@<value_type> R>
+      flat_multiset(from_range_t, R&& range, const key_compare& comp = key_compare(),
+              const Allocator& a = Allocator());
+    template<@\placeholder{container-compatible-range}@<value_type> R>
+      flat_multiset(from_range_t, R&& range, const Allocator& a);
+
+
     template <class InputIterator>
       flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare())
@@ -890,6 +936,10 @@ class flat_multiset {
       void insert(InputIterator first, InputIterator last);
     template <class InputIterator>
       void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
+
+    template<container-compatible-range<value_type> R>
+      void insert_range(R&& range)
+        { insert(ranges::begin(range), ranges::end(range)); };
 
     void insert(initializer_list<key_type> il)
       { insert(il.begin(), il.end()); }
@@ -966,6 +1016,15 @@ class flat_multiset {
     flat_multiset(sorted_equivalent_t, InputIterator, InputIterator, Compare = Compare())
       -> flat_multiset<@\placeholder{iter-value-type}@<InputIterator>, @\placeholder{iter-value-type}@<InputIterator>, Compare>;
 
+  template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
+          class Allocator = allocator<ranges::range_value_t<R>>>
+    flat_multiset(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+      -> flat_multiset<ranges::range_value_t<R>, Compare, Allocator>;
+
+   template<ranges::input_range R, class Allocator>
+     flat_multiset(from_range_t, R&&, Allocator)
+       -> flat_multiset<ranges::range_value_t<R>, less<ranges::range_value_t<R>>, Allocator>;
+
   template<class Key, class Compare = less<Key>>
     flat_multiset(initializer_list<Key>, Compare = Compare())
       -> flat_multiset<Key, Compare>;
@@ -987,6 +1046,25 @@ flat_multiset(container_type cont);
 \pnum
 \effects Initializes \tcode{c} with \tcode{std::move(cont)}, value-initializes
 \tcode{compare}, and sorts the range \range{begin()}{end()} with respect to
+\tcode{compare}.
+
+\pnum
+\complexity
+Linear in $N$ if \tcode{cont} is sorted with respect to \tcode{compare} and
+otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultiset}!constructor}%
+\begin{itemdecl}
+template<container-compatible-range<value_type> R>
+flat_multiset(from_range_t, R&& range, const key_compare& comp = key_compare(),
+        const Allocator& a = Allocator());
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Constructs an empty \tcode{c}, inserts elements from \tcode{R}, value-initializes
+\tcode{compare}, sorts the range \range{begin()}{end()} with respect to
 \tcode{compare}.
 
 \pnum
@@ -1021,6 +1099,8 @@ template <class InputIterator, class Allocator>
 template <class InputIterator, class Allocator>
   flat_multiset(InputIterator first, InputIterator last,
                 const Allocator& a);
+template<container-compatible-range<value_type> R>
+  flat_multiset(from_range_t, R&& range, const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                 const key_compare& comp, const Allocator&);
@@ -1153,7 +1233,7 @@ c = std::move(cont);
 
 \rSec3[flatmultiset.erasure]{Erasure}
 
-\indexlibrarymember{erase_if}{flatmap}%
+\indexlibrarymember{erase_if}{flatmultiset}%
 \begin{itemdecl}
 template<class Key, class Compare, class Container>
   size_t erase_if(flat_multiset<Key, Compare, Container>& c,
