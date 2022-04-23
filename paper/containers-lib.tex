@@ -81,6 +81,28 @@ The headers \tcode{<queue>}\changed{ and}{,} \tcode{<stack>}\added{, and
 \tcode{flat_map}, respectively}.
 
 \pnum
+\changed{The container adaptors each
+take a \tcode{Container} template parameter, and each constructor takes
+a \tcode{Container} reference argument. This container is copied into
+the \tcode{Container} member of each adaptor. If the container takes an
+allocator, then a compatible allocator may be passed in to the adaptor's
+constructor. Otherwise, normal copy or move construction is used for the
+container argument. The first template parameter \tcode{T} of the container
+adaptors shall denote the same type as \tcode{Container::value_type}.}
+{Each container adaptor takes one or more template parameters
+named \tcode{Container}, \tcode{KeyContainer}, or \tcode{MappedContainer} that
+denote the types of containers that the container adaptor adapts.  Each
+container adaptor has at least one constructor that takes a reference argument
+to one or more such template parameters.  For each constructor reference
+argument to a container \tcode{C}, the constructor copies the container into
+the container adaptor.  If \tcode{C} takes an allocator, then a compatible
+allocator may be passed in to the container adaptor's constructor. Otherwise,
+normal copy or move construction is used for the container argument.  For the
+container adaptors that take a single template parameter \tcode{Container},
+the first template parameter \tcode{T} of the container adaptor shall denote
+the same type as \tcode{Container::value_type}.}
+
+\pnum
 The container adaptors each take a \tcode{Container} template parameter\added{
 or \tcode{KeyContainer} and \tcode{MappedContainer} template parameters}, and
 each constructor takes a \tcode{Container} reference argument\added{
