@@ -581,7 +581,7 @@ namespace std {
       operator<=>(const flat_map& x, const flat_map& y);
 
     friend void swap(flat_map& x, flat_map& y) noexcept(noexcept(x.swap(y))
-      { return x.swap(y); }
+      { x.swap(y); }
 
   private:
     containers c;        // \expos
@@ -1530,7 +1530,7 @@ namespace std {
       operator<=>(const flat_multimap& x, const flat_multimap& y);
 
     friend void swap(flat_multimap& x, flat_multimap& y) noexcept(noexcept(x.swap(y))
-      { return x.swap(y); }
+      { x.swap(y); }
 
   private:
     containers c;        // \expos
