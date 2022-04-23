@@ -878,7 +878,7 @@ template <class... Args> pair<iterator, bool> emplace(Args&&... args);
 
 \pnum
 \effects
-First, initializes a \tcode{pair<key_type, mapped_type>} object \tcode{t}
+First, initializes an object \tcode{t} of type \tcode{pair<key_type, mapped_type>}
 with \tcode{std::forward<Args>(args)...};  if the map already
 contains an element whose key is equivalent to \tcode{t.first}, \tcode{*this}
 is unchanged.  Otherwise, equivalent to:
