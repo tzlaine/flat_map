@@ -131,8 +131,8 @@ a type that does not qualify as an input iterator is deduced for that parameter.
 \begin{addedblock}
 \pnum
 For container adaptors that have them, the \tcode{insert}, \tcode{emplace},
-and \tcode{erase} members affect the validity of iterators and references to
-the adaptor's container(s) in the same way that the containers'
+and \tcode{erase} members affect the validity of iterators, references, and
+pointers to the adaptor's container(s) in the same way that the containers'
 respective \tcode{insert}, \tcode{emplace}, and \tcode{erase} members do.
 
 [\textit{Example:} A call to \tcode{flat_map<Key, T>::insert} can invalidate all iterators to
