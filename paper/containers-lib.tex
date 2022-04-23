@@ -660,6 +660,12 @@ namespace std {
   template<class Key, class T, class Compare = less<Key>>
   flat_map(sorted_unique_t, initializer_list<pair<Key, T>>, Compare = Compare())
       -> flat_map<Key, T, Compare>;
+
+  template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+            class Allocator>
+    struct uses_allocator<flat_map<Key, T, Compare, KeyContainer, MappedContainer>,
+                          Allocator>
+      : bool_constant<uses_allocator_v<KeyContainer> && uses_allocator_v<MappedContainer>> {}
 }
 \end{codeblock}
 
@@ -1600,6 +1606,12 @@ namespace std {
   flat_multimap(sorted_equivalent_t, initializer_list<pair<Key, T>>,
                 Compare = Compare())
       -> flat_multimap<Key, T, Compare>;
+
+  template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+            class Allocator>
+    struct uses_allocator<flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>,
+                          Allocator>
+      : bool_constant<uses_allocator_v<KeyContainer> && uses_allocator_v<MappedContainer>> {}
 }
 \end{codeblock}
 
