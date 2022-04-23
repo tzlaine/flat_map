@@ -885,8 +885,8 @@ is unchanged.  Otherwise, equivalent to:
 \begin{codeblock}
 auto key_it = ranges::upper_bound(c.keys, t.first, compare);
 auto value_it = c.values.begin() + distance(c.keys.begin(), key_it);
-c.keys.emplace(key_it, std::move(t.first));
-c.values.emplace(value_it, std::move(t.second));
+c.keys.insert(key_it, std::move(t.first));
+c.values.insert(value_it, std::move(t.second));
 \end{codeblock}
 
 \pnum
