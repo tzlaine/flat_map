@@ -679,8 +679,8 @@ as if by:
 \begin{codeblock}
 auto zv = ranges::zip_view(c.keys, c.values);
 auto it = ranges::unique(zv, key_equiv(compare));
-c.keys.erase(c.keys.begin() + (zv.end() - it), c.keys.end());
-c.values.erase(c.values.begin() + (zv.end() - it), c.values.end());
+c.keys.erase(c.keys.begin() + distance(it, zv.end()), c.keys.end());
+c.values.erase(c.values.begin() + distance(it, zv.end()), c.values.end());
 \end{codeblock}
 
 \pnum
@@ -933,8 +933,8 @@ the duplicate elements as if by:
 \begin{codeblock}
 auto zv = ranges::zip_view(c.keys, c.values);
 auto it = ranges::unique(zv, key_equiv(compare));
-c.keys.erase(c.keys.begin() + (zv.end() - it), c.keys.end());
-c.values.erase(c.values.begin() + (zv.end() - it), c.values.end());
+c.keys.erase(c.keys.begin() + distance(it, zv.end()), c.keys.end());
+c.values.erase(c.values.begin() + distance(it, zv.end()), c.values.end());
 \end{codeblock}
 
 \pnum
@@ -963,8 +963,8 @@ erases the duplicate elements as if by:
 \begin{codeblock}
 auto zv = ranges::zip_view(c.keys, c.values);
 auto it = ranges::unique(zv, key_equiv(compare));
-c.keys.erase(c.keys.begin() + (zv.end() - it), c.keys.end());
-c.values.erase(c.values.begin() + (zv.end() - it), c.values.end());
+c.keys.erase(c.keys.begin() + distance(it, zv.end()), c.keys.end());
+c.values.erase(c.values.begin() + distance(it, zv.end()), c.values.end());
 \end{codeblock}
 
 \pnum
