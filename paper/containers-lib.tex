@@ -1022,11 +1022,13 @@ template<class K, class... Args>
 
 \begin{itemdescr}
 \pnum
-\constraints The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid
-and denotes a type.  \tcode{is_constructible_v<key_type, K\&\&>} is
-\tcode{true}.  \tcode{is_constructible_v<mapped_type, Args\&\&...>} is
-\tcode{true}.  For the first overload, \tcode{is_convertible_v<K\&\&, const_iterator>}
-and \tcode{is_convertible_v<K\&\&, iterator>} are both \tcode{false}.
+\constraints
+\begin{itemize}
+\item The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
+\item \tcode{is_constructible_v<key_type, K\&\&>} is \tcode{true}.
+\item \tcode{is_constructible_v<mapped_type, Args\&\&...>} is \tcode{true}.
+\item For the first overload, \tcode{is_convertible_v<K\&\&, const_iterator>} and \tcode{is_convertible_v<K\&\&, iterator>} are both \tcode{false}.
+\end{itemize}
 
 \pnum
 \expects The conversion from \tcode{k} into \tcode{key_type} constructs an
@@ -1100,11 +1102,13 @@ template<class K, class M>
 
 \begin{itemdescr}
 \pnum
-\constraints The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid
-and denotes a type.  \tcode{is_constructible_v<key_type, K\&\&>} is
-\tcode{true}.  \tcode{is_assignable_v<mapped_type\&, M>}
-is \tcode{true}, and \tcode{is_constructible_v<mapped_type, M\&\&>}
-is \tcode{true}.
+\constraints
+\begin{itemize}
+\item The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
+\item \tcode{is_constructible_v<key_type, K\&\&>} is \tcode{true}.
+\item \tcode{is_assignable_v<mapped_type\&, M>} is \tcode{true}.
+\item \tcode{is_constructible_v<mapped_type, M\&\&>} is \tcode{true}.
+\end{itemize}
 
 \pnum
 \expects The conversion from \tcode{k} into \tcode{key_type} constructs an
