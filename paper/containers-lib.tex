@@ -298,10 +298,6 @@ as \tcode{KeyContainer::value_type} or
 \tcode{T} is not the same type as \tcode{MappedContainer::value_type}.
 
 \pnum
-The behavior of \tcode{flat_map} is undefined if either
-of \tcode{KeyContainer::swap} or \tcode{MappedContainer::swap} throws.
-
-\pnum
 The effect of calling a constructor that takes both \tcode{key_container_type}
 and \tcode{mapped_container_type} arguments with containers of different sizes is
 undefined.
@@ -536,7 +532,7 @@ namespace std {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_map& fm) noexcept(is_nothrow_swappable_v<key_compare>);
+    void swap(flat_map& fm) noexcept;
     void clear() noexcept;
 
     // observers
@@ -580,7 +576,7 @@ namespace std {
     friend @\placeholder{synth-three-way-result}@<value_type>
       operator<=>(const flat_map& x, const flat_map& y);
 
-    friend void swap(flat_map& x, flat_map& y) noexcept(noexcept(x.swap(y))
+    friend void swap(flat_map& x, flat_map& y) noexcept
       { x.swap(y); }
 
   private:
@@ -1133,7 +1129,7 @@ The same as \tcode{emplace} and \tcode{emplace_hint}, respectively.
 
 \indexlibrarymember{swap}{flatmap}%
 \begin{itemdecl}
-void swap(flat_map& fm) noexcept(is_nothrow_swappable_v<key_compare>);
+void swap(flat_map& fm) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -1281,10 +1277,6 @@ used.  \begin{note}\tcode{vector<bool>} is not a sequence container.\end{note}
 The program is ill-formed if \tcode{Key} is not the same type
 as \tcode{KeyContainer::value_type} or
 \tcode{T} is not the same type as \tcode{MappedContainer::value_type}.
-
-\pnum
-The behavior of \tcode{flat_multimap} is undefined if either
-of \tcode{KeyContainer::swap} or \tcode{MappedContainer::swap} throws.
 
 \pnum
 The effect of calling a constructor that takes both \tcode{key_container_type}
@@ -1485,7 +1477,7 @@ namespace std {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_multimap& fm) noexcept(is_nothrow_swappable_v<key_compare>);
+    void swap(flat_multimap& fm) noexcept;
     void clear() noexcept;
 
     // observers
@@ -1529,7 +1521,7 @@ namespace std {
     friend @\placeholder{synth-three-way-result}@<value_type>
       operator<=>(const flat_multimap& x, const flat_multimap& y);
 
-    friend void swap(flat_multimap& x, flat_multimap& y) noexcept(noexcept(x.swap(y))
+    friend void swap(flat_multimap& x, flat_multimap& y) noexcept
       { x.swap(y); }
 
   private:
