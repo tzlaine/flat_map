@@ -813,7 +813,7 @@ template<class K> mapped_type& operator[](K&& x);
 \begin{itemdescr}
 \pnum
 \constraints
-\grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
+The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
 
 \pnum
 \effects
@@ -848,7 +848,7 @@ template<class K> const mapped_type& at(const K& x) const;
 
 \begin{itemdescr}
 \pnum
-\constraints \grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
+\constraints The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
 
 \pnum
 \expects The expression \tcode{find(x)} is well-formed and has well-defined behavior.
@@ -1020,7 +1020,7 @@ template<class K, class... Args>
 
 \begin{itemdescr}
 \pnum
-\constraints \grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid
+\constraints The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid
 and denotes a type.  \tcode{is_constructible_v<key_type, K\&\&>} is
 \tcode{true}.  \tcode{is_constructible_v<mapped_type, Args\&\&...>} is
 \tcode{true}.  For the first overload, \tcode{is_convertible_v<K\&\&, const_iterator>}
@@ -1098,7 +1098,7 @@ template<class K, class M>
 
 \begin{itemdescr}
 \pnum
-\constraints \grammarterm{Qualified-id} \tcode{Compare::is_transparent} is valid
+\constraints The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid
 and denotes a type.  \tcode{is_constructible_v<key_type, K\&\&>} is
 \tcode{true}.  \tcode{is_assignable_v<mapped_type\&, M>}
 is \tcode{true}, and \tcode{is_constructible_v<mapped_type, M\&\&>}
