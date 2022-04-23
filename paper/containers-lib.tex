@@ -316,8 +316,7 @@ that contains equal elements, is undefined.
 \begin{codeblock}
 namespace std {
   template <class Key, class T, class Compare = less<Key>,
-            class KeyContainer = vector<Key>,
-            class MappedContainer = vector<T>>
+            class KeyContainer = vector<Key>, class MappedContainer = vector<T>>
   class flat_map {
   public:
     // types
@@ -1304,8 +1303,7 @@ to \tcode{value_compare} is undefined.
 \begin{codeblock}
 namespace std {
   template <class Key, class T, class Compare = less<Key>,
-            class KeyContainer = vector<Key>,
-            class MappedContainer = vector<T>>
+            class KeyContainer = vector<Key>, class MappedContainer = vector<T>>
   class flat_multimap {
   public:
     // types
