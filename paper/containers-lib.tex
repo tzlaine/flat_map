@@ -286,10 +286,10 @@ If any member function in this subclause exits via an exception the invariants
 are restored.
 
 \pnum
-Any sequence container \tcode{C} supporting random access iteration can be
-used to instantiate \tcode{flat_map}, as long as \tcode{C::size()}
-and \tcode{C::max_size()} do not throw. In particular, \tcode{vector}
-([vector]) and \tcode{deque} ([deque]) can be
+Any sequence container ([sequence.reqmts]) \tcode{C} supporting random access
+iteration can be used to instantiate \tcode{flat_map}, as long
+as \tcode{C::size()} and \tcode{C::max_size()} do not throw. In
+particular, \tcode{vector} ([vector]) and \tcode{deque} ([deque]) can be
 used.  \begin{note}\tcode{vector<bool>} is not a sequence container.\end{note}
 
 \pnum
@@ -1274,10 +1274,10 @@ If any member function in this subclause exits via an exception the invariants
 are restored.
 
 \pnum
-Any sequence container \tcode{C} supporting random access iteration can be
-used to instantiate \tcode{flat_multimap}, as long as \tcode{C::size()}
-and \tcode{C::max_size()} do not throw. In particular, \tcode{vector}
-([vector]) and \tcode{deque} ([deque]) can be
+Any sequence container ([sequence.reqmts]) \tcode{C} supporting random access
+iteration can be used to instantiate \tcode{flat_multimap}, as long
+as \tcode{C::size()} and \tcode{C::max_size()} do not throw. In
+particular, \tcode{vector} ([vector]) and \tcode{deque} ([deque]) can be
 used.  \begin{note}\tcode{vector<bool>} is not a sequence container.\end{note}
 
 \pnum
