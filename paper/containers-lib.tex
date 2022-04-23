@@ -195,8 +195,8 @@ namespace std {
   struct sorted_unique_t { explicit sorted_unique_t() = default; };
   inline constexpr sorted_unique_t sorted_unique {};
 
-  template<class Key, class T, class Compare>,
-           class KeyContainer, class MappedContainer>
+  template<class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+           class Predicate>
     size_t erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
                     Predicate pred);
 
@@ -208,8 +208,8 @@ namespace std {
   struct sorted_equivalent_t { explicit sorted_equivalent_t() = default; };
   inline constexpr sorted_equivalent_t sorted_equivalent {};
 
-  template<class Key, class T, class Compare>,
-           class KeyContainer, class MappedContainer>
+  template<class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+           class Predicate>
     size_t erase_if(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& c,
                     Predicate pred);
 
@@ -1177,8 +1177,8 @@ c.values = std::move(mapped_cont);
 
 \indexlibrarymember{erase_if}{flatmap}%
 \begin{itemdecl}
-template <class Key, class T, class Compare,
-          class KeyContainer, class MappedContainer>
+template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+          class Predicate>
   typename flat_map<Key, T, Compare, KeyContainer, MappedContainer>::size_type
     erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
              Predicate pred);
@@ -1700,8 +1700,8 @@ and \tcode{c.values} are constructed with uses-allocator construction
 
 \indexlibrarymember{erase_if}{flatmultimap}%
 \begin{itemdecl}
-template <class Key, class T, class Compare,
-          class KeyContainer, class MappedContainer>
+template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+          class Predicate>
   typename flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>::size_type
     erase_if(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& c,
              Predicate pred);
