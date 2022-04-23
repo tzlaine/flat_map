@@ -927,7 +927,7 @@ for (; first != last; ++first) {
   c.values.insert(c.values.end(), first->second);
 }
 \end{codeblock}
-sorts the range of newly inserted elements with respect
+Then, sorts the range of newly inserted elements with respect
 to \tcode{value_comp()}; merges the resulting sorted range and the sorted
 range of pre-existing elements into a single sorted range; and finally erases
 the duplicate elements as if by:
@@ -959,7 +959,7 @@ for (; first != last; ++first) {
   c.values.insert(c.values.end(), first->second);
 }
 \end{codeblock}
-merges the sorted range of newly added elements and the sorted range of
+Then, merges the sorted range of newly added elements and the sorted range of
 pre-existing elements into a single sorted range; and finally
 erases the duplicate elements as if by:
 \begin{codeblock}
