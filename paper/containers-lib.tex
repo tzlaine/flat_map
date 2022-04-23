@@ -248,11 +248,10 @@ concept ([iterator.concept.random.access]).
 A \tcode{flat_map} satisfies all of the requirements for a container
 ([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
 plus the optional container requirements ([container.opt.reqmts]).  \tcode{flat_map}
-satisfies the requirements of an associative container ([associative.reqmts.general] and
-[associative.reqmts.except]), except that:
+satisfies the requirements of an associative container ([associative.reqmts]), except that:
 \begin{itemize}
 \item it does not meet the requirements related to node handles ([container.node]),
-\item it does not meet the requirements related to iterator invalidation in [associative.reqmts.general], and
+\item it does not meet the requirements related to iterator invalidation, and
 \item the time complexity of the operations that insert or erase a single
 element from the map is linear, including the ones that take an insertion
 position iterator.
@@ -1234,11 +1233,10 @@ and model the \libconcept{random_access_iterator} concept
 A \tcode{flat_multimap} satisfies all of the requirements for a container
 ([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
 plus the optional container requirements ([container.opt.reqmts]).  \tcode{flat_multimap}
-satisfies the requirements of an associative container ([associative.reqmts.general] and
-[associative.reqmts.except]), except that:
+satisfies the requirements of an associative container ([associative.reqmts]), except that:
 \begin{itemize}
 \item it does not meet the requirements related to node handles ([container.node]),
-\item it does not meet the requirements related to iterator invalidation in [associative.reqmts.general], and
+\item it does not meet the requirements related to iterator invalidation, and
 \item the time complexity of the operations that insert or erase a single
 element from the map is linear, including the ones that take an insertion
 position iterator.
