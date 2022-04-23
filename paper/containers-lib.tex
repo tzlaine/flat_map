@@ -238,7 +238,7 @@ namespace std {
 \pnum
 \indexlibrary{\idxcode{flatmap}}%
 A \tcode{flat_map} is a container adaptor that provides an associative
-container interface that supports unique keys (contains at most one of each
+container interface that supports unique keys (i.e., contains at most one of each
 key value) and provides for fast retrieval of values of another type \tcode{T}
 based on the keys. \tcode{flat_map} supports iterators that meet the
 \oldconcept{InputIterator} requirements and model the \libconcept{random_access_iterator}
@@ -1223,7 +1223,7 @@ return original_size - c.size();
 \pnum
 \indexlibrary{\idxcode{flatmultimap}}%
 A \tcode{flat_multimap} is a container adaptor that provides an associative
-container interface that supports equivalent keys (possibly containing
+container interface that supports equivalent keys (i.e., possibly containing
 multiple copies of the same key value) and provides for fast retrieval of
 values of another type \tcode{T} based on the keys. \tcode{flat_multimap}
 supports iterators that meet the \oldconcept{InputIterator} requirements
