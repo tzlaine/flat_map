@@ -1118,13 +1118,13 @@ object \tcode{u}, for which \tcode{find(k) == find(u)} is true.
 If the map already contains an element \tcode{e} whose key is equivalent
 to \tcode{k}, assigns \tcode{std::forward<M>(obj)} to \tcode{e.second}.
 Otherwise equivalent to \tcode{try_emplace(std::forward<decltype(k)>(k),
-std::forward<M>(obj))} for the first two overloads or
+std::forward<M>(obj))} for the first overload or
 \tcode{try_emplace_hint(hint, std::forward<decltype(k)>(k), std::forward<M>(obj))}
-for the last two overloads.
+for the second overload.
 
 \pnum
 \returns
-In the first two overloads, the \tcode{bool} component of the returned pair
+In the first overload, the \tcode{bool} component of the returned pair
 is \tcode{true} if and only if the insertion took place.  The returned
 iterator points to the map element whose key is equivalent to \tcode{k}.
 
