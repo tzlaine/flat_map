@@ -213,15 +213,13 @@ namespace std {
     size_t erase_if(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& c,
                     Predicate pred);
 
-  template <class Key, class T, class Compare,
-            class KeyContainer,
-            class MappedContainer, class Allocator>
+  template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+            class Allocator>
     struct uses_allocator<flat_map<Key, T, Compare, KeyContainer, MappedContainer>,
                           Allocator>;
 
-  template <class Key, class T, class Compare,
-            class KeyContainer,
-            class MappedContainer, class Allocator>
+  template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+            class Allocator>
     struct uses_allocator<flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>,
                           Allocator>;
 
