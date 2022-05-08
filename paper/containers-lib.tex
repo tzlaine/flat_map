@@ -98,17 +98,15 @@ namespace std {
   template<class Key, class Compare = less<Key>, class Container = vector<Key>>
     class flat_set;
 
-  template<class Key, class Compare, class Container>
-    size_t erase_if(flat_set<Key, Compare, Container>& c,
-                    Predicate pred);
+  template<class Key, class Compare, class Container, class Predicate>
+    size_t erase_if(flat_set<Key, Compare, Container>& c, Predicate pred);
 
   // \ref{flatmultiset}, class template \tcode{flat_multiset}
   template<class Key, class Compare = less<Key>, class Container = vector<Key>>
     class flat_multiset;
 
-  template<class Key, class Compare, class Container>
-    size_t erase_if(flat_multiset<Key, Compare, Container>& c,
-                    Predicate pred);
+  template<class Key, class Compare, class Container, class Predicate>
+    size_t erase_if(flat_multiset<Key, Compare, Container>& c, Predicate pred);
 }
 \end{codeblock}
 \end{addedblock}
@@ -641,9 +639,8 @@ c = std::move(cont);
 
 \indexlibrarymember{erase_if}{flatset}%
 \begin{itemdecl}
-template<class Key, class Compare, class Container>
-  size_t erase_if(flat_set<Key, Compare, Container>& c,
-                  Predicate pred);
+template<class Key, class Compare, class Container, class Predicate>
+  size_t erase_if(flat_set<Key, Compare, Container>& c, Predicate pred);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -1146,9 +1143,8 @@ c = std::move(cont);
 
 \indexlibrarymember{erase_if}{flatmultiset}%
 \begin{itemdecl}
-template<class Key, class Compare, class Container>
-  size_t erase_if(flat_multiset<Key, Compare, Container>& c,
-                  Predicate pred);
+template<class Key, class Compare, class Container, class Predicate>
+  size_t erase_if(flat_multiset<Key, Compare, Container>& c, Predicate pred);
 \end{itemdecl}
 
 \begin{itemdescr}
