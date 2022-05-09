@@ -172,10 +172,6 @@ The program is ill-formed if \tcode{Key} is not the same type
 as \tcode{KeyContainer::value_type}.
 
 \pnum
-The behavior of \tcode{flat_set} is undefined if \tcode{KeyContainer::swap}
-throws.
-
-\pnum
 The effect of calling a constructor that takes a \tcode{sorted_unique_t}
 argument with a range that is not sorted with respect to \tcode{compare}, or
 that contains equal elements, is undefined.
@@ -353,7 +349,7 @@ namespace std {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_set& fs) noexcept(is_nothrow_swappable_v<key_compare>);
+    void swap(flat_set& fs) noexcept;
     void clear() noexcept;
 
     // observers
@@ -394,7 +390,7 @@ namespace std {
     friend @\placeholder{synth-three-way-result}@<value_type>
     bool operator<=>(const flat_set& x, const flat_set& y);
 
-    friend void swap(flat_set& x, flat_set& y) noexcept(noexcept(x.swap(y))
+    friend void swap(flat_set& x, flat_set& y) noexcept
       { x.swap(y); }
 
   private:
@@ -605,7 +601,7 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 
 \indexlibrarymember{swap}{flatset}%
 \begin{itemdecl}
-void swap(flat_set& fs) noexcept(is_nothrow_swappable_v<key_compare>);
+void swap(flat_set& fs) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -712,10 +708,6 @@ used.  \begin{note}\tcode{vector<bool>} is not a sequence container.\end{note}
 \pnum
 The program is ill-formed if \tcode{Key} is not the same type
 as \tcode{KeyContainer::value_type}.
-
-\pnum
-The behavior of \tcode{flat_multiset} is undefined
-if \tcode{KeyContainer::swap} throws.
 
 \pnum
 The effect of calling a constructor that takes a \tcode{sorted_equivalent_t}
@@ -894,7 +886,7 @@ class flat_multiset {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_multiset& fms) noexcept(is_nothrow_swappable_v<key_compare>);
+    void swap(flat_multiset& fms) noexcept;
     void clear() noexcept;
 
     // observers
@@ -935,7 +927,7 @@ class flat_multiset {
     friend @\placeholder{synth-three-way-result}@<value_type>
     bool operator<=>(const flat_multiset& x, const flat_multiset& y);
 
-    friend void swap(flat_multiset& x, flat_multiset& y) noexcept(noexcept(x.swap(y))
+    friend void swap(flat_multiset& x, flat_multiset& y) noexcept
       { x.swap(y); }
 
   private:
@@ -1111,7 +1103,7 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 
 \indexlibrarymember{swap}{flatmultiset}%
 \begin{itemdecl}
-void swap(flat_multiset& fms) noexcept(is_nothrow_swappable_v<key_compare>);
+void swap(flat_multiset& fms) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
