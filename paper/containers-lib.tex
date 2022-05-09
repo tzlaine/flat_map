@@ -101,12 +101,18 @@ namespace std {
   template<class Key, class Compare, class Container, class Predicate>
     size_t erase_if(flat_set<Key, Compare, Container>& c, Predicate pred);
 
+  template<class Key, class Compare, class Container>
+    struct uses_allocator<flat_set<Key, Compare, Container>, Allocator>;
+
   // \ref{flatmultiset}, class template \tcode{flat_multiset}
   template<class Key, class Compare = less<Key>, class Container = vector<Key>>
     class flat_multiset;
 
   template<class Key, class Compare, class Container, class Predicate>
     size_t erase_if(flat_multiset<Key, Compare, Container>& c, Predicate pred);
+
+  template<class Key, class Compare, class Container>
+    struct uses_allocator<flat_multiset<Key, Compare, Container>, Allocator>;
 }
 \end{codeblock}
 \end{addedblock}
