@@ -395,7 +395,7 @@ namespace std {
     bool operator<=>(const flat_set& x, const flat_set& y);
 
     friend void swap(flat_set& x, flat_set& y) noexcept(noexcept(x.swap(y))
-      { return x.swap(y); }
+      { x.swap(y); }
 
   private:
     container_type c;    // \expos
@@ -936,7 +936,7 @@ class flat_multiset {
     bool operator<=>(const flat_multiset& x, const flat_multiset& y);
 
     friend void swap(flat_multiset& x, flat_multiset& y) noexcept(noexcept(x.swap(y))
-      { return x.swap(y); }
+      { x.swap(y); }
 
   private:
     container_type c;    // \expos
