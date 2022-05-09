@@ -574,7 +574,7 @@ for (; first != last; ++first) {
   c.insert(std::end(c), *first);
 }
 \end{codeblock}
-sorts the range of newly inserted elements with respect
+Then, sorts the range of newly inserted elements with respect
 to \tcode{compare}; merges the resulting sorted range and the sorted
 range of pre-existing elements into a single sorted range; and finally erases
 the range \range{ranges::unique(*this, compare)}{end()}.
@@ -1078,7 +1078,7 @@ for (; first != last; ++first) {
   c.insert(std::end(c), *first);
 }
 \end{codeblock}
-sorts the range of newly inserted elements with respect to \tcode{compare},
+Then, sorts the range of newly inserted elements with respect to \tcode{compare},
 and merges the resulting sorted range and the sorted range of pre-existing
 elements into a single sorted range.
 
