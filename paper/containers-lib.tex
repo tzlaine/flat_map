@@ -521,7 +521,7 @@ element equivalent to \tcode{t}, \tcode{*this} is unchanged.  Otherwise,
 equivalent to:
 \begin{codeblock}
 auto it = std::lower_bound(c.begin(), c.end(), t, compare);
-c.emplace(it, std::move(t));
+c.insert(it, std::move(t));
 \end{codeblock}
 
 \pnum
@@ -1055,7 +1055,7 @@ First, initializes an object \tcode{t} of type \tcode{key_type}
 with \tcode{std::forward<Args>(args)...}, then inserts \tcode{t} as if by:
 \begin{codeblock}
 auto it = ranges::upper_bound(c, t, compare);
-c.emplace(it, std::move(t));
+c.insert(it, std::move(t));
 \end{codeblock}
 
 \pnum
