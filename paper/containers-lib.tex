@@ -136,11 +136,10 @@ concept ([iterator.concept.random.access]).
 A \tcode{flat_set} satisfies all of the requirements for a container
 ([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
 plus the optional container requirements ([container.opt.reqmts]).  \tcode{flat_set}
-satisfies the requirements of an associative container ([associative.reqmts.general] and
-[associative.reqmts.except]), except that:
+satisfies the requirements of an associative container ([associative.reqmts]), except that:
 \begin{itemize}
 \item it does not meet the requirements related to node handles ([container.node.overview]),
-\item it does not meet the requirements related to iterator invalidation ([associative.reqmts.general]), and
+\item it does not meet the requirements related to iterator invalidation, and
 \item the time complexity of the operations that insert or erase a single
 element from the set is linear, including the ones that take an insertion
 position iterator.
@@ -675,11 +674,10 @@ the \libconcept{random_access_iterator} concept
 A \tcode{flat_multiset} satisfies all of the requirements for a container
 ([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
 plus the optional container requirements ([container.opt.reqmts]).  \tcode{flat_multiset}
-satisfies the requirements of an associative container ([associative.reqmts.general] and
-[associative.reqmts.except]), except that:
+satisfies the requirements of an associative container ([associative.reqmts]), except that:
 \begin{itemize}
 \item it does not meet the requirements related to node handles ([container.node.overview]),
-\item it does not meet the requirements related to iterator invalidation ([associative.reqmts.general]), and
+\item it does not meet the requirements related to iterator invalidation, and
 \item the time complexity of the operations that insert or erase a single
 element from the set is linear, including the ones that take an insertion
 position iterator.
