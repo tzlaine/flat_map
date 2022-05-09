@@ -515,7 +515,7 @@ template <class... Args> pair<iterator, bool> emplace(Args&&... args);
 
 \pnum
 \effects
-First, initializes an object \tcode{t} of type \tcode{key_type}
+Initializes an object \tcode{t} of type \tcode{key_type}
 with \tcode{std::forward<Args>(args)...}; if the set already contains an
 element equivalent to \tcode{t}, \tcode{*this} is unchanged.  Otherwise,
 equivalent to:
