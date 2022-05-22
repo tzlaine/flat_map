@@ -659,7 +659,8 @@ namespace std {
             class Allocator>
     struct uses_allocator<flat_map<Key, T, Compare, KeyContainer, MappedContainer>,
                           Allocator>
-      : bool_constant<uses_allocator_v<KeyContainer> && uses_allocator_v<MappedContainer>> {}
+      : bool_constant<uses_allocator_v<KeyContainer, Allocator> &&
+                      uses_allocator_v<MappedContainer, Allocator>> { };
 }
 \end{codeblock}
 
@@ -1667,7 +1668,8 @@ namespace std {
             class Allocator>
     struct uses_allocator<flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>,
                           Allocator>
-      : bool_constant<uses_allocator_v<KeyContainer> && uses_allocator_v<MappedContainer>> {}
+      : bool_constant<uses_allocator_v<KeyContainer, Allocator> &&
+                      uses_allocator_v<MappedContainer, Allocator>> { };
 }
 \end{codeblock}
 
