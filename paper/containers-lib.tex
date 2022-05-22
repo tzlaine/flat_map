@@ -189,8 +189,8 @@ namespace std {
     using value_compare             = Compare;
     using reference                 = value_type&;
     using const_reference           = const value_type&;
-    using size_type                 = size_t;
-    using difference_type           = ptrdiff_t;
+    using size_type                 = typename KeyContainer::size_type;
+    using difference_type           = typename KeyContainer::difference_type;
     using iterator                  = @\impdefx{type of \tcode{flat_set::iterator}}@; // see 24.2
     using const_iterator            = @\impdefx{type of \tcode{flat_set::const_iterator}}@; // see 24.2
     using reverse_iterator          = std::reverse_iterator<iterator>;
@@ -725,8 +725,8 @@ class flat_multiset {
     using value_compare             = Compare;
     using reference                 = value_type&;
     using const_reference           = const value_type&;
-    using size_type                 = size_t;
-    using difference_type           = ptrdiff_t;
+    using size_type                 = typename KeyContainer::size_type;
+    using difference_type           = typename KeyContainer::difference_type;
     using iterator                  = @\impdefx{type of \tcode{flat_multiset::iterator}}@; // see 24.2
     using const_iterator            = @\impdefx{type of \tcode{flat_multiset::const_iterator}}@; // see 24.2
     using reverse_iterator          = std::reverse_iterator<iterator>;
