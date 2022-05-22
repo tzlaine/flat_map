@@ -248,8 +248,8 @@ namespace std {
       flat_set(InputIterator first, InputIterator last, const Allocator& a);
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_set(from_range_t, const R& range)
-        : flat_set(std::forward<R>(range), key_compare()) { }
+      flat_set(from_range_t fr, const R& range)
+        : flat_set(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_set(from_range_t, const R& range, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
@@ -792,8 +792,8 @@ class flat_multiset {
                     const Allocator& a);
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_multiset(from_range_t, const R& range)
-        : flat_multiset(std::forward<R>(range), key_compare()) { }
+      flat_multiset(from_range_t fr, const R& range)
+        : flat_multiset(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_multiset(from_range_t, const R& range, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
