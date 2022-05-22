@@ -95,24 +95,24 @@ The headers \tcode{<queue>}, \tcode{<stack>}\changed{ and}{,}
 
 namespace std {
   // \ref{flatset}, class template \tcode{flat_set}
-  template<class Key, class Compare = less<Key>, class Container = vector<Key>>
+  template<class Key, class Compare = less<Key>, class KeyContainer = vector<Key>>
     class flat_set;
 
-  template<class Key, class Compare, class Container, class Predicate>
-    size_t erase_if(flat_set<Key, Compare, Container>& c, Predicate pred);
+  template<class Key, class Compare, class KeyContainer, class Predicate>
+    size_t erase_if(flat_set<Key, Compare, KeyContainer>& c, Predicate pred);
 
-  template<class Key, class Compare, class Container>
-    struct uses_allocator<flat_set<Key, Compare, Container>, Allocator>;
+  template<class Key, class Compare, class KeyContainer>
+    struct uses_allocator<flat_set<Key, Compare, KeyContainer>, Allocator>;
 
   // \ref{flatmultiset}, class template \tcode{flat_multiset}
-  template<class Key, class Compare = less<Key>, class Container = vector<Key>>
+  template<class Key, class Compare = less<Key>, class KeyContainer = vector<Key>>
     class flat_multiset;
 
-  template<class Key, class Compare, class Container, class Predicate>
-    size_t erase_if(flat_multiset<Key, Compare, Container>& c, Predicate pred);
+  template<class Key, class Compare, class KeyContainer, class Predicate>
+    size_t erase_if(flat_multiset<Key, Compare, KeyContainer>& c, Predicate pred);
 
-  template<class Key, class Compare, class Container>
-    struct uses_allocator<flat_multiset<Key, Compare, Container>, Allocator>;
+  template<class Key, class Compare, class KeyContainer>
+    struct uses_allocator<flat_multiset<Key, Compare, KeyContainer>, Allocator>;
 }
 \end{codeblock}
 \end{addedblock}
@@ -423,8 +423,8 @@ namespace std {
     flat_set(sorted_unique_t, initializer_list<Key>, Compare = Compare())
       -> flat_set<Key, Compare>;
 
-  template<class Key, class Compare, class Container>
-    struct uses_allocator<flat_set<Key, Compare, Container>, Allocator>
+  template<class Key, class Compare, class KeyContainer>
+    struct uses_allocator<flat_set<Key, Compare, KeyContainer>, Allocator>
       : bool_constant<uses_allocator_v<Container>> {}
 }
 \end{codeblock}
@@ -644,8 +644,8 @@ c = std::move(cont);
 
 \indexlibrarymember{erase_if}{flatset}%
 \begin{itemdecl}
-template<class Key, class Compare, class Container, class Predicate>
-  size_t erase_if(flat_set<Key, Compare, Container>& c, Predicate pred);
+template<class Key, class Compare, class KeyContainer, class Predicate>
+  size_t erase_if(flat_set<Key, Compare, KeyContainer>& c, Predicate pred);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -961,8 +961,8 @@ class flat_multiset {
   flat_multiset(sorted_equivalent_t, initializer_list<Key>, Compare = Compare())
       -> flat_multiset<Key, Compare>;
 
-  template<class Key, class Compare, class Container>
-    struct uses_allocator<flat_multiset<Key, Compare, Container>, Allocator>
+  template<class Key, class Compare, class KeyContainer>
+    struct uses_allocator<flat_multiset<Key, Compare, KeyContainer>, Allocator>
       : bool_constant<uses_allocator_v<Container>> {}
 }
 \end{codeblock}
@@ -1147,8 +1147,8 @@ c = std::move(cont);
 
 \indexlibrarymember{erase_if}{flatmultiset}%
 \begin{itemdecl}
-template<class Key, class Compare, class Container, class Predicate>
-  size_t erase_if(flat_multiset<Key, Compare, Container>& c, Predicate pred);
+template<class Key, class Compare, class KeyContainer, class Predicate>
+  size_t erase_if(flat_multiset<Key, Compare, KeyContainer>& c, Predicate pred);
 \end{itemdecl}
 
 \begin{itemdescr}
