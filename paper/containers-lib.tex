@@ -655,10 +655,7 @@ void replace(container_type&& cont);
 The elements of \tcode{cont} are sorted with respect to \tcode{compare}.
 
 \pnum
-\effects Equivalent to:
-\begin{codeblock}
-c = std::move(cont);
-\end{codeblock}
+\effects Equivalent to: \tcode{c = std::move(cont);}
 \end{itemdescr}
 
 \rSec3[flatset.erasure]{Erasure}
