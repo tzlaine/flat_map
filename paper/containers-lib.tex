@@ -200,7 +200,7 @@ namespace std {
     // \ref{flatset.cons}, construct/copy/destroy
     flat_set() : flat_set(key_compare()) { }
 
-    explicit flat_set(container_type);
+    explicit flat_set(container_type cont);
     template <class Allocator>
       flat_set(const container_type& cont, const Allocator& a);
     explicit flat_set(initializer_list<value_type> il)
