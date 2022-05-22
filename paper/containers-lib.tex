@@ -566,9 +566,7 @@ template <class InputIterator>
 \pnum
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
-for (const auto& e : range) {
-  c.insert(c.end(), e);
-}
+c.insert(c.end(), first, last);
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect
 to \tcode{compare}; merges the resulting sorted range and the sorted
@@ -579,6 +577,10 @@ the range \range{ranges::unique(*this, compare)}{end()}.
 \complexity
 $N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
 is \tcode{distance(first, last)}.
+
+\pnum
+\remarks
+Since this operation performs an in-place merge, it may allocate memory.
 \end{itemdescr}
 
 \indexlibrarymember{insert}{flatset}%
@@ -619,6 +621,10 @@ the range \range{ranges::unique(*this, compare)}{end()}.
 \complexity
 $N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
 is \tcode{distance(first, last)}.
+
+\pnum
+\remarks
+Since this operation performs an in-place merge, it may allocate memory.
 \end{itemdescr}
 
 \indexlibrarymember{swap}{flatset}%
@@ -1089,9 +1095,7 @@ template <class InputIterator>
 \pnum
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
-for (; first != last; ++first) {
-  c.insert(c.end(), *first);
-}
+c.insert(c.end(), first, last);
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect to \tcode{compare},
 and merges the resulting sorted range and the sorted range of pre-existing
