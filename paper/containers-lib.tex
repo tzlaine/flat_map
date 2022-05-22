@@ -244,14 +244,15 @@ namespace std {
     template <class InputIterator, class Allocator>
       flat_set(InputIterator first, InputIterator last,
                const key_compare& comp, const Allocator&);
+    template <class InputIterator, class Allocator>
+      flat_set(InputIterator first, InputIterator last, const Allocator& a);
+
     template<@\placeholder{container-compatible-range}@<value_type> R,
              class Allocator>
        flat_set(from_range_t, const R& range, const key_compare& comp = key_compare(),
                 const Allocator& a = Allocator())
          : flat_set(comp, a)
          { insert_range(std::forward<R>(range)); }
-    template <class InputIterator, class Allocator>
-      flat_set(InputIterator first, InputIterator last, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R,
              class Allocator>
       flat_set(from_range_t, const R& range, const Allocator& a)
