@@ -344,7 +344,7 @@ namespace std {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_set& fs) noexcept;
+    void swap(flat_set& y) noexcept;
     void clear() noexcept;
 
     // observers
@@ -601,14 +601,14 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 
 \indexlibrarymember{swap}{flatset}%
 \begin{itemdecl}
-void swap(flat_set& fs) noexcept;
+void swap(flat_set& y) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum \effects Equivalent to:
 \begin{codeblock}
-ranges::swap(compare, fs.compare);
-ranges::swap(c, fs.c);
+ranges::swap(compare, y.compare);
+ranges::swap(c, y.c);
 \end{codeblock}
 \end{itemdescr}
 
@@ -879,7 +879,7 @@ class flat_multiset {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_multiset& fms) noexcept;
+    void swap(flat_multiset& y) noexcept;
     void clear() noexcept;
 
     // observers
@@ -1102,14 +1102,14 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 
 \indexlibrarymember{swap}{flatmultiset}%
 \begin{itemdecl}
-void swap(flat_multiset& fms) noexcept;
+void swap(flat_multiset& y) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum \effects Equivalent to:
 \begin{codeblock}
-ranges::swap(compare, fms.compare);
-ranges::swap(c, fms.c);
+ranges::swap(compare, y.compare);
+ranges::swap(c, y.c);
 \end{codeblock}
 \end{itemdescr}
 
