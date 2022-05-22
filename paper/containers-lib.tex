@@ -126,11 +126,11 @@ namespace std {
 \pnum
 \indexlibrary{\idxcode{flatset}}%
 A \tcode{flat_set} is a container adaptor that provides an associative
-container interface that supports unique keys (i.e., contains at most one of each
-key value) and provides for fast retrieval of the keys
-themselves. \tcode{flat_set} supports iterators that meet the
-\oldconcept{InputIterator} requirements and model the \libconcept{random_access_iterator}
-concept ([iterator.concept.random.access]).
+container interface that supports unique keys (i.e., contains at most one of
+each key value) and provides for fast retrieval of the keys
+themselves. \tcode{flat_set} supports iterators that model
+the \libconcept{random_access_iterator} concept
+([iterator.concept.random.access]).
 
 \pnum
 A \tcode{flat_set} satisfies all of the requirements for a container
@@ -666,8 +666,7 @@ Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
 A \tcode{flat_multiset} is a container adaptor that provides an associative
 container interface that supports equivalent keys (i.e., possibly containing
 multiple copies of the same key value) and provides for fast retrieval of the
-keys themselves. \tcode{flat_multiset} supports iterators that meet
-the \oldconcept{InputIterator} requirements and model
+keys themselves. \tcode{flat_multiset} supports iterators that model
 the \libconcept{random_access_iterator} concept
 ([iterator.concept.random.access]).
 
