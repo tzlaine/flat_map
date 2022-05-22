@@ -383,7 +383,7 @@ namespace std {
     friend bool operator==(const flat_set& x, const flat_set& y);
 
     friend @\placeholder{synth-three-way-result}@<value_type>
-    bool operator<=>(const flat_set& x, const flat_set& y);
+    operator<=>(const flat_set& x, const flat_set& y);
 
     friend void swap(flat_set& x, flat_set& y) noexcept
       { x.swap(y); }
@@ -918,7 +918,7 @@ class flat_multiset {
     friend bool operator==(const flat_multiset& x, const flat_multiset& y);
 
     friend @\placeholder{synth-three-way-result}@<value_type>
-    bool operator<=>(const flat_multiset& x, const flat_multiset& y);
+    operator<=>(const flat_multiset& x, const flat_multiset& y);
 
     friend void swap(flat_multiset& x, flat_multiset& y) noexcept
       { x.swap(y); }
