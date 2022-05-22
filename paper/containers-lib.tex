@@ -417,9 +417,9 @@ namespace std {
     flat_set(sorted_unique_t, initializer_list<Key>, Compare = Compare())
       -> flat_set<Key, Compare>;
 
-  template<class Key, class Compare, class KeyContainer>
+  template<class Key, class Compare, class KeyContainer, class Allocator>
     struct uses_allocator<flat_set<Key, Compare, KeyContainer>, Allocator>
-      : bool_constant<uses_allocator_v<Container>> {}
+      : bool_constant<uses_allocator_v<KeyContainer, Allocator>> { };
 }
 \end{codeblock}
 
@@ -1000,9 +1000,9 @@ class flat_multiset {
   flat_multiset(sorted_equivalent_t, initializer_list<Key>, Compare = Compare())
       -> flat_multiset<Key, Compare>;
 
-  template<class Key, class Compare, class KeyContainer>
+  template<class Key, class Compare, class KeyContainer, class Allocator>
     struct uses_allocator<flat_multiset<Key, Compare, KeyContainer>, Allocator>
-      : bool_constant<uses_allocator_v<Container>> {}
+      : bool_constant<uses_allocator_v<KeyContainer, Allocator>> { };
 }
 \end{codeblock}
 
