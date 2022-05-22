@@ -642,7 +642,7 @@ namespace std {
   template<ranges::input_range R, class Compare = less<@\placeholder{range-key-type}@<R>>,
            class Allocator>
     flat_map(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
-      -> flat_map<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare, Allocator>;
+      -> flat_map<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare>;
 
   template<ranges::input_range R, class Allocator>
     flat_map(from_range_t, const R&, Allocator)
@@ -1593,7 +1593,7 @@ namespace std {
   template<ranges::input_range R, class Compare = less<@\placeholder{range-key-type}@<R>>,
            class Allocator>
     flat_multimap(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
-      -> flat_multimap<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare, Allocator>;
+      -> flat_multimap<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare>;
 
   template<ranges::input_range R, class Allocator>
     flat_multimap(from_range_t, const R&, Allocator)
