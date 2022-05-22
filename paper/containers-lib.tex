@@ -204,9 +204,9 @@ namespace std {
     template <class Allocator>
       flat_set(const container_type& cont, const Allocator& a);
     explicit flat_set(initializer_list<value_type> il)
-      : flat_set(std::begin(il), std::end(il), key_compare()) { }
+      : flat_set(il.begin(), il.end(), key_compare()) { }
     flat_set(initializer_list<value_type> il, const key_compare& comp)
-      : flat_set(std::begin(il), std::end(il), comp) { }
+      : flat_set(il.begin(), il.end(), comp) { }
     template <class Allocator>
       flat_set(initializer_list<value_type> il, const Allocator& a);
     template <class Allocator>
@@ -218,10 +218,10 @@ namespace std {
     template <class Allocator>
       flat_set(sorted_unique_t s, const container_type& cont, const Allocator& a);
     flat_set(sorted_unique_t s, initializer_list<value_type> il)
-      : flat_set(s, std::begin(il), std::end(il), key_compare()) { }
+      : flat_set(s, il.begin(), il.end(), key_compare()) { }
     flat_set(sorted_unique_t s, initializer_list<value_type> il,
              const key_compare& comp)
-      : flat_set(s, std::begin(il), std::end(il), comp) { }
+      : flat_set(s, il.begin(), il.end(), comp) { }
     template <class Allocator>
       flat_set(sorted_unique_t s, initializer_list<value_type> il,
                const Allocator& a);
@@ -570,7 +570,7 @@ template <class InputIterator>
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
 for (; first != last; ++first) {
-  c.insert(std::end(c), *first);
+  c.insert(c.end(), *first);
 }
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect
@@ -740,9 +740,9 @@ class flat_multiset {
     template <class Allocator>
       flat_multiset(const container_type& cont, const Allocator& a);
     explicit flat_multiset(initializer_list<value_type> il)
-      : flat_multiset(std::begin(il), std::end(il), key_compare()) { }
+      : flat_multiset(il.begin(), il.end(), key_compare()) { }
     flat_multiset(initializer_list<value_type> il, const key_compare& comp)
-      : flat_multiset(std::begin(il), std::end(il), comp) { }
+      : flat_multiset(il.begin(), il.end(), comp) { }
     template <class Allocator>
       flat_multiset(initializer_list<value_type> il, const Allocator& a);
     flat_multiset(initializer_list<value_type> il, const key_compare& comp,
@@ -753,11 +753,11 @@ class flat_multiset {
     template <class Allocator>
       flat_multiset(sorted_equivalent_t, const container_type&, const Allocator&);
     flat_multiset(sorted_equivalent_t s, initializer_list<value_type> il)
-      : flat_multiset(s, std::begin(il), std::end(il), key_compare()) { }
+      : flat_multiset(s, il.begin(), il.end(), key_compare()) { }
 
     flat_multiset(sorted_equivalent_t s, initializer_list<value_type> il,
                   const key_compare& comp)
-      : flat_multiset(s, std::begin(il), std::end(il), comp) { }
+      : flat_multiset(s, il.begin(), il.end(), comp) { }
     template <class Allocator>
       flat_multiset(sorted_equivalent_t s, initializer_list<value_type> il,
                     const Allocator& a);
@@ -1072,7 +1072,7 @@ template <class InputIterator>
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
 for (; first != last; ++first) {
-  c.insert(std::end(c), *first);
+  c.insert(c.end(), *first);
 }
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect to \tcode{compare},
