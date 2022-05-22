@@ -411,11 +411,11 @@ namespace std {
   template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
           class Allocator = allocator<ranges::range_value_t<R>>>
     flat_set(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
-      -> flat_set<ranges::range_value_t<R>, Compare, Allocator>;
+      -> flat_set<ranges::range_value_t<R>, Compare>;
 
    template<ranges::input_range R, class Allocator>
      flat_set(from_range_t, const R&, Allocator)
-       -> flat_set<ranges::range_value_t<R>, less<ranges::range_value_t<R>>, Allocator>;
+       -> flat_set<ranges::range_value_t<R>, less<ranges::range_value_t<R>>>;
 
   template<class Key, class Compare = less<Key>>
     flat_set(initializer_list<Key>, Compare = Compare())
@@ -953,11 +953,11 @@ class flat_multiset {
   template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
           class Allocator = allocator<ranges::range_value_t<R>>>
     flat_multiset(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
-      -> flat_multiset<ranges::range_value_t<R>, Compare, Allocator>;
+      -> flat_multiset<ranges::range_value_t<R>, Compare>;
 
    template<ranges::input_range R, class Allocator>
      flat_multiset(from_range_t, const R&, Allocator)
-       -> flat_multiset<ranges::range_value_t<R>, less<ranges::range_value_t<R>>, Allocator>;
+       -> flat_multiset<ranges::range_value_t<R>, less<ranges::range_value_t<R>>>;
 
   template<class Key, class Compare = less<Key>>
     flat_multiset(initializer_list<Key>, Compare = Compare())
