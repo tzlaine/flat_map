@@ -393,8 +393,8 @@ namespace std {
                const Allocator& a);
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_map(from_range_t, const R& range)
-        : flat_map(std::forward<R>(range)) { }
+      flat_map(from_range_t fr, const R& range)
+        : flat_map(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_map(from_range_t, const R& range, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
@@ -1388,8 +1388,8 @@ namespace std {
                     const Allocator& a);
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_mutlimap(from_range_t, const R& range)
-        : flat_map(std::forward<R>(range)) { }
+      flat_mutlimap(from_range_t fr, const R& range)
+        : flat_map(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_mutlimap(from_range_t, const R& range, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
