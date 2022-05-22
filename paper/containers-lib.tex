@@ -534,7 +534,7 @@ namespace std {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_map& fm) noexcept;
+    void swap(flat_map& y) noexcept;
     void clear() noexcept;
 
     // observers
@@ -1141,15 +1141,15 @@ The same as \tcode{emplace} and \tcode{emplace_hint}, respectively.
 
 \indexlibrarymember{swap}{flatmap}%
 \begin{itemdecl}
-void swap(flat_map& fm) noexcept;
+void swap(flat_map& y) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum \effects Equivalent to:
 \begin{codeblock}
-ranges::swap(compare, fm.compare);
-ranges::swap(c.keys, fm.c.keys);
-ranges::swap(c.values, fm.c.values);
+ranges::swap(compare, y.compare);
+ranges::swap(c.keys, y.c.keys);
+ranges::swap(c.values, y.c.values);
 \end{codeblock}
 \end{itemdescr}
 
@@ -1493,7 +1493,7 @@ namespace std {
     template<class K> size_type erase(K&& x);
     iterator erase(const_iterator first, const_iterator last);
 
-    void swap(flat_multimap& fm) noexcept;
+    void swap(flat_multimap&) noexcept;
     void clear() noexcept;
 
     // observers
