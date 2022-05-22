@@ -356,7 +356,8 @@ namespace std {
     template <ranges::input_range R>
       explicit flat_map(const R& range,
                         const key_compare& comp = key_compare())
-        : flat_map(ranges::begin(range), ranges::end(range), comp) { }
+        : flat_map(comp)
+        { insert_range(std::forward<R>(range); }
     template <ranges::input_range R, class Allocator>
       flat_map(const R& range, const Allocator& a);
 
@@ -366,10 +367,9 @@ namespace std {
       flat_map(sorted_unique_t, const key_container_type& key_cont,
                const mapped_container_type& mapped_cont, const Allocator& a);
     template <ranges::input_range R>
-      flat_map(sorted_unique_t s,
+      flat_map(sorted_unique_t,
                const R& range,
-               const key_compare& comp = key_compare())
-        : flat_map(s, ranges::begin(range), ranges::end(range), comp) { }
+               const key_compare& comp = key_compare());
     template <ranges::input_range R, class Allocator>
       flat_map(sorted_unique_t, const R& range, const Allocator& a);
 
@@ -490,8 +490,7 @@ namespace std {
     template <class InputIterator>
       void insert(sorted_unique_t, InputIterator first, InputIterator last);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      void insert_range(const R& range)
-        { insert(ranges::begin(range), ranges::end(range)); }
+      void insert_range(const R& range);
 
     void insert(initializer_list<value_type> il)
       { insert(il.begin(), il.end()); }
@@ -707,6 +706,31 @@ flat_map(sorted_unique_t, key_container_type key_cont, mapped_container_type map
 \complexity
 Constant.
 \end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
+template <ranges::input_range R>
+  flat_map(sorted_unique_t,
+           const R& range,
+           const key_compare& comp = key_compare());
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Initializes \tcode{compare} with \tcode{comp}, then adds elements to \tcode{c}
+as if by:
+\begin{codeblock}
+for (const auto& e : range) {
+  c.keys.insert(c.keys.end(), e.first);
+  c.values.insert(c.values.end(), e.second);
+}
+\end{codeblock}
+
+\pnum
+\complexity
+Linear in \tcode{ranges::distance(range)}.
+\end{itemdescr}
+
 
 \indexlibrary{\idxcode{flatmap}!constructor}%
 \begin{itemdecl}
@@ -978,6 +1002,38 @@ c.values.erase(c.values.begin() + distance(it, zv.end()), c.values.end());
 \pnum
 \complexity
 Linear in $N$, where $N$ is \tcode{size()} after the operation.
+\end{itemdescr}
+
+\indexlibrarymember{insert_range}{flatmap}%
+\begin{itemdecl}
+template<@\placeholder{container-compatible-range}@<value_type> R>
+  void insert_range(const R& range);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Adds elements to \tcode{c} as if by:
+\begin{codeblock}
+for (const auto& e : range) {
+  c.keys.insert(c.keys.end(), e.first);
+  c.values.insert(c.values.end(), e.second);
+}
+\end{codeblock}
+Then, sorts the range of newly inserted elements with respect
+to \tcode{value_comp()}; merges the resulting sorted range and the sorted
+range of pre-existing elements into a single sorted range; and finally erases
+the duplicate elements as if by:
+\begin{codeblock}
+auto zv = ranges::zip_view(c.keys, c.values);
+auto it = ranges::unique(zv, key_equiv(compare));
+c.keys.erase(c.keys.begin() + distance(it, zv.end()), c.keys.end());
+c.values.erase(c.values.begin() + distance(it, zv.end()), c.values.end());
+\end{codeblock}
+
+\pnum
+\complexity
+$N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
+is \tcode{ranges::distance(range)}.
 \end{itemdescr}
 
 \indexlibrarymember{try_emplace}{flatmap}%
@@ -1351,7 +1407,8 @@ namespace std {
     template <ranges::input_range R>
       explicit flat_multimap(const R& range,
                              const key_compare& comp = key_compare())
-        : flat_multimap(ranges::begin(range), ranges::end(range), comp) { }
+        : flat_multimap(comp)
+        { insert_range(std::forward<R>(range)); }
     template <ranges::input_range R, class Allocator>
       flat_multimap(const R& range, const Allocator& a);
 
@@ -1363,8 +1420,7 @@ namespace std {
     template <ranges::input_range R>
       flat_multimap(sorted_equivalent_t s,
                     const R& range,
-                    const key_compare& comp = key_compare())
-        : flat_multimap(s, ranges::begin(range), ranges::end(range), comp) { }
+                    const key_compare& comp = key_compare());
     template <ranges::input_range R, class Allocator>
       flat_multimap(sorted_equivalent_t, const R& range, const Allocator& a);
 
@@ -1476,8 +1532,7 @@ namespace std {
     template <class InputIterator>
       void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      void insert_range(const R& range)
-        { insert(ranges::begin(range), ranges::end(range)); }
+      void insert_range(const R& range);
 
     void insert(initializer_list<value_type> il)
       { insert(il.begin(), il.end()); }
