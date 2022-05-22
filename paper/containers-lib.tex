@@ -527,32 +527,6 @@ is constructed with uses-allocator construction ([allocator.uses.construction]).
 
 \rSec3[flatset.modifiers]{Modifiers}
 
-\indexlibrarymember{emplace}{flatset}%
-\begin{itemdecl}
-template <class... Args> pair<iterator, bool> emplace(Args&&... args);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum \constraints \tcode{is_constructible_v<key_type, Args\&\&...>} is \tcode{true}.
-
-\pnum
-\effects
-Initializes an object \tcode{t} of type \tcode{key_type}
-with \tcode{std::forward<Args>(args)...}; if the set already contains an
-element equivalent to \tcode{t}, \tcode{*this} is unchanged.  Otherwise,
-equivalent to:
-\begin{codeblock}
-auto it = std::lower_bound(c.begin(), c.end(), t, compare);
-c.insert(it, std::move(t));
-\end{codeblock}
-
-\pnum
-\returns
-The \tcode{bool} component of the returned pair is \tcode{true} if and only if
-the insertion took place, and the iterator component of the pair points to the
-element equivalent to \tcode{t}.
-\end{itemdescr}
-
 \indexlibrarymember{insert}{flatset}%
 \begin{itemdecl}
 template<class K> pair<iterator, bool> insert(K&& x);
