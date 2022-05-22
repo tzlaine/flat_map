@@ -672,7 +672,7 @@ template<class Key, class Compare, class KeyContainer, class Predicate>
 \begin{itemdescr}
 \pnum
 \effects
-Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
+Equivalent to:
 \begin{codeblock}
   auto [erase_first, erase_last] = ranges::remove_if(c, pred);
   return c.erase(erase_first, erase_last);
@@ -1172,7 +1172,7 @@ template<class Key, class Compare, class KeyContainer, class Predicate>
 \begin{itemdescr}
 \pnum
 \effects
-Removes the elements for which \tcode{pred} is \tcode{true}, as if by:
+Equivalent to:
 \begin{codeblock}
   auto [erase_first, erase_last] = ranges::remove_if(c, pred);
   return c.erase(erase_first, erase_last);
