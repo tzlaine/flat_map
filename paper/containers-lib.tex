@@ -1194,14 +1194,15 @@ name of the template:
 
 \begin{codeblock}
 namespace std {
-  template <class charT, formattable<charT> Key, class... U>
+  template <class charT, class Key, class... U>
+    requires formattable<const Key, charT>
   struct formatter<@\placeholder{set-type}@<Key, U...>, charT>
   {
   private:
     range_formatter<Key, charT> underlying_; // \expos
 
   public:
-    formatter();
+    constexpr formatter();
 
     template <class ParseContext>
       constexpr typename ParseContext::iterator
@@ -1215,14 +1216,14 @@ namespace std {
 \end{codeblock}
 
 \begin{itemdecl}
-formatter();
+constexpr formatter();
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \effects Equivalent to:
 \begin{codeblock}
-this->set_brackets(@\placeholder{STATICALLY-WIDEN}@<charT>("{"), @\placeholder{STATICALLY-WIDEN}@<charT>("}"));
+underlying_.set_brackets(@\placeholder{STATICALLY-WIDEN}@<charT>("{"), @\placeholder{STATICALLY-WIDEN}@<charT>("}"));
 \end{codeblock}
 \end{itemdescr}
 
@@ -1234,7 +1235,7 @@ template <class ParseContext>
 
 \begin{itemdescr}
 \pnum
-\effects Equivalent to: \tcode{return underlying_.parse(ctx);}
+\effects Equivalent to \tcode{return underlying_.parse(ctx);}
 \end{itemdescr}
 
 \begin{itemdecl}
@@ -1245,6 +1246,6 @@ template <class FormatContext>
 
 \begin{itemdescr}
 \pnum
-\effects Equivalent to: \tcode{return underlying_.format(r, ctx);}
+\effects Equivalent to \tcode{return underlying_.format(r, ctx);}
 \end{itemdescr}
 \end{addedblock}
