@@ -152,7 +152,7 @@ A \tcode{flat_set} also provides most operations described
 in ([associative.reqmts]) for unique keys.  This means that a
 \tcode{flat_set} supports the \tcode{a_uniq} operations
 in ([associative.reqmts]), but not the \tcode{a_eq} operations.  For a
-\tcode{flat_set<Key>} both the \tcode{key_type} and \tcode{mapped_type} are
+\tcode{flat_set<Key>} both the \tcode{key_type} and \tcode{value_type} are
 \tcode{Key}.
 
 \pnum
@@ -712,12 +712,12 @@ position iterator.
 allocator-aware container, as described in ([container.alloc.reqmts]).\end{note}
 
 \pnum
-A \tcode{flat_multiset} also provides most operations described
-in ([associative.reqmts]) for equal keys.  This means that a
+A \tcode{flat_multiset} also provides most operations described in
+([associative.reqmts]) for equal keys.  This means that a
 \tcode{flat_multiset} supports the \tcode{a_eq} operations
-in ([associative.reqmts]), but not the \tcode{a_uniq} operations.  For
-a \tcode{flat_multiset<Key,T>} the \tcode{key_type} is \tcode{Key} and the
-\tcode{value_type} is \tcode{pair<const Key,T>}.
+in ([associative.reqmts]), but not the \tcode{a_uniq} operations.  For a
+\tcode{flat_mutliset<Key>} both the \tcode{key_type} and \tcode{value_type} are
+\tcode{Key}.
 
 \pnum
 Descriptions are provided here only for operations on \tcode{flat_multiset}
