@@ -249,16 +249,16 @@ namespace std {
       flat_set(InputIterator first, InputIterator last, const Allocator& a);
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_set(from_range_t fr, const R& rg)
+      flat_set(from_range_t fr, R&& rg)
         : flat_set(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_set(from_range_t, const R& rg, const Allocator& a);
+      flat_set(from_range_t, R&& rg, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-       flat_set(from_range_t, const R& rg, const key_compare& comp)
-         : flat_set(comp)
-         { insert_range(std::forward<R>(range)); }
+      flat_set(from_range_t, R&& rg, const key_compare& comp)
+        : flat_set(comp)
+        { insert_range(std::forward<R>(range)); }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-       flat_set(from_range_t, const R& rg, const key_compare& comp,
+       flat_set(from_range_t, R&& rg, const key_compare& comp,
                 const Allocator& a);
 
     template <class InputIterator>
@@ -410,11 +410,11 @@ namespace std {
 
   template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
           class Allocator = allocator<ranges::range_value_t<R>>>
-    flat_set(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
+    flat_set(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
       -> flat_set<ranges::range_value_t<R>, Compare>;
 
    template<ranges::input_range R, class Allocator>
-     flat_set(from_range_t, const R&, Allocator)
+     flat_set(from_range_t, R&&, Allocator)
        -> flat_set<ranges::range_value_t<R>, less<ranges::range_value_t<R>>>;
 
   template<class Key, class Compare = less<Key>>
@@ -516,9 +516,9 @@ template <class InputIterator, class Allocator>
 template <class InputIterator, class Allocator>
   flat_set(InputIterator first, InputIterator last, const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_set(from_range_t, const R& rg, const Allocator& a);
+  flat_set(from_range_t, R&& rg, const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-   flat_set(from_range_t, const R& rg, const key_compare& comp, const Allocator& a);
+  flat_set(from_range_t, R&& rg, const key_compare& comp, const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_set(sorted_unique_t, InputIterator first, InputIterator last,
            const key_compare& comp, const Allocator&);
@@ -838,13 +838,13 @@ class flat_multiset {
       flat_multiset(from_range_t fr, const R& rg)
         : flat_multiset(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_multiset(from_range_t, const R& rg, const Allocator& a);
+      flat_multiset(from_range_t, R&& rg, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_multiset(from_range_t, const R& rg, const key_compare& comp)
+      flat_multiset(from_range_t, R&& rg, const key_compare& comp)
         : flat_multiset(comp)
         { insert_range(std::forward<R>(range)); }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_multiset(from_range_t, const R& rg, const key_compare& comp,
+      flat_multiset(from_range_t, R&& rg, const key_compare& comp,
                     const Allocator& a);
 
     template <class InputIterator>
@@ -994,11 +994,11 @@ class flat_multiset {
 
   template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
           class Allocator = allocator<ranges::range_value_t<R>>>
-    flat_multiset(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
+    flat_multiset(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
       -> flat_multiset<ranges::range_value_t<R>, Compare>;
 
    template<ranges::input_range R, class Allocator>
-     flat_multiset(from_range_t, const R&, Allocator)
+     flat_multiset(from_range_t, R&&, Allocator)
        -> flat_multiset<ranges::range_value_t<R>, less<ranges::range_value_t<R>>>;
 
   template<class Key, class Compare = less<Key>>
@@ -1079,9 +1079,9 @@ template <class InputIterator, class Allocator>
   flat_multiset(InputIterator first, InputIterator last,
                 const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_multiset(from_range_t, const R& rg, const Allocator& a);
+  flat_multiset(from_range_t, R&& rg, const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_multiset(from_range_t, const R& rg, const key_compare& comp,
+  flat_multiset(from_range_t, R&& rg, const key_compare& comp,
                 const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
