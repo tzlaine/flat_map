@@ -442,8 +442,8 @@ flat_set(container_type cont);
 \pnum
 \effects Initializes \tcode{c} with \tcode{std::move(cont)}, value-initializes
 \tcode{compare}, sorts the range \range{begin()}{end()} with respect to
-\tcode{compare}, and finally erases the range \range{ranges::unique(*this,
-compare)}{end()}.
+\tcode{compare}, and finally erases all but the first element from each group of
+consecutive equivalent elements.
 
 \pnum
 \complexity
@@ -592,8 +592,9 @@ c.insert(c.end(), first, last);
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect
 to \tcode{compare}; merges the resulting sorted range and the sorted
-range of pre-existing elements into a single sorted range; and finally erases
-the range \range{ranges::unique(*this, compare)}{end()}.
+range of pre-existing elements into a single sorted range; and finally
+erases all but the first element from each group of consecutive equivalent
+elements.
 
 \pnum
 \complexity
@@ -636,8 +637,9 @@ for (const auto& e : range) {
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect
 to \tcode{compare}; merges the resulting sorted range and the sorted
-range of pre-existing elements into a single sorted range; and finally erases
-the range \range{ranges::unique(*this, compare)}{end()}.
+range of pre-existing elements into a single sorted range; and finally
+erases all but the first element from each group of
+consecutive equivalent elements.
 
 \pnum
 \complexity
