@@ -403,13 +403,13 @@ namespace std {
       flat_map(from_range_t fr, const R& rg)
         : flat_map(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_map(from_range_t, const R& rg, const Allocator& a);
+      flat_map(from_range_t, R&& rg, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_map(from_range_t, const R& rg, const key_compare& comp)
+      flat_map(from_range_t, R&& rg, const key_compare& comp)
         : flat_map(comp)
         { insert_range(std::forward<R>(range)); }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_map(from_range_t, const R& rg, const key_compare& comp,
+      flat_map(from_range_t, R&& rg, const key_compare& comp,
                const Allocator& a);
 
     template <class InputIterator>
@@ -647,11 +647,11 @@ namespace std {
 
   template<ranges::input_range R, class Compare = less<@\placeholder{range-key-type}@<R>>,
            class Allocator>
-    flat_map(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
+    flat_map(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
       -> flat_map<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare>;
 
   template<ranges::input_range R, class Allocator>
-    flat_map(from_range_t, const R&, Allocator)
+    flat_map(from_range_t, R&&, Allocator)
       -> flat_map<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>>;
 
   template<class Key, class T, class Compare = less<Key>>
@@ -788,9 +788,9 @@ template <class InputIterator, class Allocator>
   flat_map(InputIterator first, InputIterator last,
            const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_map(from_range_t, const R& rg, const Allocator& a);
+  flat_map(from_range_t, R&& rg, const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_map(from_range_t, const R& rg, const key_compare& comp, const Allocator& a);
+  flat_map(from_range_t, R&& rg, const key_compare& comp, const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_map(sorted_unique_t, InputIterator first, InputIterator last,
            const key_compare& comp, const Allocator& a);
@@ -1499,13 +1499,13 @@ namespace std {
       flat_mutlimap(from_range_t fr, const R& rg)
         : flat_map(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_mutlimap(from_range_t, const R& rg, const Allocator& a);
+      flat_mutlimap(from_range_t, R&& rg, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_multimap(from_range_t, const R& rg, const key_compare& comp)
+      flat_multimap(from_range_t, R&& rg, const key_compare& comp)
         : flat_map(comp)
         { insert_range(std::forward<R>(range)); }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-      flat_multimap(from_range_t, const R& rg, const key_compare& comp,
+      flat_multimap(from_range_t, R&& rg, const key_compare& comp,
                     const Allocator& a);
 
     template <class InputIterator>
@@ -1699,11 +1699,11 @@ namespace std {
 
   template<ranges::input_range R, class Compare = less<@\placeholder{range-key-type}@<R>>,
            class Allocator>
-    flat_multimap(from_range_t, const R&, Compare = Compare(), Allocator = Allocator())
+    flat_multimap(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
       -> flat_multimap<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare>;
 
   template<ranges::input_range R, class Allocator>
-    flat_multimap(from_range_t, const R&, Allocator)
+    flat_multimap(from_range_t, R&&, Allocator)
       -> flat_multimap<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>>;
 
   template<class Key, class T, class Compare = less<Key>>
@@ -1812,9 +1812,9 @@ template <class InputIterator, class Allocator>
   flat_multimap(InputIterator first, InputIterator last,
                 const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_mutlimap(from_range_t, const R& rg, const Allocator& a);
+  flat_mutlimap(from_range_t, R&& rg, const Allocator& a);
 template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
-  flat_multimap(from_range_t, const R& rg, const key_compare& comp,
+  flat_multimap(from_range_t, R&& rg, const key_compare& comp,
                 const Allocator& a);
 template <class InputIterator, class Allocator>
   flat_multimap(sorted_equivalent_t, InputIterator first, InputIterator last,
