@@ -214,7 +214,7 @@ namespace std {
     flat_set(sorted_unique_t, container_type cont)
       : c(std::move(cont)), compare(key_compare()) { }
     template <class Allocator>
-      flat_set(sorted_unique_t s, const container_type& cont, const Allocator& a);
+      flat_set(sorted_unique_t, const container_type& cont, const Allocator& a);
     template <ranges::input_range R>
       flat_set(sorted_unique_t,
                const R& range,
@@ -261,7 +261,7 @@ namespace std {
       flat_set(sorted_unique_t, InputIterator first, InputIterator last,
                const key_compare& comp, const Allocator&);
     template <class InputIterator, class Allocator>
-      flat_set(sorted_unique_t s, InputIterator first, InputIterator last,
+      flat_set(sorted_unique_t, InputIterator first, InputIterator last,
                const Allocator& a);
 
     flat_set(initializer_list<key_type>&& il,
@@ -277,10 +277,10 @@ namespace std {
              const key_compare& comp = key_compare()) 
         : flat_set(s, il, comp) { }
     template <class Allocator>
-      flat_set(sorted_unique_t s, initializer_list<key_type>&& il,
+      flat_set(sorted_unique_t, initializer_list<key_type>&& il,
                const key_compare& comp, const Allocator& a);
     template <class Allocator>
-      flat_set(sorted_unique_t s, initializer_list<key_type>&& il,
+      flat_set(sorted_unique_t, initializer_list<key_type>&& il,
                const Allocator& a);
 
     flat_set& operator=(initializer_list<key_type>);
@@ -477,12 +477,12 @@ template <class Allocator>
   flat_set(initializer_list<value_type> il, const key_compare& comp,
            const Allocator& a);
 template <class Allocator>
-  flat_set(sorted_unique_t s, const container_type& cont, const Allocator& a);
+  flat_set(sorted_unique_t, const container_type& cont, const Allocator& a);
 template <class Allocator>
-  flat_set(sorted_unique_t s, initializer_list<value_type> il,
+  flat_set(sorted_unique_t, initializer_list<value_type> il,
            const Allocator& a);
 template<class Allocator>
-  flat_set(sorted_unique_t s, initializer_list<value_type> il,
+  flat_set(sorted_unique_t, initializer_list<value_type> il,
            const key_compare& comp, const Allocator& a);
 template <class Allocator>
   flat_set(const key_compare& comp, const Allocator&);
@@ -501,7 +501,7 @@ template <class InputIterator, class Allocator>
   flat_set(sorted_unique_t, InputIterator first, InputIterator last,
            const key_compare& comp, const Allocator&);
 template <class InputIterator, class Allocator>
-  flat_set(sorted_unique_t s, InputIterator first, InputIterator last,
+  flat_set(sorted_unique_t, InputIterator first, InputIterator last,
            const Allocator& a);
 template <class Allocator>
   flat_set(initializer_list<key_type>&& il,
@@ -509,10 +509,10 @@ template <class Allocator>
 template <class Allocator>
   flat_set(initializer_list<key_type>&& il, const Allocator& a);
 template <class Allocator>
-  flat_set(sorted_unique_t s, initializer_list<key_type>&& il,
+  flat_set(sorted_unique_t, initializer_list<key_type>&& il,
            const key_compare& comp, const Allocator& a);
 template <class Allocator>
-  flat_set(sorted_unique_t s, initializer_list<key_type>&& il,
+  flat_set(sorted_unique_t, initializer_list<key_type>&& il,
            const Allocator& a);
 \end{itemdecl}
 
@@ -825,7 +825,7 @@ class flat_multiset {
       flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                     const key_compare& comp, const Allocator&);
     template <class InputIterator, class Allocator>
-      flat_multiset(sorted_equivalent_t s, InputIterator first, InputIterator last,
+      flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                     const Allocator& a);
 
     flat_multiset(initializer_list<key_type>&& il,
@@ -841,10 +841,10 @@ class flat_multiset {
                   const key_compare& comp = key_compare())
         : flat_multiset(s, il, comp) { }
     template <class Allocator>
-      flat_multiset(sorted_equivalent_t s, initializer_list<key_type>&& il,
+      flat_multiset(sorted_equivalent_t, initializer_list<key_type>&& il,
                     const key_compare& comp, const Allocator& a);
     template <class Allocator>
-      flat_multiset(sorted_equivalent_t s, initializer_list<key_type>&& il,
+      flat_multiset(sorted_equivalent_t, initializer_list<key_type>&& il,
                     const Allocator& a);
 
     flat_multiset& operator=(initializer_list<key_type>);
@@ -1015,10 +1015,10 @@ flat_multiset(initializer_list<value_type> il, const key_compare& comp,
 template <class Allocator>
   flat_multiset(sorted_equivalent_t, const container_type&, const Allocator&);
 template <class Allocator>
-  flat_multiset(sorted_equivalent_t s, initializer_list<value_type> il,
+  flat_multiset(sorted_equivalent_t, initializer_list<value_type> il,
                 const Allocator& a);
 template <class Allocator>
-  flat_multiset(sorted_equivalent_t s, initializer_list<value_type> il,
+  flat_multiset(sorted_equivalent_t, initializer_list<value_type> il,
                 const key_compare& comp, const Allocator& a);
 template <class Allocator>
   flat_multiset(const key_compare& comp, const Allocator&);
@@ -1039,7 +1039,7 @@ template <class InputIterator, class Allocator>
   flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                 const key_compare& comp, const Allocator&);
 template <class InputIterator, class Allocator>
-  flat_multiset(sorted_equivalent_t s, InputIterator first, InputIterator last,
+  flat_multiset(sorted_equivalent_t, InputIterator first, InputIterator last,
                 const Allocator& a);
 template <class Allocator>
   flat_multiset(initializer_list<key_type>&& il,
@@ -1047,10 +1047,10 @@ template <class Allocator>
 template <class Allocator>
   flat_multiset(initializer_list<key_type>&& il, const Allocator& a);
 template <class Allocator>
-  flat_multiset(sorted_equivalent_t s, initializer_list<key_type>&& il,
+  flat_multiset(sorted_equivalent_t, initializer_list<key_type>&& il,
                 const key_compare& comp, const Allocator& a);
 template <class Allocator>
-  flat_multiset(sorted_equivalent_t s, initializer_list<key_type>&& il,
+  flat_multiset(sorted_equivalent_t, initializer_list<key_type>&& il,
                 const Allocator& a);
 \end{itemdecl}
 
