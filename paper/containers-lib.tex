@@ -354,12 +354,16 @@ namespace std {
                const mapped_container_type& mapped_cont,
                const Allocator& a);
     template <ranges::input_range R>
-      explicit flat_map(const R& rg,
-                        const key_compare& comp = key_compare())
+      explicit flat_map(const R& rg)
+        : flat_map(rg, key_compare()) { }
+    template <ranges::input_range R>
+      explicit flat_map(const R& rg, const key_compare& comp)
         : flat_map(comp)
         { insert_range(std::forward<R>(range); }
     template <ranges::input_range R, class Allocator>
       flat_map(const R& rg, const Allocator& a);
+    template <ranges::input_range R, class Allocator>
+      flat_map(const R& rg, const key_compare& comp, const Allocator& a);
 
     flat_map(sorted_unique_t,
              key_container_type key_cont, mapped_container_type mapped_cont);
@@ -367,11 +371,14 @@ namespace std {
       flat_map(sorted_unique_t, const key_container_type& key_cont,
                const mapped_container_type& mapped_cont, const Allocator& a);
     template <ranges::input_range R>
-      flat_map(sorted_unique_t,
-               const R& rg,
-               const key_compare& comp = key_compare());
+      flat_map(sorted_unique_t s, const R& rg)
+        : flat_map(s, rg, key_compare()) { }
+    template <ranges::input_range R>
+      flat_map(sorted_unique_t, const R& rg, const key_compare& comp);
     template <ranges::input_range R, class Allocator>
       flat_map(sorted_unique_t, const R& rg, const Allocator& a);
+    template <ranges::input_range R, class Allocator>
+      flat_map(sorted_unique_t, const R& rg, const key_compare& comp, const Allocator& a);
 
     explicit flat_map(const key_compare& comp)
       : c(), compare(comp) { }
@@ -711,9 +718,7 @@ Constant.
 \indexlibrary{\idxcode{flatmap}!constructor}%
 \begin{itemdecl}
 template <ranges::input_range R>
-  flat_map(sorted_unique_t,
-           const R& rg,
-           const key_compare& comp = key_compare());
+  flat_map(sorted_unique_t, const R& rg, const key_compare& comp);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -741,11 +746,16 @@ template <class Allocator>
            const Allocator& a);
 template <ranges::input_range R, class Allocator>
   flat_map(const R& rg, const Allocator& a);
+template <ranges::input_range R, class Allocator>
+  flat_map(const R& rg, const key_compare& comp, const Allocator& a);
 template <class Allocator>
   flat_map(sorted_unique_t, const key_container_type& key_cont,
            const mapped_container_type& mapped_cont, const Allocator& a);
 template <ranges::input_range R, class Allocator>
   flat_map(sorted_unique_t, const R& rg, const Allocator& a);
+template <ranges::input_range R, class Allocator>
+  flat_map(sorted_unique_t, const R& rg, const key_compare& comp,
+           const Allocator& a);
 template <class Allocator>
   flat_map(const key_compare& comp, const Allocator& a);
 template <class Allocator>
@@ -1418,12 +1428,16 @@ namespace std {
                     const mapped_container_type& mapped_cont,
                     const Allocator& a);
     template <ranges::input_range R>
-      explicit flat_multimap(const R& rg,
-                             const key_compare& comp = key_compare())
+      explicit flat_multimap(const R& rg)
+        : flat_multimap(rg, key_compare()) { }
+    template <ranges::input_range R>
+      explicit flat_multimap(const R& rg, const key_compare& comp)
         : flat_multimap(comp)
         { insert_range(std::forward<R>(range)); }
     template <ranges::input_range R, class Allocator>
       flat_multimap(const R& rg, const Allocator& a);
+    template <ranges::input_range R, class Allocator>
+      flat_multimap(const R& rg, const key_compare& comp, const Allocator& a);
 
     flat_multimap(sorted_equivalent_t,
                   key_container_type key_cont, mapped_container_type mapped_cont);
@@ -1431,11 +1445,15 @@ namespace std {
       flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
                     const mapped_container_type& mapped_cont, const Allocator& a);
     template <ranges::input_range R>
-      flat_multimap(sorted_equivalent_t,
-                    const R& rg,
-                    const key_compare& comp = key_compare());
+      flat_multimap(sorted_equivalent_t s, const R& rg)
+        : flat_multimap(s, rg, key_compare()) { }
+    template <ranges::input_range R>
+      flat_multimap(sorted_equivalent_t, const R& rg, const key_compare& comp);
     template <ranges::input_range R, class Allocator>
       flat_multimap(sorted_equivalent_t, const R& rg, const Allocator& a);
+    template <ranges::input_range R, class Allocator>
+      flat_multimap(sorted_equivalent_t, const R& rg, const key_compare& comp,
+                    const Allocator& a);
 
     explicit flat_multimap(const key_compare& comp)
       : c(), compare(comp) { }
@@ -1731,9 +1749,14 @@ template <class Allocator>
                 const Allocator& a);
 template <ranges::input_range R, class Allocator>
   flat_multimap(const R& rg, const Allocator& a);
+template <ranges::input_range R, class Allocator>
+  flat_multimap(const R& rg, const key_compare& comp, const Allocator& a);
 template <class Allocator>
   flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
                 const mapped_container_type& mapped_cont, const Allocator& a);
+template <ranges::input_range R, class Allocator>
+  flat_multimap(sorted_equivalent_t, const R& rg, const key_compare& comp,
+                const Allocator& a);
 template <ranges::input_range R, class Allocator>
   flat_multimap(sorted_equivalent_t, const R& rg, const Allocator& a);
 template <class Allocator>
