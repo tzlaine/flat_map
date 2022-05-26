@@ -1431,7 +1431,7 @@ namespace std {
       flat_multimap(sorted_equivalent_t, const key_container_type& key_cont,
                     const mapped_container_type& mapped_cont, const Allocator& a);
     template <ranges::input_range R>
-      flat_multimap(sorted_equivalent_t s,
+      flat_multimap(sorted_equivalent_t,
                     const R& range,
                     const key_compare& comp = key_compare());
     template <ranges::input_range R, class Allocator>
