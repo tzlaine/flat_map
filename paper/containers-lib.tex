@@ -701,6 +701,27 @@ is \tcode{key_cont.size()}.
 
 \indexlibrary{\idxcode{flatmap}!constructor}%
 \begin{itemdecl}
+template <class Allocator>
+  flat_map(const key_container_type& key_cont,
+           const mapped_container_type& mapped_cont,
+           const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to \tcode{flat_map(key_cont, mapped_cont)}, except that
+\tcode{c.keys} and \tcode{c.values} are constructed with uses-allocator
+construction ([allocator.uses.construction]).
+
+\pnum
+\complexity
+Linear in $N$ if the container arguments are already sorted with respect
+to \tcode{value_comp()} and otherwise $N \log N$, where $N$
+is \tcode{key_cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
 flat_map(sorted_unique_t, key_container_type key_cont, mapped_container_type mapped_cont);
 \end{itemdecl}
 
@@ -1716,6 +1737,27 @@ flat_multimap(key_container_type key_cont, mapped_container_type mapped_cont);
 \tcode{c.values} with \tcode{std::move(mapped_cont)}; value-initializes
 \tcode{compare}; and sorts the range \range{begin()}{end()} with respect to
 \tcode{value_comp()}.
+
+\pnum
+\complexity
+Linear in $N$ if the container arguments are already sorted with respect
+to \tcode{value_comp()} and otherwise $N \log N$, where $N$
+is \tcode{key_cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+template <class Allocator>
+  flat_multimap(const key_container_type& key_cont,
+                const mapped_container_type& mapped_cont,
+                const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to \tcode{flat_multimap(key_cont, mapped_cont)}, except that
+\tcode{c.keys} and \tcode{c.values} are constructed with uses-allocator
+construction ([allocator.uses.construction]).
 
 \pnum
 \complexity
