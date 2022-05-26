@@ -678,7 +678,9 @@ template<class Key, class Compare, class KeyContainer, class Predicate>
 Equivalent to:
 \begin{codeblock}
   auto [erase_first, erase_last] = ranges::remove_if(c, pred);
-  return c.erase(erase_first, erase_last);
+  auto n = erase_last - erase_first;
+  c.erase(erase_first, erase_last);
+  return n;
 \end{codeblock}
 \end{itemdescr}
 
@@ -1176,7 +1178,9 @@ template<class Key, class Compare, class KeyContainer, class Predicate>
 Equivalent to:
 \begin{codeblock}
   auto [erase_first, erase_last] = ranges::remove_if(c, pred);
-  return c.erase(erase_first, erase_last);
+  auto n = erase_last - erase_first;
+  c.erase(erase_first, erase_last);
+  return n;
 \end{codeblock}
 \end{itemdescr}
 \end{addedblock}
