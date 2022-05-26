@@ -453,6 +453,24 @@ otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
 
 \indexlibrary{\idxcode{flatset}!constructor}%
 \begin{itemdecl}
+template <class Allocator>
+  flat_set(const container_type& cont, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to \tcode{flat_set(cont)}, except that \tcode{c}
+is constructed with uses-allocator construction
+([allocator.uses.construction]).
+
+\pnum
+\complexity
+Linear in $N$ if \tcode{cont} is sorted with respect to \tcode{compare} and
+otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatset}!constructor}%
+\begin{itemdecl}
 template <ranges::input_range R>
   flat_set(sorted_unique_t, const R& rg, const key_compare& comp);
 \end{itemdecl}
@@ -1009,6 +1027,24 @@ flat_multiset(container_type cont);
 \effects Initializes \tcode{c} with \tcode{std::move(cont)}, value-initializes
 \tcode{compare}, and sorts the range \range{begin()}{end()} with respect to
 \tcode{compare}.
+
+\pnum
+\complexity
+Linear in $N$ if \tcode{cont} is sorted with respect to \tcode{compare} and
+otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultiset}!constructor}%
+\begin{itemdecl}
+template <class Allocator>
+  flat_multiset(const container_type& cont, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to \tcode{flat_multiset(cont)}, except that \tcode{c}
+is constructed with uses-allocator construction
+([allocator.uses.construction]).
 
 \pnum
 \complexity
