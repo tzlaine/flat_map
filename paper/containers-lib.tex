@@ -300,9 +300,10 @@ and \tcode{mapped_container_type} arguments with containers of different sizes i
 undefined.
 
 \pnum
-The effect of calling a constructor that takes a \tcode{sorted_unique_t}
-argument with a range that is not sorted with respect to \tcode{compare}, or
-that contains equal elements, is undefined.
+The effect of calling a constructor or member function that takes
+a \tcode{sorted_unique_t} argument with a container or containers that is not
+sorted with respect to \tcode{key_Comp()}, or that contains equal elements, is
+undefined.
 
 \rSec3[flatmap.defn]{Definition}
 
@@ -1395,9 +1396,9 @@ and \tcode{mapped_container_type} arguments with containers of different sizes i
 undefined.
 
 \pnum
-The effect of calling a constructor that takes a \tcode{sorted_equivalent_t}
-argument with a container or containers that are not sorted with respect
-to \tcode{value_compare} is undefined.
+The effect of calling a constructor or member function that takes
+a \tcode{sorted_equivalent_t} argument with a container or containers that are
+not sorted with respect to \tcode{key_comp()} is undefined.
 
 \rSec3[flatmultimap.defn]{Definition}
 
