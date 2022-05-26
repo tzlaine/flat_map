@@ -562,20 +562,20 @@ The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and deno
 a type.  \tcode{is_constructible_v<value_type, K\&\&>} is \tcode{true}.
 
 \pnum
-\expects The conversion from \tcode{k} into \tcode{value_type} constructs an
-object \tcode{u}, for which \tcode{find(k) == find(u)} is true.
+\expects The conversion from \tcode{x} into \tcode{value_type} constructs an
+object \tcode{u}, for which \tcode{find(x) == find(u)} is true.
 
 \pnum
 \effects
-If the set already contains an element equivalent to \tcode{k}, \tcode{*this}
-and \tcode{args...} are unchanged.  Otherwise, inserts a new element as if
-by: \tcode{return emplace(std::forward<K>(k));}.
+If the set already contains an element equivalent to \tcode{x}, \tcode{*this}
+and \tcode{x} is unchanged.  Otherwise, inserts a new element as if
+by: \tcode{return emplace(std::forward<K>(x));}.
 
 \pnum
 \returns
-The \tcode{bool} component of the returned pair is \tcode{true} if and only if
-the insertion took place, and the iterator component of the pair points to the
-element equivalent to \tcode{k}.
+In the first overload, the \tcode{bool} component of the returned pair
+is \tcode{true} if and only if the insertion took place.  The returned
+iterator points to the element whose key is equivalent to \tcode{k}.
 \end{itemdescr}
 
 \indexlibrarymember{insert}{flatset}%
