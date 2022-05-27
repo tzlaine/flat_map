@@ -336,7 +336,7 @@ namespace std {
     template <class InputIterator>
       void insert(sorted_unique_t, InputIterator first, InputIterator last);
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      void insert_range(const R& rg);
+      void insert_range(R&& rg);
 
     void insert(initializer_list<key_type> il)
       { insert(il.begin(), il.end()); }
@@ -625,7 +625,7 @@ The range \range{first}{last} is sorted with respect to \tcode{compare}.
 \indexlibrarymember{insert_range}{flatset}%
 \begin{itemdecl}
 template<@\placeholder{container-compatible-range}@<value_type> R>
-  void insert_range(const R& rg);
+  void insert_range(R&& rg);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -838,7 +838,7 @@ class flat_multiset {
                     const Allocator& a);
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
-      flat_multiset(from_range_t fr, const R& rg)
+      flat_multiset(from_range_t fr, R&& rg)
         : flat_multiset(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_multiset(from_range_t, R&& rg, const Allocator& a);
@@ -922,7 +922,7 @@ class flat_multiset {
     template <class InputIterator>
       void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
     template<c@\placeholder{container-compatible-range}@<value_type> R>
-      void insert_range(const R& rg);
+      void insert_range(R&& rg);
 
     void insert(initializer_list<key_type> il)
       { insert(il.begin(), il.end()); }
