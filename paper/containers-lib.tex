@@ -358,7 +358,7 @@ namespace std {
       explicit flat_map(const R& rg)
         : flat_map(rg, key_compare()) { }
     template <ranges::input_range R>
-      explicit flat_map(const R& rg, const key_compare& comp)
+      flat_map(const R& rg, const key_compare& comp)
         : flat_map(comp)
         { insert_range(std::forward<R>(range); }
     template <ranges::input_range R, class Allocator>
@@ -1453,7 +1453,7 @@ namespace std {
       explicit flat_multimap(const R& rg)
         : flat_multimap(rg, key_compare()) { }
     template <ranges::input_range R>
-      explicit flat_multimap(const R& rg, const key_compare& comp)
+      flat_multimap(const R& rg, const key_compare& comp)
         : flat_multimap(comp)
         { insert_range(std::forward<R>(range)); }
     template <ranges::input_range R, class Allocator>
