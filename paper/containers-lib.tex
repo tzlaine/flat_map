@@ -1568,9 +1568,9 @@ namespace std {
     template <class... Args>
       iterator emplace_hint(const_iterator position, Args&&... args);
 
-    pair<iterator, bool> insert(const value_type& x)
+    iterator insert(const value_type& x)
       { return emplace(x); }
-    pair<iterator, bool> insert(value_type&& x)
+    iterator insert(value_type&& x)
       { return emplace(std::move(x)); }
     iterator insert(const_iterator position, const value_type& x)
       { return emplace_hint(position, x); }
