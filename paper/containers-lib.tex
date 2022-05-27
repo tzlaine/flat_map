@@ -926,7 +926,7 @@ class flat_multiset {
 
     void insert(initializer_list<key_type> il)
       { insert(il.begin(), il.end()); }
-    void insert(sorted_unique_t s, initializer_list<key_type> il)
+    void insert(sorted_equivalent_t s, initializer_list<key_type> il)
       { insert(s, il.begin(), il.end()); }
 
     container_type extract() &&;
@@ -1163,7 +1163,7 @@ is \tcode{distance(first, last)}.
 \indexlibrarymember{insert}{flatmultiset}%
 \begin{itemdecl}
 template <class InputIterator>
-  void insert(sorted_unique_t, InputIterator first, InputIterator last);
+  void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
 \end{itemdecl}
 
 \begin{itemdescr}
