@@ -439,6 +439,9 @@ template <class Allocator>
 
 \begin{itemdescr}
 \pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator>} is \tcode{true}.
+
+\pnum
 \effects Equivalent to \tcode{flat_set(cont)}, except that \tcode{c}
 is constructed with uses-allocator construction
 ([allocator.uses.construction]).
@@ -970,6 +973,9 @@ template <class Allocator>
 
 \begin{itemdescr}
 \pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator>} is \tcode{true}.
+
+\pnum
 \effects Equivalent to \tcode{flat_multiset(cont)}, except that \tcode{c}
 is constructed with uses-allocator construction
 ([allocator.uses.construction]).
@@ -982,8 +988,6 @@ otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
 
 \indexlibrary{\idxcode{flatmultiset}!constructor}%
 \begin{itemdecl}
-template <class Allocator>
-  flat_multiset(const container_type& cont, const Allocator& a);
 template <class Allocator>
   flat_multiset(sorted_equivalent_t, const container_type&, const Allocator& a);
 template <class Allocator>
