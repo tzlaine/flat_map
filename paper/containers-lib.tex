@@ -679,9 +679,7 @@ construction ([allocator.uses.construction]).
 
 \pnum
 \complexity
-Linear in $N$ if the container arguments are already sorted with respect
-to \tcode{value_comp()} and otherwise $N \log N$, where $N$
-is \tcode{key_cont.size()}.
+Same as \tcode{flat_map(key_cont, mapped_cont)}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{flatmap}!constructor}%
@@ -703,8 +701,27 @@ Constant.
 \indexlibrary{\idxcode{flatmap}!constructor}%
 \begin{itemdecl}
 template <class Allocator>
-  flat_map(sorted_unique_t, const key_container_type& key_cont,
+  flat_map(sorted_unique_t s, const key_container_type& key_cont,
            const mapped_container_type& mapped_cont, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator> \&\&
+uses_allocator_v<mapped_container_type, Allocator>} is \tcode{true}.
+
+\pnum
+\effects Equivalent to \tcode{flat_map(s, key_cont, mapped_cont)}, except that
+\tcode{c.keys} and \tcode{c.values} are constructed with uses-allocator
+construction ([allocator.uses.construction]).
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmap}!constructor}%
+\begin{itemdecl}
 template <class Allocator>
   flat_map(const key_compare& comp, const Allocator& a);
 template <class Allocator>
@@ -1667,9 +1684,7 @@ construction ([allocator.uses.construction]).
 
 \pnum
 \complexity
-Linear in $N$ if the container arguments are already sorted with respect
-to \tcode{value_comp()} and otherwise $N \log N$, where $N$
-is \tcode{key_cont.size()}.
+Same as \tcode{flat_multimap(key_cont, mapped_cont)}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{flatmultimap}!constructor}%
@@ -1687,6 +1702,28 @@ flat_multimap(sorted_equivalent_t, key_container_type key_cont,
 \pnum
 \complexity
 Constant.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultimap}!constructor}%
+\begin{itemdecl}
+template <class Allocator>
+  flat_multimap(sorted_equivalent_t s, const key_container_type& key_cont,
+                const mapped_container_type& mapped_cont, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator> \&\&
+uses_allocator_v<mapped_container_type, Allocator>} is \tcode{true}.
+
+\pnum
+\effects Equivalent to \tcode{flat_multimap(s, key_cont, mapped_cont)}, except that
+\tcode{c.keys} and \tcode{c.values} are constructed with uses-allocator
+construction ([allocator.uses.construction]).
+
+\pnum
+\complexity
+Linear.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{flatmultimap}!constructor}%
