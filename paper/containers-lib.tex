@@ -669,6 +669,10 @@ template <class Allocator>
 
 \begin{itemdescr}
 \pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator> \&\&
+uses_allocator_v<mapped_container_type, Allocator>} is \tcode{true}.
+
+\pnum
 \effects Equivalent to \tcode{flat_map(key_cont, mapped_cont)}, except that
 \tcode{c.keys} and \tcode{c.values} are constructed with uses-allocator
 construction ([allocator.uses.construction]).
@@ -698,10 +702,6 @@ Constant.
 
 \indexlibrary{\idxcode{flatmap}!constructor}%
 \begin{itemdecl}
-template <class Allocator>
-  flat_map(const key_container_type& key_cont,
-           const mapped_container_type& mapped_cont,
-           const Allocator& a);
 template <class Allocator>
   flat_map(sorted_unique_t, const key_container_type& key_cont,
            const mapped_container_type& mapped_cont, const Allocator& a);
@@ -1657,6 +1657,10 @@ template <class Allocator>
 
 \begin{itemdescr}
 \pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator> \&\&
+uses_allocator_v<mapped_container_type, Allocator>} is \tcode{true}.
+
+\pnum
 \effects Equivalent to \tcode{flat_multimap(key_cont, mapped_cont)}, except that
 \tcode{c.keys} and \tcode{c.values} are constructed with uses-allocator
 construction ([allocator.uses.construction]).
@@ -1687,10 +1691,6 @@ Constant.
 
 \indexlibrary{\idxcode{flatmultimap}!constructor}%
 \begin{itemdecl}
-template <class Allocator>
-  flat_multimap(const key_container_type& key_cont,
-                const mapped_container_type& mapped_cont,
-                const Allocator& a);
 template <class Allocator>
   flat_multimap(const key_compare& comp, const Allocator& a);
 template <class Allocator>
