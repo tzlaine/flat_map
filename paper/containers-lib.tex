@@ -317,7 +317,6 @@ namespace std {
     using mapped_container_type     = MappedContainer;
 
     class value_compare {
-      friend flat_map;
     private:
       key_compare comp;                           // \expos
       value_compare(key_compare c) : comp(c) { }  // \expos
@@ -1352,7 +1351,6 @@ namespace std {
     using mapped_container_type     = MappedContainer;
 
     class value_compare {
-      friend flat_multimap;
     private:
       key_compare comp;                           // \expos
       value_compare(key_compare c) : comp(c) { }  // \expos
