@@ -604,6 +604,15 @@ namespace std {
     flat_map(sorted_unique_t, InputIterator, InputIterator, Compare = Compare())
       -> flat_map<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
 
+  template<ranges::input_range R, class Compare = less<@\placeholder{range-key-type}@<R>>,
+           class Allocator>
+    flat_map(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+      -> flat_map<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare>;
+
+  template<ranges::input_range R, class Allocator>
+    flat_map(from_range_t, R&&, Allocator)
+      -> flat_map<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>>;
+
   template<class Key, class T, class Compare = less<Key>>
     flat_map(initializer_list<pair<Key, T>>, Compare = Compare())
       -> flat_map<Key, T, Compare>;
@@ -1585,6 +1594,15 @@ namespace std {
     flat_multimap(sorted_equivalent_t, InputIterator, InputIterator,
                   Compare = Compare())
       -> flat_multimap<@\placeholder{iter-key-type}@<InputIterator>, @\placeholder{iter-mapped-type}@<InputIterator>, Compare>;
+
+  template<ranges::input_range R, class Compare = less<@\placeholder{range-key-type}@<R>>,
+           class Allocator>
+    flat_multimap(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+      -> flat_multimap<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>, Compare>;
+
+  template<ranges::input_range R, class Allocator>
+    flat_multimap(from_range_t, R&&, Allocator)
+      -> flat_multimap<@\placeholder{range-key-type}@<R>, @\placeholder{range-mapped-type}@<R>>;
 
   template<class Key, class T, class Compare = less<Key>>
     flat_multimap(initializer_list<pair<Key, T>>, Compare = Compare())
