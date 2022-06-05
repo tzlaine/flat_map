@@ -388,6 +388,15 @@ namespace std {
     flat_set(sorted_unique_t, InputIterator, InputIterator, Compare = Compare())
       -> flat_set<@\placeholder{iter-value-type}@<InputIterator>, Compare>;
 
+  template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
+          class Allocator = allocator<ranges::range_value_t<R>>>
+    flat_set(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+      -> flat_set<ranges::range_value_t<R>, Compare>;
+
+   template<ranges::input_range R, class Allocator>
+     flat_set(from_range_t, R&&, Allocator)
+       -> flat_set<ranges::range_value_t<R>, less<ranges::range_value_t<R>>>;
+
   template<class Key, class Compare = less<Key>>
     flat_set(initializer_list<Key>, Compare = Compare())
       -> flat_set<Key, Compare>;
@@ -910,6 +919,15 @@ class flat_multiset {
   template <class InputIterator, class Compare = less<@\placeholder{iter-value-type}@<InputIterator>>>
     flat_multiset(sorted_equivalent_t, InputIterator, InputIterator, Compare = Compare())
       -> flat_multiset<@\placeholder{iter-value-type}@<InputIterator>, @\placeholder{iter-value-type}@<InputIterator>, Compare>;
+
+  template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
+          class Allocator = allocator<ranges::range_value_t<R>>>
+    flat_multiset(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+      -> flat_multiset<ranges::range_value_t<R>, Compare>;
+
+   template<ranges::input_range R, class Allocator>
+     flat_multiset(from_range_t, R&&, Allocator)
+       -> flat_multiset<ranges::range_value_t<R>, less<ranges::range_value_t<R>>>;
 
   template<class Key, class Compare = less<Key>>
     flat_multiset(initializer_list<Key>, Compare = Compare())
