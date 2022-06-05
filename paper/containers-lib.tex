@@ -141,7 +141,7 @@ A deduction guide for a container adaptor shall not participate in overload reso
 The exposition-only alias template \exposid{iter-value-type} defined in
 [sequences.general]\added{ and the exposition-only alias
 templates \exposid{iter-key-type} and
-\exposid{iter-value-type} defined in [associative.general]} may appear in
+\exposid{iter-mapped-type} defined in [associative.general]} may appear in
 deduction guides for container adaptors.
 
 \begin{addedblock}
@@ -229,10 +229,10 @@ based on the keys. \tcode{flat_map} supports iterators that meet the
 concept ([iterator.concept.random.access]).
 
 \pnum
-A \tcode{flat_map} satisfies all of the requirements for a container
+A \tcode{flat_map} meets all of the requirements for a container
 ([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
 plus the optional container requirements ([container.opt.reqmts]).  \tcode{flat_map}
-satisfies the requirements of an associative container ([associative.reqmts]), except that:
+meets the requirements of an associative container ([associative.reqmts]), except that:
 \begin{itemize}
 \item it does not meet the requirements related to node handles ([container.node]),
 \item it does not meet the requirements related to iterator invalidation, and
@@ -1263,10 +1263,10 @@ and model the \libconcept{random_access_iterator} concept
 ([iterator.concept.random.access]).
 
 \pnum
-A \tcode{flat_multimap} satisfies all of the requirements for a container
+A \tcode{flat_multimap} meets all of the requirements for a container
 ([container.reqmts]) and for a reversible container ([container.rev.reqmts]),
 plus the optional container requirements ([container.opt.reqmts]).  \tcode{flat_multimap}
-satisfies the requirements of an associative container ([associative.reqmts]), except that:
+meets the requirements of an associative container ([associative.reqmts]), except that:
 \begin{itemize}
 \item it does not meet the requirements related to node handles ([container.node]),
 \item it does not meet the requirements related to iterator invalidation, and
