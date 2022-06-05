@@ -448,14 +448,31 @@ is constructed with uses-allocator construction
 
 \pnum
 \complexity
-Linear in $N$ if \tcode{cont} is sorted with respect to \tcode{compare} and
-otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
+Same as \tcode{flat_set(cont)}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{flatset}!constructor}%
 \begin{itemdecl}
 template <class Allocator>
-  flat_set(sorted_unique_t, const container_type& cont, const Allocator& a);
+  flat_set(sorted_unique_t s, const container_type& cont, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator>} is \tcode{true}.
+
+\pnum
+\effects Equivalent to \tcode{flat_set(s, cont)}, except that \tcode{c}
+is constructed with uses-allocator construction
+([allocator.uses.construction]).
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatset}!constructor}%
+\begin{itemdecl}
 template <class Allocator>
   flat_set(const key_compare& comp, const Allocator& a);
 template <class Allocator>
@@ -982,15 +999,31 @@ is constructed with uses-allocator construction
 
 \pnum
 \complexity
-Linear in $N$ if \tcode{cont} is sorted with respect to \tcode{compare} and
-otherwise $N \log N$, where $N$ is \tcode{cont.size()}.
+Same as \tcode{flat_multiset(cont)}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{flatmultiset}!constructor}%
 \begin{itemdecl}
 template <class Allocator>
-  flat_multiset(sorted_equivalent_t, const container_type&, const Allocator& a);
-template <class Allocator>
+  flat_multiset(sorted_equivalent_t s, const container_type&, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{uses_allocator_v<key_container_type, Allocator>} is \tcode{true}.
+
+\pnum
+\effects Equivalent to \tcode{flat_multiset(s, cont)}, except that \tcode{c}
+is constructed with uses-allocator construction
+([allocator.uses.construction]).
+
+\pnum
+\complexity
+Linear.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{flatmultiset}!constructor}%
+\begin{itemdecl}
 template <class Allocator>
   flat_multiset(const key_compare& comp, const Allocator& a);
 template <class Allocator>
