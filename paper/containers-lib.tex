@@ -303,7 +303,7 @@ namespace std {
     // types
     using key_type                  = Key;
     using mapped_type               = T;
-    using value_type                = pair<const key_type, mapped_type>;
+    using value_type                = pair<key_type, mapped_type>;
     using key_compare               = Compare;
     using reference                 = pair<const key_type&, mapped_type&>;
     using const_reference           = pair<const key_type&, const mapped_type&>;
@@ -1338,7 +1338,7 @@ namespace std {
     // types
     using key_type                  = Key;
     using mapped_type               = T;
-    using value_type                = pair<const key_type, mapped_type>;
+    using value_type                = pair<key_type, mapped_type>;
     using key_compare               = Compare;
     using reference                 = pair<const key_type&, mapped_type&>;
     using const_reference           = pair<const key_type&, const mapped_type&>;
