@@ -129,7 +129,7 @@ A deduction guide for a container adaptor shall not participate in overload reso
 \item It has an \tcode{InputIterator} template parameter and a type that does not qualify as an input iterator is deduced for that parameter.
 \item It has a \tcode{Compare} template parameter and a type that qualifies as an allocator is deduced for that parameter.
 \item It has a \tcode{Container}\added{, \tcode{KeyContainer}, or \tcode{MappedContainer}} template parameter and a type that qualifies as an allocator is deduced for that parameter.
-\item It has no \tcode{Container} template parameter, and it has an \tcode{Allocator} template parameter, and a type that does not qualify as an allocator is deduced for that parameter.
+\item It has no \tcode{Container}\added{, \tcode{KeyContainer}, or \tcode{MappedContainer}} template parameter, and it has an \tcode{Allocator} template parameter, and a type that does not qualify as an allocator is deduced for that parameter.
 \item It has both \tcode{Container} and \tcode{Allocator} template parameters, and \tcode{uses_allocator_v<Container, Allocator>} is \tcode{false}.
 \item \added{It has both \tcode{KeyContainer} and \tcode{Allocator} template parameters, and \\
 \tcode{uses_allocator_v<KeyContainer, Allocator>} is \tcode{false}.}
