@@ -184,6 +184,11 @@ namespace std {
     size_t erase_if(flat_map<Key, T, Compare, KeyContainer, MappedContainer>& c,
                     Predicate pred);
 
+  template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
+            class Allocator>
+    struct uses_allocator<flat_map<Key, T, Compare, KeyContainer, MappedContainer>,
+                          Allocator>;
+
   // \ref{flatmultimap}, class template \tcode{flat_multimap}
   template<class Key, class T, class Compare = less<Key>,
            class KeyContainer = vector<Key>, class MappedContainer = vector<T>>
@@ -196,11 +201,6 @@ namespace std {
            class Predicate>
     size_t erase_if(flat_multimap<Key, T, Compare, KeyContainer, MappedContainer>& c,
                     Predicate pred);
-
-  template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
-            class Allocator>
-    struct uses_allocator<flat_map<Key, T, Compare, KeyContainer, MappedContainer>,
-                          Allocator>;
 
   template <class Key, class T, class Compare, class KeyContainer, class MappedContainer,
             class Allocator>
