@@ -1254,8 +1254,8 @@ auto original_size = c.size();
 auto [keys, values] = std::move(c).extract();
 
 auto keys_out_it = keys.begin();
-auto values_out_it = keys.begin();
-auto values_it = keys.begin();
+auto values_out_it = values.begin();
+auto values_it = values.begin();
 for (auto & key : keys) {
   auto & value = *values_it;
   if (!pred(pair<const Key&, const T&>(key, value))) {
@@ -1798,8 +1798,8 @@ auto original_size = c.size();
 auto [keys, values] = std::move(c).extract();
 
 auto keys_out_it = keys.begin();
-auto values_out_it = keys.begin();
-auto values_it = keys.begin();
+auto values_out_it = values.begin();
+auto values_it = values.begin();
 for (auto & key : keys) {
   auto & value = *values_it;
   if (!pred(pair<const Key&, const T&>(key, value))) {
