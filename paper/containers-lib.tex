@@ -655,7 +655,8 @@ void replace(container_type&& cont);
 
 \begin{itemdescr}
 \pnum \expects
-The elements of \tcode{cont} are sorted with respect to \tcode{compare}.
+The elements of \tcode{cont} are sorted with respect to \tcode{compare}, and
+contains no equal elements.
 
 \pnum
 \effects Equivalent to: \tcode{c = std::move(cont);}
