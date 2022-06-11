@@ -882,7 +882,7 @@ class flat_multiset {
       void insert(InputIterator first, InputIterator last);
     template <class InputIterator>
       void insert(sorted_equivalent_t, InputIterator first, InputIterator last);
-    template<c@\placeholder{container-compatible-range}@<value_type> R>
+    template<@\placeholder{container-compatible-range}@<value_type> R>
       void insert_range(R&& rg);
 
     void insert(initializer_list<key_type> il)
