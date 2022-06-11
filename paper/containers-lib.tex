@@ -881,7 +881,7 @@ template <class... Args> pair<iterator, bool> emplace(Args&&... args);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{is_constructible_v<pair<key_type, mapped_type>, Arg\&\&...>} is \tcode{true}.
+\pnum \constraints \tcode{is_constructible_v<pair<key_type, mapped_type>, Arg...>} is \tcode{true}.
 
 \pnum
 \effects
@@ -910,7 +910,7 @@ template<class P> iterator insert(const_iterator position, P&& x);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{is_constructible_v<pair<key_type, mapped_type>, P\&\&>} is \tcode{true}.
+\pnum \constraints \tcode{is_constructible_v<pair<key_type, mapped_type>, P>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1041,7 +1041,7 @@ template<class... Args>
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{is_constructible_v<mapped_type, Args\&\&...>} is \tcode{true}.
+\pnum \constraints \tcode{is_constructible_v<mapped_type, Args...>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1079,8 +1079,8 @@ template<class K, class... Args>
 \constraints
 \begin{itemize}
 \item The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
-\item \tcode{is_constructible_v<key_type, K\&\&>} is \tcode{true}.
-\item \tcode{is_constructible_v<mapped_type, Args\&\&...>} is \tcode{true}.
+\item \tcode{is_constructible_v<key_type, K>} is \tcode{true}.
+\item \tcode{is_constructible_v<mapped_type, Args...>} is \tcode{true}.
 \item For the first overload, \tcode{is_convertible_v<K\&\&, const_iterator>} and \tcode{is_convertible_v<K\&\&, iterator>} are both \tcode{false}.
 \end{itemize}
 
@@ -1124,7 +1124,7 @@ template<class M>
 
 \begin{itemdescr}
 \pnum \constraints \tcode{is_assignable_v<mapped_type\&, M>} is \tcode{true} and
-\tcode{is_constructible_v<mapped_type, M\&\&>} is \tcode{true}.
+\tcode{is_constructible_v<mapped_type, M>} is \tcode{true}.
 
 \pnum
 \effects
@@ -1159,9 +1159,9 @@ template<class K, class M>
 \constraints
 \begin{itemize}
 \item The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes a type.
-\item \tcode{is_constructible_v<key_type, K\&\&>} is \tcode{true}.
+\item \tcode{is_constructible_v<key_type, K>} is \tcode{true}.
 \item \tcode{is_assignable_v<mapped_type\&, M>} is \tcode{true}.
-\item \tcode{is_constructible_v<mapped_type, M\&\&>} is \tcode{true}.
+\item \tcode{is_constructible_v<mapped_type, M>} is \tcode{true}.
 \end{itemize}
 
 \pnum
