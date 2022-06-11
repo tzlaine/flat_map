@@ -931,8 +931,9 @@ template <class InputIterator>
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
 for (; first != last; ++first) {
-  c.keys.insert(c.keys.end(), first->first);
-  c.values.insert(c.values.end(), first->second);
+  value_type value = *first;
+  c.keys.insert(c.keys.end(), std::move(value.first));
+  c.values.insert(c.values.end(), std::move(value.second));
 }
 \end{codeblock}
 Then, sorts the range of newly inserted elements with respect
@@ -968,8 +969,9 @@ template <class InputIterator>
 \effects Adds elements to \tcode{c} as if by:
 \begin{codeblock}
 for (; first != last; ++first) {
-  c.keys.insert(c.keys.end(), first->first);
-  c.values.insert(c.values.end(), first->second);
+  value_type value = *first;
+  c.keys.insert(c.keys.end(), std::move(value.first));
+  c.values.insert(c.values.end(), std::move(value.second));
 }
 \end{codeblock}
 Then, merges the sorted range of newly added elements and the sorted range of
