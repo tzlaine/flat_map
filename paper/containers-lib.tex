@@ -526,7 +526,7 @@ template<class K> iterator insert(const_iterator hint, K&& x);
 \pnum
 \constraints
 The \grammarterm{qualified-id} \tcode{Compare::is_transparent} is valid and denotes
-a type.  \tcode{is_constructible_v<value_type, K\&\&>} is \tcode{true}.
+a type.  \tcode{is_constructible_v<value_type, K>} is \tcode{true}.
 
 \pnum
 \expects The conversion from \tcode{x} into \tcode{value_type} constructs an
@@ -1075,7 +1075,7 @@ template <class... Args> iterator emplace(Args&&... args);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \constraints \tcode{is_constructible_v<key_type, Args\&\&...>} is \tcode{true}.
+\pnum \constraints \tcode{is_constructible_v<key_type, Args...>} is \tcode{true}.
 
 \pnum
 \effects
