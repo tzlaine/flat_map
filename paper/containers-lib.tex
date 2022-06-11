@@ -161,6 +161,15 @@ are not described in one of those sets of requirements or for operations where
 there is additional semantic information.
 
 \pnum
+A \tcode{flat_set} maintains the invariant that the keys are sorted with
+respect to the comparison object.
+
+\pnum
+If any member function in [flatset.defn] exits via an exception the invariant
+is restored.  \begin{note}This may result in the \tcode{flat_set}'s being
+emptied.\end{note}
+
+\pnum
 Any sequence container ([sequence.reqmts]) supporting \oldconcept{RandomAccessIterator}
 can be used to instantiate \tcode{flat_set}. In particular, \tcode{vector}
 ([vector]) and \tcode{deque} ([deque]) can be
@@ -714,6 +723,15 @@ in ([associative.reqmts]), but not the \tcode{a_uniq} operations.  For a
 Descriptions are provided here only for operations on \tcode{flat_multiset}
 that are not described in one of the general sections or for operations where
 there is additional semantic information.
+
+\pnum
+A \tcode{flat_multiset} maintains the invariant that the keys are sorted with
+respect to the comparison object.
+
+\pnum
+If any member function in [flatmultiset.defn] exits via an exception the
+invariant is restored.  \begin{note}This may result in
+the \tcode{flat_multiset}'s being emptied.\end{note}
 
 \pnum
 Any sequence container ([sequence.reqmts]) supporting \oldconcept{RandomAccessIterator}
