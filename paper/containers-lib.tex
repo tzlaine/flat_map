@@ -381,7 +381,7 @@ namespace std {
     friend @\placeholder{synth-three-way-result}@<value_type>
     operator<=>(const flat_set& x, const flat_set& y);
 
-    friend void swap(flat_set& x, flat_set& y) noexcept(noexcept(x.swap(y)))
+    friend void swap(flat_set& x, flat_set& y) noexcept
       { x.swap(y); }
 
   private:
@@ -940,7 +940,7 @@ class flat_multiset {
     friend @\placeholder{synth-three-way-result}@<value_type>
     operator<=>(const flat_multiset& x, const flat_multiset& y);
 
-    friend void swap(flat_multiset& x, flat_multiset& y) noexcept(noexcept(x.swap(y)))
+    friend void swap(flat_multiset& x, flat_multiset& y) noexcept
       { x.swap(y); }
 
   private:
