@@ -266,7 +266,8 @@ A \tcode{flat_map} maintains the following invariants:
 
 \pnum
 If any member function in [flatmap.defn] exits via an exception the invariants
-are restored.
+are restored.  \begin{note}This may result in the \tcode{flat_map}'s being
+emptied.\end{note}
 
 \pnum
 Any sequence container ([sequence.reqmts]) \tcode{C}
@@ -1323,7 +1324,8 @@ A \tcode{flat_multimap} maintains the following invariants:
 
 \pnum
 If any member function in [flatmultimap.defn] subclause exits via an exception
-the invariants are restored.
+the invariants are restored.  \begin{note}This may result in
+the \tcode{flat_multimap}'s being emptied.\end{note}
 
 \pnum
 Any sequence container ([sequence.reqmts]) \tcode{C}
