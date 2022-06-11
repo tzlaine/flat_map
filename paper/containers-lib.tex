@@ -1127,6 +1127,10 @@ elements into a single sorted range.
 \complexity
 $N$ + $M \log M$, where $N$ is \tcode{size()} before the operation and $M$
 is \tcode{distance(first, last)}.
+
+\pnum
+\remarks
+Since this operation performs an in-place merge, it may allocate memory.
 \end{itemdescr}
 
 \indexlibrarymember{insert}{flatmultiset}%
