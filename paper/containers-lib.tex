@@ -1519,7 +1519,7 @@ namespace std {
 
     void insert(initializer_list<value_type> il)
       { insert(il.begin(), il.end()); }
-    void insert(sorted_unique_t s, initializer_list<value_type> il)
+    void insert(sorted_equivalent_t s, initializer_list<value_type> il)
       { insert(s, il.begin(), il.end()); }
 
     containers extract() &&;
