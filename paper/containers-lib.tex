@@ -1428,12 +1428,12 @@ namespace std {
 
     template<@\placeholder{container-compatible-range}@<value_type> R>
       flat_mutlimap(from_range_t fr, R&& rg)
-        : flat_map(fr, std::forward<R>(range), key_compare()) { }
+        : flat_multimap(fr, std::forward<R>(range), key_compare()) { }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_mutlimap(from_range_t, R&& rg, const Allocator& a);
     template<@\placeholder{container-compatible-range}@<value_type> R>
       flat_multimap(from_range_t, R&& rg, const key_compare& comp)
-        : flat_map(comp)
+        : flat_multimap(comp)
         { insert_range(std::forward<R>(range)); }
     template<@\placeholder{container-compatible-range}@<value_type> R, class Allocator>
       flat_multimap(from_range_t, R&& rg, const key_compare& comp,
