@@ -1222,8 +1222,9 @@ void replace(key_container_type&& key_cont, mapped_container_type&& mapped_cont)
 
 \begin{itemdescr}
 \pnum \expects
-\tcode{key_cont.size() == mapped_cont.size()} is \tcode{true}, and the elements of
-\tcode{key_cont} are sorted with respect to \tcode{compare}.
+\tcode{key_cont.size() == mapped_cont.size()} is \tcode{true}, the elements of
+\tcode{key_cont} are sorted with respect to \tcode{compare}, and \tcode{key_cont}
+contains no equal elements.
 
 \pnum
 \effects Equivalent to:
