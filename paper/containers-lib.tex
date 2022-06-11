@@ -1494,7 +1494,7 @@ namespace std {
     size_type max_size() const noexcept;
 
     // \ref{flatmultimap.modifiers}, modifiers
-    template <class... Args> pair<iterator, bool> emplace(Args&&... args);
+    template <class... Args> iterator emplace(Args&&... args);
     template <class... Args>
       iterator emplace_hint(const_iterator position, Args&&... args);
 
@@ -1507,7 +1507,7 @@ namespace std {
     iterator insert(const_iterator position, value_type&& x)
       { return emplace_hint(position, std::move(x)); }
 
-    template <class P> pair<iterator, bool> insert(P&& x);
+    template <class P> iterator insert(P&& x);
     template <class P>
       iterator insert(const_iterator position, P&&);
     template <class InputIterator>
