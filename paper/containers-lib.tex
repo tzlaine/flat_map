@@ -1252,31 +1252,23 @@ template <class Key, class T, class Compare, class KeyContainer, class MappedCon
 
 \begin{itemdescr}
 \pnum
-\effects
-Equivalent to:
-\begin{codeblock}
-auto original_size = c.size();
+\expects \tcode{Key} and \tcode{T} meet the \oldconcept{MoveAssignable} requirements.
 
-auto [keys, values] = std::move(c).extract();
+\pnum
+\effects Let $E$ be \tcode{bool(pred(pair<const Key\&, const T\&>(e)))}. Erases all
+elements \tcode{e} in \tcode{c} for which $E$ holds.
 
-auto keys_out_it = keys.begin();
-auto values_out_it = values.begin();
-auto values_it = values.begin();
-for (auto & key : keys) {
-  auto & value = *values_it;
-  if (!pred(pair<const Key&, const T&>(key, value))) {
-    *keys_out_it++ = std::move(key);
-    *values_out_it++ = std::move(value);
-  }
-  ++values_it;
-}
+\pnum
+\returns The number of elements erased.
 
-keys.erase(keys_out_it, keys.end());
-values.erase(values_out_it, values.end());
+\pnum
+\complexity Exactly \tcode{c.size()} applications of the predicate.
 
-c.replace(std::move(keys), std::move(values));
-return original_size - c.size();
-\end{codeblock}
+\pnum
+\remarks Stable ([algorithm.stable]). If an invocation of this function template exits
+via an exception, \tcode{c} is in a valid but unspecified state ([defns.valid]).
+\begin{note}\tcode{c} still meets its invariants, but some or all of its elements may
+have been erased.\end{note}
 \end{itemdescr}
 
 \rSec2[flatmultimap]{Class template \tcode{flat_multimap}}
@@ -1801,30 +1793,22 @@ template <class Key, class T, class Compare, class KeyContainer, class MappedCon
 
 \begin{itemdescr}
 \pnum
-\effects
-Equivalent to:
-\begin{codeblock}
-auto original_size = c.size();
+\expects \tcode{Key} and \tcode{T} meet the \oldconcept{MoveAssignable} requirements.
 
-auto [keys, values] = std::move(c).extract();
+\pnum
+\effects Let $E$ be \tcode{bool(pred(pair<const Key\&, const T\&>(e)))}. Erases all
+elements \tcode{e} in \tcode{c} for which $E$ holds.
 
-auto keys_out_it = keys.begin();
-auto values_out_it = values.begin();
-auto values_it = values.begin();
-for (auto & key : keys) {
-  auto & value = *values_it;
-  if (!pred(pair<const Key&, const T&>(key, value))) {
-    *keys_out_it++ = std::move(key);
-    *values_out_it++ = std::move(value);
-  }
-  ++values_it;
-}
+\pnum
+\returns The number of elements erased.
 
-keys.erase(keys_out_it, keys.end());
-values.erase(values_out_it, values.end());
+\pnum
+\complexity Exactly \tcode{c.size()} applications of the predicate.
 
-c.replace(std::move(keys), std::move(values));
-return original_size - c.size();
-\end{codeblock}
+\pnum
+\remarks Stable ([algorithm.stable]). If an invocation of this function template exits
+via an exception, \tcode{c} is in a valid but unspecified state ([defns.valid]).
+\begin{note}\tcode{c} still meets its invariants, but some or all of its elements may
+have been erased.\end{note}
 \end{itemdescr}
 \end{addedblock}
