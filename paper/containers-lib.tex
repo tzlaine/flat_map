@@ -1265,7 +1265,7 @@ elements \tcode{e} in \tcode{c} for which $E$ holds.
 \complexity Exactly \tcode{c.size()} applications of the predicate.
 
 \pnum
-\remarks Stable ([algorithm.stable]). If an invocation of this function template exits
+\remarks Stable ([algorithm.stable]). If an invocation of \tcode{erase_if} exits
 via an exception, \tcode{c} is in a valid but unspecified state ([defns.valid]).
 \begin{note}\tcode{c} still meets its invariants, but some or all of its elements may
 have been erased.\end{note}
@@ -1806,7 +1806,7 @@ elements \tcode{e} in \tcode{c} for which $E$ holds.
 \complexity Exactly \tcode{c.size()} applications of the predicate.
 
 \pnum
-\remarks Stable ([algorithm.stable]). If an invocation of this function template exits
+\remarks Stable ([algorithm.stable]). If an invocation of \tcode{erase_if} exits
 via an exception, \tcode{c} is in a valid but unspecified state ([defns.valid]).
 \begin{note}\tcode{c} still meets its invariants, but some or all of its elements may
 have been erased.\end{note}
